@@ -5,11 +5,11 @@
    just grouped) because several sections below rely on later rules
    overriding earlier ones, and on media queries firing in a specific
    sequence — see the notes in sections 19 and 30.
- 
+
    Additions on top of the stock theme are called out explicitly:
      - Section 34: hero cover image, ported over from the Cosmos theme.
    ========================================================================== */
- 
+
 /* --------------------------------------------------------------------------
    1. Heading & navbar transition tweaks
    -------------------------------------------------------------------------- */
@@ -17,12 +17,12 @@ h1.notion-heading,
 h2.notion-heading * {
   letter-spacing: -1px !important;
 }
- 
+
 .super-navbar__item,
 .super-navbar__theme-toggle {
   transition: background .16s ease-in-out, border .16s ease-in-out !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    2. List view — text wrapping
    -------------------------------------------------------------------------- */
@@ -30,7 +30,7 @@ h2.notion-heading * {
 .notion-collection-list__item .notion-property__title .notion-semantic-string {
   white-space: pre-wrap !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    3. Design tokens — new custom properties (shared / light default)
    -------------------------------------------------------------------------- */
@@ -43,12 +43,17 @@ h2.notion-heading * {
   --cta-bg-hover-color: #111 !important;
   --cta-text-color: var(--color-bg-default) !important;
   --cta-text-hover-color: #ffffff !important;
- 
+
   /* Added for the hero cover image — see section 34 */
   --cover-opacity: .9;
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
+
+  /* Shared with the navbar rules in section 16 and the cover offset in
+     section 34, so the cover always reaches exactly one navbar-height
+     above where it'd otherwise start, however tall the navbar is. */
+  --navbar-height: 96px;
 }
- 
+
 /* --------------------------------------------------------------------------
    4. Design tokens — dark theme
    -------------------------------------------------------------------------- */
@@ -61,7 +66,7 @@ h2.notion-heading * {
   --color-code-bg: var(--color-bg-gray-light) !important;
   --color-ui-hover-bg: #202020 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    5. Design tokens — light theme
    -------------------------------------------------------------------------- */
@@ -71,7 +76,7 @@ h2.notion-heading * {
   --navbar-background-color: rgba(246, 246, 246, .8) !important;
   --color-ui-hover-bg: #F2F2F2 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    6. Hide elements
    NOTE: this used to also hide #page-index .notion-header (the homepage
@@ -84,7 +89,7 @@ h2.notion-heading * {
 .notion-toggle__trigger {
   display: none !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    7. Flex layout fixes
    -------------------------------------------------------------------------- */
@@ -94,7 +99,7 @@ h2.notion-heading * {
   display: flex !important;
   display: flex !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    8. Dark theme — text color fixes
    -------------------------------------------------------------------------- */
@@ -103,7 +108,7 @@ h2.notion-heading * {
 .theme-dark .notion-collection-card__property span .date {
   color: var(--color-text-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    9. Card content & pill colors (light default)
    -------------------------------------------------------------------------- */
@@ -112,7 +117,7 @@ h2.notion-heading * {
 .notion-collection-gallery .pill-default {
   color: var(--color-bg-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    10. Per-page content width
    -------------------------------------------------------------------------- */
@@ -121,7 +126,7 @@ h2.notion-heading * {
 .parent-page__posts .max-width {
   --layout-max-width: 900px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    11. Dark theme — pill outline
    -------------------------------------------------------------------------- */
@@ -130,7 +135,7 @@ h2.notion-heading * {
   border: 1px solid var(--color-text-default);
   color: var(--color-text-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    12. Base body font smoothing
    -------------------------------------------------------------------------- */
@@ -139,18 +144,18 @@ body {
   -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    13. Text selection color
    -------------------------------------------------------------------------- */
 ::-moz-selection {
   background: var(--select-highlight-color) !important;
 }
- 
+
 ::selection {
   background: var(--select-highlight-color) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    14. Paragraph & heading spacing
    -------------------------------------------------------------------------- */
@@ -158,7 +163,7 @@ body {
 h2.notion-heading:not(.toggle) {
   margin-bottom: 12px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    15. Big display headings
    -------------------------------------------------------------------------- */
@@ -169,42 +174,43 @@ strong h1.notion-heading {
   line-height: 1 !important;
   font-size: clamp(2.6rem, 6vw, 5rem) !important;
 }
- 
+
 h2.notion-heading * {
   line-height: 1 !important;
 }
- 
+
 h3.notion-heading * {
   letter-spacing: -.6px !important;
   line-height: 1 !important;
 }
- 
+
 .notion-header__title {
   font-size: clamp(2.3rem, 5vw, 3rem) !important;
   line-height: 1.1 !important;
   letter-spacing: -1.6px !important;
   opacity: var(--header-title-opacity) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    16. Navbar bar & items
    -------------------------------------------------------------------------- */
 .super-navbar {
   backdrop-filter: blur(8px) !important;
   border-bottom: 1px solid var(--color-border-default) !important;
-  padding-top: 15px !important;
-  padding-bottom: 15px !important;
-  background: color-mix(in srgb, var(--color-bg-default) 50%, transparent) !important;
+  min-height: var(--navbar-height) !important;
+  background: color-mix(in srgb, var(--color-bg-default) 20%, transparent) !important;
 }
- 
+
 .super-navbar__menu {
-  background: var(--color-bg-default) !important;
+  backdrop-filter: blur(8px) !important;
+  min-height: var(--navbar-height) !important;
+  background: color-mix(in srgb, var(--color-bg-default) 20%, transparent) !important;
 }
- 
+
 .super-navbar__item-list {
   gap: 12px !important;
 }
- 
+
 .super-navbar__item {
   font-weight: 100 !important;
   padding: 8px 12px !important;
@@ -212,31 +218,31 @@ h3.notion-heading * {
   border-radius: 50px !important;
   border: 1px solid transparent !important;
 }
- 
+
 .super-navbar__item:hover,
 .super-navbar__theme-toggle:hover {
   border: 1px solid var(--color-border-default) !important;
   background: var(--color-ui-hover-bg);
 }
- 
+
 .super-navbar__theme-toggle {
   border-radius: 50px !important;
   border: 1px solid transparent !important;
   width: 42px !important;
   height: 42px !important;
 }
- 
+
 .super-navbar__theme-toggle svg {
   stroke-width: 1.5px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    17. Header spacing
    -------------------------------------------------------------------------- */
 .notion-header {
   margin-bottom: 0 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    18. Collection header wrapper
    -------------------------------------------------------------------------- */
@@ -244,7 +250,7 @@ h3.notion-heading * {
   flex-direction: column !important;
   align-items: flex-start !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    19. Gallery grid — column counts & responsive breakpoints
    NOTE: keep everything in this section in the order it's in. The three
@@ -255,60 +261,60 @@ h3.notion-heading * {
 .notion-collection-gallery.small {
   grid-template-columns: 1fr 1fr 1fr !important;
 }
- 
+
 .notion-collection-gallery.medium {
   grid-template-columns: 1fr 1fr 1fr 1fr !important;
 }
- 
+
 .notion-collection-gallery.medium .notion-collection-card {
   min-height: 420px !important;
 }
- 
+
 @media all and (max-width: 1200px) {
   .notion-collection-gallery.medium {
     grid-template-columns: 1fr 1fr 1fr !important;
   }
- 
+
   .notion-collection-gallery.medium .notion-collection-card:last-of-type {
     grid-column: 2/-1;
   }
 }
- 
+
 @media all and (max-width: 968px) {
   .notion-collection-gallery.medium {
     grid-template-columns: 1fr 1fr !important;
   }
- 
+
   .notion-collection-gallery.medium .notion-collection-card:last-of-type {
     grid-column: 1/-1;
   }
 }
- 
+
 @media all and (max-width: 764px) {
   .notion-collection-gallery.medium,
   .notion-collection-gallery.small {
     grid-template-columns: 1fr !important;
   }
 }
- 
+
 .notion-collection-gallery.large {
   grid-template-columns: 1fr 1fr !important;
 }
- 
+
 @media only screen and (min-width: 1440px) {
   .notion-collection-gallery.large {
     grid-auto-flow: row !important;
     grid-template-columns: 1fr 1fr 1fr !important;
   }
 }
- 
+
 @media only screen and (max-width: 767px) {
   .notion-collection-gallery.large {
     grid-auto-flow: row !important;
     grid-template-columns: 1fr !important;
   }
 }
- 
+
 @media only screen and (min-width: 992px) {
   .notion-collection-gallery.large .notion-collection-card:nth-child(26n+12),
   .notion-collection-gallery.large .notion-collection-card:nth-child(26n+2),
@@ -321,18 +327,18 @@ h3.notion-heading * {
     grid-column: span 2/auto;
     grid-row: span 2/auto;
   }
- 
+
   .notion-collection-gallery.medium .notion-collection-card:nth-child(26n+11):not(:last-child),
   .notion-collection-gallery.medium .notion-collection-card:nth-child(26n+16):not(:last-child) {
     grid-column: span 2/auto;
   }
 }
- 
+
 .notion-collection-gallery,
 .notion-collection-list {
   border-top: 0 !important;
 }
- 
+
 .notion-collection-gallery.large {
   display: grid !important;
   grid-auto-flow: row dense !important;
@@ -341,7 +347,7 @@ h3.notion-heading * {
   grid-row-gap: 24px !important;
   grid-template-rows: auto !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    20. Collection cards — layout, cover image, hover effects
    -------------------------------------------------------------------------- */
@@ -350,12 +356,12 @@ h3.notion-heading * {
   height: 100% !important;
   transition: transform .2s ease-in-out !important;
 }
- 
+
 .notion-collection-card picture,
 .notion-collection-card__cover div {
   height: 100% !important;
 }
- 
+
 .notion-collection-card {
   flex-direction: column !important;
   box-shadow: none !important;
@@ -366,36 +372,36 @@ h3.notion-heading * {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
 }
- 
+
 .notion-collection-card__cover {
   height: 100% !important;
   position: relative !important;
 }
- 
+
 .notion-collection-card:hover .notion-collection-card__cover img {
   transform: scale(1.05) !important;
   -webkit-transform: scale(1.05) !important;
   -ms-transform: scale(1.05) !important;
 }
- 
+
 .notion-collection-card__content {
   position: absolute !important;
   bottom: 0 !important;
   background: linear-gradient(to top, #000 0, rgba(0, 0, 0, 0) 100%);
   width: 100% !important;
 }
- 
+
 .notion-collection-card:hover .notion-property__title::after {
   opacity: 1 !important;
 }
- 
+
 .notion-property__title::after {
   transition: opacity .2s ease-in-out !important;
   content: '→';
   opacity: 0 !important;
   margin-left: 6px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    21. Shared background helpers
    -------------------------------------------------------------------------- */
@@ -403,20 +409,20 @@ h3.notion-heading * {
   background: 0 0 !important;
   border: 1px solid var(--color-bg-default);
 }
- 
+
 .notion-dropdown__menu,
 .notion-pill.pill-gray,
 .super-navbar__cta {
   background: var(--color-bg-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    22. Property title weight
    -------------------------------------------------------------------------- */
 .notion-property__title .notion-semantic-string {
   font-weight: 200 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    23. Card property list layout
    -------------------------------------------------------------------------- */
@@ -428,7 +434,7 @@ h3.notion-heading * {
   flex-direction: column !important;
   gap: 8px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    24. Property text sizing
    -------------------------------------------------------------------------- */
@@ -436,7 +442,7 @@ h3.notion-heading * {
   font-size: 14px !important;
   font-weight: 300 !important;
 }
- 
+
 .notion-collection-card__property .notion-semantic-string {
   white-space: pre-wrap !important;
   line-height: 1.4 !important;
@@ -444,7 +450,7 @@ h3.notion-heading * {
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    25. Pills
    -------------------------------------------------------------------------- */
@@ -456,11 +462,11 @@ h3.notion-heading * {
   padding: 1px 7px 0 !important;
   border-radius: 50px !important;
 }
- 
+
 .notion-pill.pill-gray {
   border: 1px solid var(--color-border-default);
 }
- 
+
 /* --------------------------------------------------------------------------
    26. List view items
    -------------------------------------------------------------------------- */
@@ -468,7 +474,7 @@ h3.notion-heading * {
 .super-footer {
   border-top: 1px solid var(--color-border-default) !important;
 }
- 
+
 .notion-collection-list__item {
   border-bottom: 1px solid var(--color-border-default) !important;
   padding: 24px !important;
@@ -477,23 +483,23 @@ h3.notion-heading * {
   transition: background-color .15s !important;
   margin: 0 !important;
 }
- 
+
 .notion-collection-list__item .notion-property__title .notion-semantic-string > span {
   border-bottom: 0 !important;
 }
- 
+
 .notion-page__property-name > span {
   font-size: 16px !important;
 }
- 
+
 .notion-page__properties .notion-divider {
   margin: 32px 0 !important;
 }
- 
+
 .notion-property__date .date {
   opacity: .6;
 }
- 
+
 /* --------------------------------------------------------------------------
    27. Buttons — navbar CTA & inline links
    -------------------------------------------------------------------------- */
@@ -509,7 +515,7 @@ h3.notion-heading * {
   border: 1px solid var(--color-text-default) !important;
   transition: background .2s ease-in-out, color .2s ease-in-out, opacity .2s ease-in-out !important;
 }
- 
+
 .notion-root .notion-text .notion-link strong,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link,
@@ -528,13 +534,13 @@ h3.notion-heading * {
   transition: background .2s ease-in-out, color .2s ease-in-out, opacity .2s ease-in-out !important;
   text-decoration: none !important;
 }
- 
+
 .notion-code pre,
 .notion-toggle,
 .super-footer.floating {
   border: 1px solid var(--color-border-default) !important;
 }
- 
+
 .notion-root .notion-text .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link:hover,
@@ -544,7 +550,7 @@ h3.notion-heading * {
   color: var(--color-bg-default) !important;
   opacity: 1 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    28. Toggle blocks
    -------------------------------------------------------------------------- */
@@ -552,7 +558,7 @@ h3.notion-heading * {
 .notion-toggle:hover {
   background: var(--color-ui-hover-bg) !important;
 }
- 
+
 .notion-toggle.open:before,
 .notion-toggle:before {
   position: absolute !important;
@@ -563,16 +569,16 @@ h3.notion-heading * {
   top: 20px !important;
   right: 18px !important;
 }
- 
+
 .super-footer.corners {
   padding: 40px 26px !important;
   gap: 60px !important;
 }
- 
+
 .super-footer__footnote {
   font-weight: 300 !important;
 }
- 
+
 .notion-toggle {
   border-radius: 8px !important;
   margin-bottom: 16px !important;
@@ -580,20 +586,20 @@ h3.notion-heading * {
   text-align: left !important;
   transition: .3s ease-in-out !important;
 }
- 
+
 .notion-toggle__summary {
   margin: 0 !important;
   padding: 18px 30px 18px 18px !important;
 }
- 
+
 .notion-heading.toggle {
   padding: 0 !important;
 }
- 
+
 .notion-toggle.open {
   padding-bottom: 16px !important;
 }
- 
+
 .notion-toggle__content {
   padding-inline-start: 0px !important;
   border-top: 1px solid var(--color-border-default) !important;
@@ -601,32 +607,32 @@ h3.notion-heading * {
   padding-top: 16px !important;
   transition: .05s ease-in-out !important;
 }
- 
+
 .notion-toggle__content .notion-text__content {
   margin-bottom: 0 !important;
 }
- 
+
 .notion-toggle:before {
   content: "+" !important;
 }
- 
+
 .notion-toggle.open:before {
   content: "-" !important;
 }
- 
+
 .notion-toggle.open .notion-toggle__content {
   border-top: 1px solid var(--color-border-default) !important;
   opacity: 1 !important;
   height: auto !important;
 }
- 
+
 .notion-toggle.closed .notion-toggle__content {
   opacity: 0 !important;
   height: 0 !important;
   padding: 0 !important;
   display: block !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    29. Checkboxes
    -------------------------------------------------------------------------- */
@@ -634,15 +640,15 @@ h3.notion-heading * {
 .notion-checkbox svg {
   border-radius: 2px !important;
 }
- 
+
 .notion-to-do__title.checked del {
   text-decoration: none !important;
 }
- 
+
 .notion-checkbox.checked > svg {
   fill: var(--color-bg-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    30. Dropdown menu — base + responsive behavior
    NOTE: the @media block at the end of this section overrides several of
@@ -652,7 +658,7 @@ h3.notion-heading * {
 .notion-dropdown {
   width: 100% !important;
 }
- 
+
 .notion-dropdown__button {
   justify-content: space-between !important;
   width: 100% !important;
@@ -660,11 +666,11 @@ h3.notion-heading * {
   padding: 10px !important;
   border-radius: 8px !important;
 }
- 
+
 .notion-dropdown__menu-wrapper {
   margin-bottom: 8px !important;
 }
- 
+
 .notion-dropdown__menu {
   width: 100% !important;
   border-radius: 8px !important;
@@ -675,49 +681,49 @@ h3.notion-heading * {
   border: 1px solid var(--color-border-default) !important;
   margin-top: 5px !important;
 }
- 
+
 .notion-dropdown__option-list {
   padding: 0 !important;
   flex-wrap: wrap !important;
 }
- 
+
 .notion-dropdown__option {
   padding: 5px 16px !important;
   height: 50px !important;
 }
- 
+
 .notion-dropdown__button-title,
 .notion-dropdown__option p {
   font-size: 16px !important;
   font-weight: 300 !important;
 }
- 
+
 .notion-dropdown__button:hover {
   background: 0 0 !important;
 }
- 
+
 .notion-dropdown__option-icon {
   display: none !important;
 }
- 
+
 @media all and (min-width: 624px) {
   .notion-dropdown__button,
   .notion-dropdown__menu-header {
     display: none !important;
   }
- 
+
   .notion-dropdown__menu.initial-state {
     z-index: 1 !important;
     opacity: 1 !important;
     transform: none !important;
   }
- 
+
   .notion-dropdown__menu.animate-in,
   .notion-dropdown__menu.animate-in.animate-out,
   .notion-dropdown__menu.animate-out {
     animation: none !important;
   }
- 
+
   .notion-dropdown__menu {
     background: 0 0 !important;
     box-shadow: unset !important;
@@ -727,27 +733,27 @@ h3.notion-heading * {
     position: relative !important;
     border: none !important;
   }
- 
+
   .notion-dropdown__menu-wrapper {
     margin-bottom: 12px !important;
     position: relative !important;
   }
- 
+
   .notion-dropdown__option:hover {
     background: var(--color-text-default) !important;
     border: 1px solid var(--color-text-default) !important;
   }
- 
+
   .notion-dropdown__option:hover p,
   .notion-dropdown__option:hover svg {
     color: var(--cta-text-hover-color) !important;
   }
- 
+
   .notion-dropdown__option p,
   .notion-dropdown__option.active p {
     color: var(--color-text-default) !important;
   }
- 
+
   .notion-dropdown__option {
     border: 1px solid var(--color-border-default) !important;
     border-radius: var(--cta-border-radii) !important;
@@ -755,42 +761,42 @@ h3.notion-heading * {
     height: auto !important;
     padding: 8px 12px !important;
   }
- 
+
   .notion-dropdown__option p {
     transition: color .2s ease-in-out !important;
     font-size: 10px !important;
     text-transform: uppercase !important;
     letter-spacing: .8px !important;
   }
- 
+
   .notion-dropdown__option-list {
     display: flex !important;
     padding: 0 !important;
     height: auto !important;
     gap: 8px !important;
   }
- 
+
   .notion-dropdown__option.active {
     background: var(--color-bg-gray) !important;
     border: 1px solid transparent !important;
   }
 }
- 
+
 /* --------------------------------------------------------------------------
    31. Code syntax highlighting (Prism tokens)
    -------------------------------------------------------------------------- */
 .token.selector {
   color: #2a2a2a !important;
 }
- 
+
 .token.property {
   color: #909090 !important;
 }
- 
+
 .token.important {
   color: var(--primary-color) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    32. Lightbox
    -------------------------------------------------------------------------- */
@@ -809,7 +815,7 @@ h3.notion-heading * {
   align-items: center;
   backdrop-filter: blur(5px);
 }
- 
+
 .close-lightbox {
   position: absolute;
   top: 0;
@@ -828,11 +834,11 @@ h3.notion-heading * {
   cursor: pointer;
   transition: background .2s ease-in-out;
 }
- 
+
 .close-lightbox:hover {
   background: var(--color-ui-hover-bg);
 }
- 
+
 .lightbox-image {
   width: auto;
   max-height: 90%;
@@ -841,14 +847,14 @@ h3.notion-heading * {
   z-index: 100;
   border-radius: 12px;
 }
- 
+
 /* --------------------------------------------------------------------------
    33. Misc polish
    -------------------------------------------------------------------------- */
 .notion-collection-card.no-click {
   cursor: pointer !important;
 }
- 
+
 .notion-quote {
   line-height: 1.4 !important;
   margin-bottom: 24px !important;
@@ -857,7 +863,7 @@ h3.notion-heading * {
   letter-spacing: -.3px !important;
   border-color: var(--color-border-default) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    34. Hero cover image (added from Cosmos)
    Shows the Notion page cover image as a full-width, fading hero banner
@@ -869,7 +875,7 @@ h3.notion-heading * {
 .notion-header__cover.no-cover {
   display: none !important;
 }
- 
+
 .footer-cover,
 .footer-cover:before,
 .notion-header__cover.has-cover,
@@ -878,16 +884,16 @@ h3.notion-heading * {
   left: 0 !important;
   width: 100% !important;
 }
- 
+
 .notion-header__cover.has-cover {
-  top: -100px !important;
-  margin-top: -20px !important;
-  height: 60vh !important;
-  max-height: 60vh !important;
+  top: calc(-1 * var(--navbar-height)) !important;
+  margin-top: 0 !important;
+  height: calc(60vh + var(--navbar-height)) !important;
+  max-height: calc(60vh + var(--navbar-height)) !important;
   z-index: -2 !important;
   opacity: var(--cover-opacity) !important;
 }
- 
+
 .footer-cover:before,
 .notion-header__cover:after {
   content: "" !important;
@@ -896,7 +902,7 @@ h3.notion-heading * {
   height: 100% !important;
   background-image: var(--cover-fade-gradient) !important;
 }
- 
+
 .footer-cover {
   background: var(--footerCover) !important;
   background-color: var(--color-bg-default) !important;
@@ -910,24 +916,24 @@ h3.notion-heading * {
   transform: rotate(180deg) !important;
   border: 0 !important;
 }
- 
+
 /* Page name + icon are intentionally NOT hidden globally — some pages
    (e.g. a future blog) may want to keep them visible. To hide them on
    one specific page, paste this into that page's own CSS field in
    Super (not this global file):
- 
+
      .notion-header__title,
      .notion-header__icon-wrapper {
        display: none !important;
      }
- 
+
      .notion-header {
        padding-bottom: 160px !important;
      }
- 
+
    The padding-bottom replaces the space the title used to take up, so
    only include it on pages where you're also hiding the title above. */
- 
+
 /* --------------------------------------------------------------------------
    35. Full-width callout section — dark mode background
    Super's official full-width-section snippet handles the layout, but
