@@ -45,7 +45,7 @@ h2.notion-heading * {
   --cta-text-hover-color: #ffffff !important;
  
   /* Added for the hero cover image — see section 34 */
-  --cover-opacity: .8;
+  --cover-opacity: .9;
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
 }
  
@@ -192,6 +192,9 @@ h3.notion-heading * {
 .super-navbar {
   backdrop-filter: blur(8px) !important;
   border-bottom: 1px solid var(--color-border-default) !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  background: color-mix(in srgb, var(--color-bg-default) 50%, transparent) !important;
 }
  
 .super-navbar__menu {
@@ -924,3 +927,15 @@ h3.notion-heading * {
  
    The padding-bottom replaces the space the title used to take up, so
    only include it on pages where you're also hiding the title above. */
+ 
+/* --------------------------------------------------------------------------
+   35. Full-width callout section — dark mode background
+   Super's official full-width-section snippet handles the layout, but
+   not the color — the callout keeps whatever background Notion's
+   "Gray" callout color maps to, which is nearly invisible against a
+   near-black dark theme. This gives it its own explicit color in dark
+   mode only; light mode is untouched. Adjust the hex value to taste.
+   -------------------------------------------------------------------------- */
+.theme-dark .notion-callout[class*="bg-gray"] {
+  background-color: #1a1a1a !important;
+}
