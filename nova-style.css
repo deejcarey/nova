@@ -51,7 +51,7 @@ h2.notion-heading * {
   /* Shared with the navbar rules in section 16 and the cover offset in
      section 34, so the cover always reaches exactly one navbar-height
      above where it'd otherwise start, however tall the navbar is. */
-  --navbar-height: 96px;
+  --navbar-height: 92px;
 }
 
 /* --------------------------------------------------------------------------
