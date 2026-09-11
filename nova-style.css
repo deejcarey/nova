@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Nova theme — DJCarey.com custom build
-   Base: the official Nova theme (formatted for readability). Rule
+   Horizon theme — DJCarey.com custom build
+   Base: the official Horizon theme (formatted for readability). Rule
    ORDER within the original theme is preserved exactly as written (not
    just grouped) because several sections below rely on later rules
    overriding earlier ones, and on media queries firing in a specific
@@ -944,4 +944,29 @@ h3.notion-heading * {
    -------------------------------------------------------------------------- */
 .theme-dark .notion-callout[class*="bg-gray"] {
   background-color: #1a1a1a !important;
+}
+
+/* --------------------------------------------------------------------------
+   36. Testimonials gallery — text-driven card height
+   The stock card design assumes every card has a cover photo behind an
+   absolutely-positioned caption. With no photo, and no min-height set
+   for whatever size this gallery uses, cards collapse to just their
+   border. This puts the text back in normal flow so its own content
+   gives the card real height, and adds padding since it's no longer
+   leaning on an image for visual structure.
+
+   REPLACE "REPLACE_WITH_TESTIMONIALS_BLOCK_ID" with this gallery's
+   actual block ID (same method as before: right-click the block in
+   Notion → Copy link to block → strip the dashes from the UUID).
+   -------------------------------------------------------------------------- */
+#block-REPLACE_WITH_TESTIMONIALS_BLOCK_ID .notion-collection-card {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+#block-REPLACE_WITH_TESTIMONIALS_BLOCK_ID .notion-collection-card__content {
+  position: static !important;
+  background: none !important;
+  width: auto !important;
+  padding: 28px !important;
 }
