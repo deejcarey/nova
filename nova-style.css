@@ -959,12 +959,12 @@ h3.notion-heading * {
    actual block ID (same method as before: right-click the block in
    Notion → Copy link to block → strip the dashes from the UUID).
    -------------------------------------------------------------------------- */
-#block-REPLACE_WITH_TESTIMONIALS_BLOCK_ID .notion-collection-card {
+#block-c04e3cf42c980cba207c7c5369c3760 .notion-collection-card {
   min-height: 0 !important;
   height: auto !important;
 }
 
-#block-REPLACE_WITH_TESTIMONIALS_BLOCK_ID .notion-collection-card__content {
+#block-c04e3cf42c980cba207c7c5369c3760 .notion-collection-card__content {
   position: static !important;
   background: none !important;
   width: auto !important;
