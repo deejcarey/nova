@@ -72,35 +72,3 @@
   transform: rotate(180deg) !important;
   border: 0 !important;
 }
-
-/* --------------------------------------------------------------------------
-   Gallery cards — uniform 16:9 cover shape, all sizes
-   This is a deliberate revert to a known-working baseline: the last
-   two attempts to make Large behave differently from Medium/Small,
-   and to detect cover-vs-no-cover cards via :has(), both produced
-   worse results than this simpler version — in one case hiding real
-   cover images entirely. This version doesn't touch
-   .notion-collection-card__content at all, so title-over-image
-   display is just stock behavior, untouched and known to work. Every
-   card's cover is a consistent 16:9 box; images crop to fill it.
-   No Large/Medium/Small differentiation and no no-cover handling yet
-   — both intentionally left out until we agree on the next step.
-   -------------------------------------------------------------------------- */
-.notion-collection-gallery .notion-collection-card {
-  grid-column: auto !important;
-  grid-row: auto !important;
-  min-height: 0 !important;
-  height: auto !important;
-  align-self: start !important;
-}
-
-.notion-collection-gallery .notion-collection-card__cover {
-  aspect-ratio: 16 / 9 !important;
-  height: auto !important;
-}
-
-.notion-collection-gallery .notion-collection-card__cover img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
