@@ -1,0 +1,74 @@
+/* ==========================================================================
+   01-layout.css — spacing, sizing & positioning only
+   No color, no transparency, no blur — those live in 02-design.css.
+   Load this AFTER 00-base-theme.css. Loading this file alone should
+   move/resize things correctly, but they'll look visually "undressed"
+   (e.g. the navbar solid instead of translucent) until 02-design.css
+   is added too — that's expected, and useful for testing: if something
+   is in the wrong PLACE or wrong SIZE, the bug is in this file: if
+   something is in the right place but looks visually wrong (color,
+   transparency), the bug is in 02-design.css instead.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared token: navbar height
+   Used both to size the navbar itself and to calculate how far the
+   hero cover image needs to reach to start at the very top of the
+   page (behind the navbar) rather than just below it.
+   -------------------------------------------------------------------------- */
+:root {
+  --navbar-height: 92px;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar height
+   -------------------------------------------------------------------------- */
+.super-navbar {
+  min-height: var(--navbar-height) !important;
+}
+
+.super-navbar__menu {
+  min-height: var(--navbar-height) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Hero cover image — position & size only (not opacity/color/fade)
+   -------------------------------------------------------------------------- */
+.notion-header__cover.no-cover {
+  display: none !important;
+}
+
+.footer-cover,
+.footer-cover:before,
+.notion-header__cover.has-cover,
+.notion-header__cover:after {
+  position: absolute !important;
+  left: 0 !important;
+  width: 100% !important;
+}
+
+.notion-header__cover.has-cover {
+  top: calc(-1 * var(--navbar-height)) !important;
+  margin-top: 0 !important;
+  height: calc(60vh + var(--navbar-height)) !important;
+  max-height: calc(60vh + var(--navbar-height)) !important;
+  z-index: -2 !important;
+}
+
+.footer-cover:before,
+.notion-header__cover:after {
+  content: "" !important;
+  z-index: 1 !important;
+  bottom: -2px !important;
+  height: 100% !important;
+}
+
+.footer-cover {
+  z-index: -1 !important;
+  min-width: 100% !important;
+  min-height: 25% !important;
+  height: auto !important;
+  bottom: 0 !important;
+  transform: rotate(180deg) !important;
+  border: 0 !important;
+}

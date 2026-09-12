@@ -1,0 +1,57 @@
+/* ==========================================================================
+   02-design.css — color, transparency & visual surface treatment only
+   No positioning or sizing here — that's 01-layout.css. Load this
+   AFTER both 00-base-theme.css and 01-layout.css, since some rules
+   below (the cover fade, the callout background) only make visual
+   sense once things are correctly positioned and sized.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero cover image — opacity & fade only (not position/size)
+   -------------------------------------------------------------------------- */
+:root {
+  --cover-opacity: .9;
+  --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
+}
+
+.notion-header__cover.has-cover {
+  opacity: var(--cover-opacity) !important;
+}
+
+.footer-cover:before,
+.notion-header__cover:after {
+  background-image: var(--cover-fade-gradient) !important;
+}
+
+.footer-cover {
+  background: var(--footerCover) !important;
+  background-color: var(--color-bg-default) !important;
+  background-size: cover !important;
+  opacity: var(--cover-opacity) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar — transparency & blur only (not height)
+   -------------------------------------------------------------------------- */
+.super-navbar {
+  backdrop-filter: blur(8px) !important;
+  border-bottom: 1px solid var(--color-border-default) !important;
+  background: color-mix(in srgb, var(--color-bg-default) 20%, transparent) !important;
+}
+
+.super-navbar__menu {
+  backdrop-filter: blur(8px) !important;
+  background: color-mix(in srgb, var(--color-bg-default) 20%, transparent) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Full-width callout section — dark mode background
+   Super's official full-width-section snippet handles the layout, but
+   not the color — the callout keeps whatever background Notion's
+   "Gray" callout color maps to, which is nearly invisible against a
+   near-black dark theme. This gives it its own explicit color in dark
+   mode only; light mode is untouched. Adjust the hex value to taste.
+   -------------------------------------------------------------------------- */
+.theme-dark .notion-callout[class*="bg-gray"] {
+  background-color: #1a1a1a !important;
+}

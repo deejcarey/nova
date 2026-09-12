@@ -1,0 +1,49 @@
+/* ==========================================================================
+   04-special-features.css — one-off, page/block-specific overrides
+   Everything in here is scoped to a specific block ID, not a general
+   class — so unlike the other files, nothing here can ever leak out
+   and affect some OTHER gallery, page, or element elsewhere on the
+   site. Safe to load always; each rule only ever matches the one
+   exact block it names.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Testimonials gallery — text-driven card height
+   The stock card design assumes every card has a cover photo behind an
+   absolutely-positioned caption. With no photo, and no min-height set
+   for whatever size this gallery uses, cards collapse to just their
+   border. This puts the text back in normal flow so its own content
+   gives the card real height, and adds padding since it's no longer
+   leaning on an image for visual structure.
+   -------------------------------------------------------------------------- */
+#block-3c04e3cf42c980cba207c7c5369c3760 .notion-collection-card {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+#block-3c04e3cf42c980cba207c7c5369c3760 .notion-collection-card__content {
+  position: static !important;
+  background: none !important;
+  width: auto !important;
+  padding: 28px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Reference only — NOT an active rule in this file.
+   Page name + icon are intentionally NOT hidden globally — some pages
+   (e.g. a future blog) may want to keep them visible. To hide them on
+   one specific page, paste this into that page's own CSS field in
+   Super instead:
+
+     .notion-header__title,
+     .notion-header__icon-wrapper {
+       display: none !important;
+     }
+
+     .notion-header {
+       padding-bottom: 160px !important;
+     }
+
+   The padding-bottom replaces the space the title used to take up, so
+   only include it on pages where you're also hiding the title above.
+   -------------------------------------------------------------------------- */
