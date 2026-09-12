@@ -72,3 +72,109 @@
   transform: rotate(180deg) !important;
   border: 0 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Large gallery — true masonry (respects each cover image's own shape)
+   Replaces the base theme's grid + nth-child pseudo-masonry, which
+   forces every card into one of a few hardcoded row/column spans
+   regardless of what the actual cover image looks like — that's what
+   was causing cropping. This uses CSS multi-column layout instead:
+   each card's height is just whatever its own image naturally needs.
+
+   TRADE-OFF: multi-column layout fills top-to-bottom within one column
+   before moving to the next, rather than left-to-right across a row.
+   Cards stay in the correct order, just arranged down each column
+   first. Flag it if a strict left-to-right reading order matters here.
+
+   The five breakpoints below use min-width and are ordered narrowest
+   to widest on purpose — like the max-width breakpoints elsewhere in
+   this file, more than one can be true at once on a wide screen, so
+   whichever is written LAST (the widest matching one) wins.
+
+   The @supports block at the end upgrades to native CSS masonry grid
+   on browsers that already support it (preserving left-to-right
+   order for those visitors); everyone else gets the column version
+   above it.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery.large {
+  display: block !important;
+  column-count: 1 !important;
+  column-gap: 24px !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card {
+  break-inside: avoid !important;
+  margin-bottom: 24px !important;
+  width: 100% !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card__cover {
+  height: auto !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card__cover img {
+  height: auto !important;
+  width: 100% !important;
+}
+
+@media all and (min-width: 640px) {
+  .notion-collection-gallery.large {
+    column-count: 2 !important;
+  }
+}
+
+@media all and (min-width: 900px) {
+  .notion-collection-gallery.large {
+    column-count: 3 !important;
+  }
+}
+
+@media all and (min-width: 1200px) {
+  .notion-collection-gallery.large {
+    column-count: 4 !important;
+  }
+}
+
+@media all and (min-width: 1440px) {
+  .notion-collection-gallery.large {
+    column-count: 5 !important;
+  }
+}
+
+@supports (grid-template-rows: masonry) {
+  .notion-collection-gallery.large {
+    display: grid !important;
+    grid-template-columns: repeat(1, 1fr) !important;
+    grid-template-rows: masonry !important;
+    column-count: initial !important;
+  }
+
+  .notion-collection-gallery.large .notion-collection-card {
+    break-inside: initial !important;
+    margin-bottom: 0 !important;
+  }
+
+  @media all and (min-width: 640px) {
+    .notion-collection-gallery.large {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  @media all and (min-width: 900px) {
+    .notion-collection-gallery.large {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  @media all and (min-width: 1200px) {
+    .notion-collection-gallery.large {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+  }
+
+  @media all and (min-width: 1440px) {
+    .notion-collection-gallery.large {
+      grid-template-columns: repeat(5, 1fr) !important;
+    }
+  }
+}
