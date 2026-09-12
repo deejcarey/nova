@@ -74,107 +74,109 @@
 }
 
 /* --------------------------------------------------------------------------
-   Large gallery — true masonry (respects each cover image's own shape)
-   Replaces the base theme's grid + nth-child pseudo-masonry, which
-   forces every card into one of a few hardcoded row/column spans
-   regardless of what the actual cover image looks like — that's what
-   was causing cropping. This uses CSS multi-column layout instead:
-   each card's height is just whatever its own image naturally needs.
+   Gallery cards — shared reset
+   Every size below is opting out of the base theme's default card
+   sizing (stock's min-height on Medium, and the nth-child spanning
+   that stock applies to Medium/Large) in favor of its own explicit
+   treatment. This just clears the slate so nothing from
+   00-base-theme.css leaks through unexpectedly.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery .notion-collection-card {
+  min-height: 0 !important;
+}
 
-   TRADE-OFF: multi-column layout fills top-to-bottom within one column
-   before moving to the next, rather than left-to-right across a row.
-   Cards stay in the correct order, just arranged down each column
-   first. Flag it if a strict left-to-right reading order matters here.
-
-   The five breakpoints below use min-width and are ordered narrowest
-   to widest on purpose — like the max-width breakpoints elsewhere in
-   this file, more than one can be true at once on a wide screen, so
-   whichever is written LAST (the widest matching one) wins.
-
-   The @supports block at the end upgrades to native CSS masonry grid
-   on browsers that already support it (preserving left-to-right
-   order for those visitors); everyone else gets the column version
-   above it.
+/* --------------------------------------------------------------------------
+   Large — real masonry: featured cards, dense-packed
+   Some cards span a 2x2 area (the same nth-child pattern stock used),
+   with grid-auto-flow: dense so nothing leaves gaps. This is a
+   deliberate curated look: featured cards WILL crop their image
+   somewhat to fill the bigger cell — that's inherent to this specific
+   treatment, unlike Medium/Small below. grid-auto-rows gives spanned
+   cards a predictable "exactly double" height instead of depending on
+   whatever content happens to be inside.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery.large {
-  display: block !important;
-  column-count: 1 !important;
-  column-gap: 24px !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  grid-auto-flow: row dense !important;
+  grid-auto-rows: 220px !important;
+  gap: 16px !important;
 }
 
 .notion-collection-gallery.large .notion-collection-card {
-  break-inside: avoid !important;
-  margin-bottom: 24px !important;
-  width: 100% !important;
+  height: 100% !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+2):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+8):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+12):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+20):not(:last-child) {
+  grid-column: span 2 !important;
+  grid-row: span 2 !important;
 }
 
 .notion-collection-gallery.large .notion-collection-card__cover {
-  height: auto !important;
+  height: 100% !important;
 }
 
 .notion-collection-gallery.large .notion-collection-card__cover img {
-  height: auto !important;
   width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
 }
 
-@media all and (min-width: 640px) {
-  .notion-collection-gallery.large {
-    column-count: 2 !important;
-  }
+/* --------------------------------------------------------------------------
+   Medium & Small — shared mechanism: natural image proportions, no crop
+   Both use CSS multi-column flow (not grid) so every card's height is
+   just whatever its own image needs — no forced ratio, no cropping,
+   ever. Small is the same treatment with more columns. This also
+   solves the no-cover-image case for free: with nothing forcing a
+   height, a card with no image just shows its text with no gap above.
+
+   TRADE-OFF (same as discussed before): multi-column layout fills
+   top-to-bottom within a column before moving to the next, rather
+   than left-to-right across a row. Order is preserved, just not in
+   strict row-major reading order.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery.medium,
+.notion-collection-gallery.small {
+  display: block !important;
+  column-gap: 16px !important;
 }
 
-@media all and (min-width: 900px) {
-  .notion-collection-gallery.large {
-    column-count: 3 !important;
-  }
+.notion-collection-gallery.medium {
+  column-count: 3 !important;
 }
 
-@media all and (min-width: 1200px) {
-  .notion-collection-gallery.large {
-    column-count: 4 !important;
-  }
+.notion-collection-gallery.small {
+  column-count: 5 !important;
 }
 
-@media all and (min-width: 1440px) {
-  .notion-collection-gallery.large {
-    column-count: 5 !important;
-  }
+.notion-collection-gallery.medium .notion-collection-card,
+.notion-collection-gallery.small .notion-collection-card {
+  break-inside: avoid !important;
+  margin-bottom: 16px !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
-@supports (grid-template-rows: masonry) {
-  .notion-collection-gallery.large {
-    display: grid !important;
-    grid-template-columns: repeat(1, 1fr) !important;
-    grid-template-rows: masonry !important;
-    column-count: initial !important;
-  }
+.notion-collection-gallery.medium .notion-collection-card__cover,
+.notion-collection-gallery.small .notion-collection-card__cover {
+  height: auto !important;
+  position: static !important;
+}
 
-  .notion-collection-gallery.large .notion-collection-card {
-    break-inside: initial !important;
-    margin-bottom: 0 !important;
-  }
+.notion-collection-gallery.medium .notion-collection-card__cover img,
+.notion-collection-gallery.small .notion-collection-card__cover img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
 
-  @media all and (min-width: 640px) {
-    .notion-collection-gallery.large {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
-  }
-
-  @media all and (min-width: 900px) {
-    .notion-collection-gallery.large {
-      grid-template-columns: repeat(3, 1fr) !important;
-    }
-  }
-
-  @media all and (min-width: 1200px) {
-    .notion-collection-gallery.large {
-      grid-template-columns: repeat(4, 1fr) !important;
-    }
-  }
-
-  @media all and (min-width: 1440px) {
-    .notion-collection-gallery.large {
-      grid-template-columns: repeat(5, 1fr) !important;
-    }
-  }
+.notion-collection-gallery.medium .notion-collection-card__content,
+.notion-collection-gallery.small .notion-collection-card__content {
+  position: static !important;
+  background: none !important;
+  width: auto !important;
+  padding: 16px !important;
 }
