@@ -72,3 +72,121 @@
   transform: rotate(180deg) !important;
   border: 0 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Gallery cards — shared reset
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery .notion-collection-card {
+  min-height: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Gallery cards — cover vs. no-cover content behavior (all sizes)
+   Checks for ANY content inside the cover area, or an <img> anywhere
+   in the card — two different signals combined, since the previous
+   two attempts at this (both checking specifically for an <img> tag
+   nested inside .notion-collection-card__cover) both failed to tell
+   cards apart correctly. This is a broader, more defensive check.
+
+   WITH a cover: title overlaid on the image with a bottom gradient,
+   nothing else shown — no description, no tags.
+   WITHOUT a cover: content flows normally, showing whatever
+   properties that view has chosen to display.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__content {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, .85) 0%, rgba(0, 0, 0, 0) 100%) !important;
+  padding: 20px 16px 16px !important;
+}
+
+.notion-collection-gallery .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-property__text,
+.notion-collection-gallery .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__property-list {
+  display: none !important;
+}
+
+.notion-collection-gallery .notion-collection-card:not(:has(img, .notion-collection-card__cover *)) .notion-collection-card__content {
+  position: static !important;
+  background: none !important;
+  width: auto !important;
+  padding: 16px !important;
+}
+
+.notion-collection-gallery .notion-collection-card:not(:has(img, .notion-collection-card__cover *)) .notion-collection-card__cover {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Large — masonry: featured cards, dense-packed
+   Single fixed column count, no breakpoints, no auto-fill — exactly
+   as requested. Featured (spanning) cards crop their image to fill
+   the bigger cell; that's inherent to this treatment, not a bug.
+   220px is a starting estimate for row height, not measured against
+   your real content.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery.large {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  grid-auto-flow: row dense !important;
+  grid-auto-rows: 220px !important;
+  gap: 16px !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card {
+  height: 100% !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+2):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+8):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+12):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+20):not(:last-child) {
+  grid-column: span 2 !important;
+  grid-row: span 2 !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover {
+  height: 100% !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* --------------------------------------------------------------------------
+   Medium & Small — simple grid: uniform cells, fixed column count
+   Column counts are swapped from stock on purpose — Small now has
+   MORE, smaller columns (4) than Medium (3), matching what "small"
+   and "medium" should intuitively mean, rather than stock's reversed
+   arrangement. aspect-ratio (not height: 100%) sizes each cell, since
+   that's what was silently failing to resolve for Medium in stock —
+   aspect-ratio doesn't depend on a parent's resolved height at all,
+   so it can't fail the same way. No breakpoints, as requested.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery.medium {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+.notion-collection-gallery.small {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+.notion-collection-gallery.medium .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover,
+.notion-collection-gallery.small .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover {
+  aspect-ratio: 4 / 3 !important;
+  height: auto !important;
+}
+
+.notion-collection-gallery.medium .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover img,
+.notion-collection-gallery.small .notion-collection-card:has(img, .notion-collection-card__cover *) .notion-collection-card__cover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
