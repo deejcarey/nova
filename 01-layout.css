@@ -75,9 +75,6 @@
 
 /* --------------------------------------------------------------------------
    Gallery cards — shared reset
-   min-height: 60px on top of min-height: 0 is a safety net: even if a
-   no-cover card ends up with very little content, it can't collapse
-   below a sane floor.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card {
   min-height: 60px !important;
@@ -85,8 +82,11 @@
 
 /* --------------------------------------------------------------------------
    Gallery cards — cover vs. no-cover content behavior (all sizes)
+   CONFIRMED from real HTML: .notion-collection-card__cover is the class
+   on the <img> itself, not a wrapper div containing one — so this
+   checks for that class directly, not a descendant of it.
    -------------------------------------------------------------------------- */
-.notion-collection-gallery .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__content {
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__content {
   position: absolute !important;
   bottom: 0 !important;
   left: 0 !important;
@@ -95,23 +95,20 @@
   padding: 20px 16px 16px !important;
 }
 
-/* Hide description/tags on cover cards, but force the title itself to
-   stay visible regardless of whether it's nested inside the same
-   wrapper as those other properties — don't rely on that assumption. */
-.notion-collection-gallery .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-property__text,
-.notion-collection-gallery .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-pill {
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__text,
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-pill {
   display: none !important;
 }
 
-.notion-collection-gallery .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-property__title {
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title {
   display: block !important;
 }
 
-.notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) {
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) {
   height: auto !important;
 }
 
-.notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) .notion-collection-card__content {
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
   position: static !important;
   background: none !important;
   background-image: none !important;
@@ -120,31 +117,14 @@
   padding: 16px !important;
 }
 
-/* Stock clamps property text to 2 lines — fine for a caption over an
-   image, wrong for a no-cover card meant to show full content */
-.notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) .notion-collection-card__property .notion-semantic-string {
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
   -webkit-line-clamp: unset !important;
   display: block !important;
   overflow: visible !important;
 }
 
-/* TEMPORARILY DISABLED for diagnosis — this was hiding covers whenever
-   the :has() check below failed to match, which is exactly what's
-   currently wrong. Disabling it unconditionally shows covers again so
-   real HTML can be inspected. Re-enable once :has() is fixed for real:
-.notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) .notion-collection-card__cover {
-  display: none !important;
-}
-*/
-
 /* --------------------------------------------------------------------------
    Large — masonry: featured cards, dense-packed
-   aspect-ratio (16:9) on EVERY card's cover — not a fixed pixel row
-   height — is what makes the math work: it lets the grid calculate
-   row-track height from the aspect ratio itself, so a 2-row spanning
-   card and the normal cards next to it end up geometrically
-   consistent instead of an arbitrary guessed pixel value fighting a
-   ratio constraint.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery.large {
   display: grid !important;
@@ -162,11 +142,7 @@
   grid-row: span 2 !important;
 }
 
-.notion-collection-gallery.large .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover {
-  height: 100% !important;
-}
-
-.notion-collection-gallery.large .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover img {
+.notion-collection-gallery.large .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
@@ -186,10 +162,6 @@
 
 /* --------------------------------------------------------------------------
    Medium & Small — simple grid: uniform cells, fixed column count
-   grid-column/grid-row are explicitly reset to auto here — stock's
-   spanning rule (in 00-base-theme.css) still targets Medium, and
-   without this reset it silently re-activates now that Medium is
-   display: grid again, producing the masonry-shaped gaps.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery.medium,
 .notion-collection-gallery.small {
@@ -215,13 +187,8 @@
   grid-template-columns: 1fr 1fr 1fr 1fr !important;
 }
 
-.notion-collection-gallery.medium .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover,
-.notion-collection-gallery.small .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover {
-  height: 100% !important;
-}
-
-.notion-collection-gallery.medium .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover img,
-.notion-collection-gallery.small .notion-collection-card:has(picture, .notion-collection-card__cover *) .notion-collection-card__cover img {
+.notion-collection-gallery.medium .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover,
+.notion-collection-gallery.small .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
