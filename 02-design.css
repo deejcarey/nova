@@ -73,3 +73,18 @@
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
   color: var(--color-text-default) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Gallery group headers — hide the divider, color the title
+   The divider is a border (or box-shadow) directly on the header,
+   not a separate element — making it transparent instead of removing
+   it preserves the exact same vertical spacing between groups.
+   -------------------------------------------------------------------------- */
+.notion-collection-group__section-header {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.notion-collection-group__section-header .notion-property__title {
+  color: #7D7D7D !important;
+}
