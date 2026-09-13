@@ -27,3 +27,12 @@
   font-size: 1.3em !important;
   font-weight: 700 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Navbar links & CTA button — bold
+   Stock sets these to font-weight: 100, quite thin.
+   -------------------------------------------------------------------------- */
+.super-navbar__item,
+.super-navbar__cta {
+  font-weight: 700 !important;
+}
