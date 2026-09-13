@@ -32,7 +32,7 @@
    Navbar links & CTA button — bold
    Stock sets these to font-weight: 100, quite thin.
    -------------------------------------------------------------------------- */
-.super-navbar__item,
-.super-navbar__cta {
+.super-navbar__item-list .super-navbar__item,
+.super-navbar__actions .super-navbar__cta {
   font-weight: 700 !important;
 }
