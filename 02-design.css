@@ -55,3 +55,21 @@
 .theme-dark .notion-callout[class*="bg-gray"] {
   background-color: #1a1a1a !important;
 }
+
+/* --------------------------------------------------------------------------
+   Gallery cards — cover overlay gradient & no-cover text color
+   Structure/positioning for these same has-cover / no-cover cards
+   lives in 01-layout.css — this file only touches their color.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__content {
+  background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, .7) 45%, rgba(0, 0, 0, 0) 100%) !important;
+}
+
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
+  background: none !important;
+  background-image: none !important;
+}
+
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
+  color: var(--color-text-default) !important;
+}
