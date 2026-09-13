@@ -1,7 +1,20 @@
 /* ==========================================================================
-   03-text-treatment.css — typography (reserved, currently empty)
-   Nothing in here yet — this is a placeholder for future work on
-   headings, body text, letter-spacing, etc. that goes beyond what
-   00-base-theme.css already sets. Load it whenever there's actually
-   something here; harmless to link now even while empty.
+   03-text-treatment.css — typography
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Gallery cards — title weight/size, no-cover text truncation
+   Structure/positioning for these same has-cover / no-cover cards
+   lives in 01-layout.css — this file only touches typography.
+   -------------------------------------------------------------------------- */
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title {
+  font-weight: 700 !important;
+  font-size: 1.15em !important;
+}
+
+/* Stock clamps property text to 2 lines — fine for a caption over an
+   image, wrong for a no-cover card meant to show full content */
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+}
