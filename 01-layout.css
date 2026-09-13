@@ -129,9 +129,14 @@
   overflow: visible !important;
 }
 
+/* TEMPORARILY DISABLED for diagnosis — this was hiding covers whenever
+   the :has() check below failed to match, which is exactly what's
+   currently wrong. Disabling it unconditionally shows covers again so
+   real HTML can be inspected. Re-enable once :has() is fixed for real:
 .notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) .notion-collection-card__cover {
   display: none !important;
 }
+*/
 
 /* --------------------------------------------------------------------------
    Large — masonry: featured cards, dense-packed
