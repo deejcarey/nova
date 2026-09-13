@@ -18,3 +18,12 @@
   -webkit-line-clamp: unset !important;
   overflow: visible !important;
 }
+
+/* --------------------------------------------------------------------------
+   Gallery group headers — title size/weight
+   Color for this same title lives in 02-design.css.
+   -------------------------------------------------------------------------- */
+.notion-collection-group__section-header .notion-property__title {
+  font-size: 1.3em !important;
+  font-weight: 700 !important;
+}
