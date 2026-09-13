@@ -109,7 +109,6 @@
 
 .notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) {
   height: auto !important;
-  align-self: start !important;
 }
 
 .notion-collection-gallery .notion-collection-card:not(:has(picture, .notion-collection-card__cover *)) .notion-collection-card__content {
