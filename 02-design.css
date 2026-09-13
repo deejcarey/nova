@@ -62,7 +62,7 @@
    lives in 01-layout.css — this file only touches their color.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__content {
-  background: linear-gradient(to top, rgba(0, 0, 0, .8) 0%, rgba(0, 0, 0, .56) 45%, rgba(0, 0, 0, 0) 100%) !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .42) 45%, rgba(0, 0, 0, 0) 100%) !important;
 }
 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
