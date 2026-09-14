@@ -55,6 +55,14 @@
   z-index: -2 !important;
 }
 
+/* .notion-header likely clips anything extending above its own box by
+   default (a common pattern for hero sections) — which would silently
+   cut off exactly the portion of the cover pulled up above it, since
+   that portion now extends past .notion-header's own top edge. */
+.notion-header {
+  overflow: visible !important;
+}
+
 .footer-cover:before,
 .notion-header__cover:after {
   content: "" !important;
