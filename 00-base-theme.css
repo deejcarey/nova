@@ -59,7 +59,7 @@ h2.notion-heading * {
   --color-pill-default: #101010 !important;
   --card-content-bg-color: rgba(0, 0, 0, .6) !important;
   --color-border-default: rgba(255, 255, 255, .12) !important;
-  --navbar-background-color: rgba(25, 25, 25, .8) !important;
+  --dj-lightbox-bg: rgba(25, 25, 25, .8) !important;
   --color-code-bg: var(--color-bg-gray-light) !important;
   --color-ui-hover-bg: #202020 !important;
 }
@@ -70,7 +70,7 @@ h2.notion-heading * {
 .theme-light {
   --card-content-bg-color: rgba(255, 255, 255, .6) !important;
   --color-border-default: rgba(204, 204, 204, .4) !important;
-  --navbar-background-color: rgba(246, 246, 246, .8) !important;
+  --dj-lightbox-bg: rgba(246, 246, 246, .8) !important;
   --color-ui-hover-bg: #F2F2F2 !important;
 }
 
@@ -820,7 +820,7 @@ h3.notion-heading * {
   align-items: center;
   margin: 20px;
   font-size: 2rem;
-  background: var(--navbar-background-color);
+  background: var(--dj-lightbox-bg);
   border: 1px solid var(--color-border-default);
   color: var(--color-text-default);
   border-radius: 500px;
