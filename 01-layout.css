@@ -63,6 +63,13 @@
   overflow: visible !important;
 }
 
+/* Confirmed via computed styles: Super's own super.css sets overflow:
+   hidden directly on .notion-header__cover itself (not just its
+   parent), and it was winning. */
+.notion-header__cover {
+  overflow: visible !important;
+}
+
 .footer-cover:before,
 .notion-header__cover:after {
   content: "" !important;
