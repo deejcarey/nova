@@ -17,18 +17,18 @@
    page (behind the navbar) rather than just below it.
    -------------------------------------------------------------------------- */
 :root {
-  --navbar-height: 92px;
+  --dj-nav-height: 92px;
 }
 
 /* --------------------------------------------------------------------------
    Navbar height
    -------------------------------------------------------------------------- */
 .super-navbar {
-  min-height: var(--navbar-height) !important;
+  min-height: var(--dj-nav-height) !important;
 }
 
 .super-navbar__menu {
-  min-height: var(--navbar-height) !important;
+  min-height: var(--dj-nav-height) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -48,10 +48,10 @@
 }
 
 .notion-header__cover.has-cover {
-  top: calc(-1 * var(--navbar-height)) !important;
+  top: calc(-1 * var(--dj-nav-height)) !important;
   margin-top: 0 !important;
-  height: calc(60vh + var(--navbar-height)) !important;
-  max-height: calc(60vh + var(--navbar-height)) !important;
+  height: calc(60vh + var(--dj-nav-height)) !important;
+  max-height: calc(60vh + var(--dj-nav-height)) !important;
   z-index: -2 !important;
 }
 
