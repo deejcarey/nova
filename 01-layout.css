@@ -55,6 +55,18 @@
   z-index: -2 !important;
 }
 
+/* Direct override for the actual <img> nested inside .notion-header__cover
+   (confirmed via inspected page data — a distinct element/class from the
+   outer div above). Forces it to fill its container regardless of
+   whatever is happening with Next.js's own fill-mode sizing. */
+.notion-header__cover-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
 /* .notion-header likely clips anything extending above its own box by
    default (a common pattern for hero sections) — which would silently
    cut off exactly the portion of the cover pulled up above it, since
