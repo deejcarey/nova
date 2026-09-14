@@ -35,7 +35,6 @@
    -------------------------------------------------------------------------- */
 .super-navbar {
   backdrop-filter: blur(4px) !important;
-  border-bottom: 1px solid var(--color-border-default) !important;
   background: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
 }
 
@@ -87,16 +86,4 @@
 
 .notion-collection-group__section-header .notion-property__title {
   color: #7D7D7D !important;
-}
-
-/* --------------------------------------------------------------------------
-   Navbar background — override Super's own native variable
-   .super-navbar and .super-navbar__menu were already correctly
-   transparent (confirmed via computed styles), but something else
-   consuming Super's own --navbar-background-color variable was still
-   rendering opaque on top. Overriding the variable itself, confirmed
-   by testing, fixes it regardless of which element actually uses it.
-   -------------------------------------------------------------------------- */
-:root {
-  --navbar-background-color: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
 }
