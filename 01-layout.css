@@ -25,10 +25,18 @@
    -------------------------------------------------------------------------- */
 .super-navbar {
   min-height: var(--dj-nav-height) !important;
+  margin: 20px !important;
+  width: calc(100% - 40px) !important;
+  top: 20px !important;
 }
 
 .super-navbar__menu {
   min-height: var(--dj-nav-height) !important;
+}
+
+.super-navbar,
+.super-navbar__menu {
+  border-radius: 10px !important;
 }
 
 /* --------------------------------------------------------------------------
