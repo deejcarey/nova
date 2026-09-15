@@ -36,3 +36,33 @@
 .super-navbar__actions .super-navbar__cta {
   font-weight: 700 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Normal text — line-height
+   Set at the body level so it cascades into paragraphs and general
+   copy; headings already set their own explicit line-height (tighter,
+   by design), which wins over this inherited value automatically.
+   -------------------------------------------------------------------------- */
+body {
+  line-height: 1.2 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Inline pill buttons (e.g. "Learn more") — punchier text
+   Stock sets these to font-weight: 100, quite thin.
+   -------------------------------------------------------------------------- */
+.notion-root .notion-text .notion-link strong,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link,
+.notion-root .notion-text strong .notion-link {
+  font-size: 1.1em !important;
+  font-weight: 700 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Notion button blocks (e.g. "Learn more") — bold, enlarged text
+   -------------------------------------------------------------------------- */
+.notion-button__content {
+  font-size: 1.15em !important;
+  font-weight: 700 !important;
+}
