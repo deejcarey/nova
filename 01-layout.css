@@ -270,6 +270,6 @@
    paragraph rather than between them. 1rem (16px) is a starting
    estimate, not a measured value — easy to adjust.
    -------------------------------------------------------------------------- */
-.notion-text {
+.notion-text.notion-text__content.notion-semantic-string {
   margin-bottom: 1.8rem !important;
 }
