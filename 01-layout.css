@@ -249,26 +249,3 @@
     grid-template-columns: 1fr !important;
   }
 }
-
-/* --------------------------------------------------------------------------
-   SPECULATIVE — navbar viewport-wrapper (adapted from Cosmos theme)
-   Cosmos targets .super-navbar__menu-wrapper (and a child with a
-   react-transition-group "enter-done" class) with position: absolute.
-   Horizon's real, confirmed navbar markup has no element with that
-   name — but it does have an empty .super-navbar__viewport-wrapper
-   sitting in the same structural position, which may be Horizon's
-   equivalent (a mount point for something that only renders during
-   certain transitions/states, which is why it appeared empty in the
-   static HTML we captured). Unconfirmed whether this affects anything
-   related to the cover image — this is a genuine experiment, not a
-   verified fix like the rest of this file.
-   -------------------------------------------------------------------------- */
-.super-navbar__viewport-wrapper {
-  width: auto !important;
-  height: auto !important;
-  position: absolute !important;
-}
-
-.super-navbar__viewport-wrapper .enter-done {
-  position: absolute !important;
-}
