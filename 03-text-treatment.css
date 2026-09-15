@@ -39,12 +39,19 @@
 
 /* --------------------------------------------------------------------------
    Normal text — line-height
-   Set at the body level so it cascades into paragraphs and general
-   copy; headings already set their own explicit line-height (tighter,
-   by design), which wins over this inherited value automatically.
    -------------------------------------------------------------------------- */
-body {
-  line-height: 1.2 !important;
+.notion-semantic-string {
+  line-height: 1.8rem !important;
+}
+
+/* --------------------------------------------------------------------------
+   Heading 3 — line-height
+   Scoped to h3 specifically (not h1/h2, which already look right) —
+   .notion-heading is shared across all heading levels, so the h3 tag
+   qualifier here matters.
+   -------------------------------------------------------------------------- */
+h3.notion-heading.notion-semantic-string {
+  line-height: 1.5em !important;
 }
 
 /* --------------------------------------------------------------------------
