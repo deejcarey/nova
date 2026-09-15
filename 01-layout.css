@@ -79,11 +79,15 @@
    whether a cover image is set. Without this, no-cover pages (like
    Art, Work) collapse to zero header height while has-cover pages
    (like About, Manifesto) keep the space the cover reserves —
-   creating inconsistent spacing between page types. Using Horizon's
-   own --header-cover-height variable rather than a new number, so
-   it stays proportionate to the theme's existing scale. */
+   creating inconsistent spacing between page types.
+   Fixed px, not --header-cover-height (30vh): that variable is
+   designed for the hero cover image, where scaling with viewport
+   makes sense. For this purpose — reserving modest, consistent
+   label space — a viewport-relative unit scales unpredictably
+   (confirmed: computed to 704px on a tall screen). 200px is a
+   starting estimate, not a measured value — easy to adjust. */
 .notion-header {
-  min-height: var(--header-cover-height) !important;
+  min-height: 200px !important;
 }
 
 /* Confirmed via computed styles: Super's own super.css sets overflow:
