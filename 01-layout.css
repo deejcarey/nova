@@ -75,6 +75,17 @@
   overflow: visible !important;
 }
 
+/* Guarantee consistent top spacing on every page, regardless of
+   whether a cover image is set. Without this, no-cover pages (like
+   Art, Work) collapse to zero header height while has-cover pages
+   (like About, Manifesto) keep the space the cover reserves —
+   creating inconsistent spacing between page types. Using Horizon's
+   own --header-cover-height variable rather than a new number, so
+   it stays proportionate to the theme's existing scale. */
+.notion-header {
+  min-height: var(--header-cover-height) !important;
+}
+
 /* Confirmed via computed styles: Super's own super.css sets overflow:
    hidden directly on .notion-header__cover itself (not just its
    parent), and it was winning. */
