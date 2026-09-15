@@ -249,3 +249,17 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Notion button blocks (e.g. "Learn more") — size & shape
+   Confirmed via real HTML: <a class="notion-link notion-button__content
+   color-default">. This is a native Notion button, distinct from the
+   text-link-styled-as-pill-button system elsewhere in this file.
+   border-radius matches --cta-border-radii for consistency with the
+   site's other buttons, since Super's own default here isn't visible
+   to check against.
+   -------------------------------------------------------------------------- */
+.notion-button__content {
+  padding: 14px 28px !important;
+  border-radius: var(--cta-border-radii) !important;
+}
