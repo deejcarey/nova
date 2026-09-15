@@ -263,3 +263,13 @@
   padding: 14px 28px !important;
   border-radius: var(--cta-border-radii) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Paragraph spacing — gap between separate paragraph blocks
+   Different from line-height, which controls spacing within a
+   paragraph rather than between them. 1rem (16px) is a starting
+   estimate, not a measured value — easy to adjust.
+   -------------------------------------------------------------------------- */
+.notion-text {
+  margin-bottom: 1.8rem !important;
+}
