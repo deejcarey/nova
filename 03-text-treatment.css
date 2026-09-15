@@ -44,6 +44,14 @@
   line-height: 1.8rem !important;
 }
 
+/* Exception: text immediately followed by a divider (e.g. an eyebrow
+   label above a rule) doesn't need paragraph-level line-height — that
+   was the actual source of the extra space before dividers, not the
+   margin-bottom exception added alongside this in 01-layout.css. */
+.notion-semantic-string:has(+ .notion-divider) {
+  line-height: 1.2 !important;
+}
+
 /* --------------------------------------------------------------------------
    Heading 3 — line-height
    Scoped to h3 specifically (not h1/h2, which already look right) —
