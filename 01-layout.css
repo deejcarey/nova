@@ -48,10 +48,13 @@
 }
 
 .notion-header__cover.has-cover {
-  top: calc(-1 * var(--dj-nav-height)) !important;
+  /* TEST: hardcoded 184px (double --dj-nav-height), decoupled from the
+     shared variable so it doesn't affect the navbar's own 92px sizing.
+     If this resolves things, we can decide how to formalize it. */
+  top: -184px !important;
   margin-top: 0 !important;
-  height: calc(60vh + var(--dj-nav-height)) !important;
-  max-height: calc(60vh + var(--dj-nav-height)) !important;
+  height: calc(60vh + 184px) !important;
+  max-height: calc(60vh + 184px) !important;
   z-index: -2 !important;
 }
 
