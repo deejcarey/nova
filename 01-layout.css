@@ -286,11 +286,11 @@
    estimate, not a measured value — easy to adjust.
    -------------------------------------------------------------------------- */
 .notion-text.notion-text__content.notion-semantic-string {
-  margin-bottom: 1.8rem !important;
+  margin-bottom: 1.2rem !important;
 }
 
 /* Exception: when a paragraph is immediately followed by a divider
-   (e.g. an eyebrow label above a rule), the 1.8rem margin above is
+   (e.g. an eyebrow label above a rule), the 1.2rem margin above is
    too much — restoring a smaller gap just for this case. .5rem is a
    starting estimate, not a measured "what it was before" value. */
 .notion-text.notion-text__content.notion-semantic-string:has(+ .notion-divider) {
