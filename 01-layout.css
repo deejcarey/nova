@@ -87,7 +87,7 @@
    (confirmed: computed to 704px on a tall screen). 200px is a
    starting estimate, not a measured value — easy to adjust. */
 .notion-header {
-  min-height: 120px !important;
+  min-height: 60px !important;
 }
 
 /* Confirmed via computed styles: Super's own super.css sets overflow:
