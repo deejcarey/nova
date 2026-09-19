@@ -68,6 +68,10 @@ h2.notion-heading * {
      affecting those. White at 70% opacity so it tints whatever
      color sits behind a toggle, rather than covering it flat. */
   --dj-toggle-hover-bg: rgba(255, 255, 255, .05) !important;
+  /* Colored text-link pill hover text color — dark theme keeps
+     dark text, since a bright colored button already pops well
+     against a dark page. */
+  --dj-pill-hover-text: #111 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -80,6 +84,10 @@ h2.notion-heading * {
   --color-ui-hover-bg: #F2F2F2 !important;
   /* Black at 30% opacity — same idea as the dark-theme value above. */
   --dj-toggle-hover-bg: rgba(0, 0, 0, .05) !important;
+  /* White text in light mode — a colored button reads as a
+     "dark-ish" surface against a white page, so white text fits
+     better than another dark element sitting on it. */
+  --dj-pill-hover-text: #fff !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -586,7 +594,7 @@ h3.notion-heading * {
 .notion-root .notion-text strong .notion-link:hover {
   color: inherit !important;
   background: currentColor !important;
-  -webkit-text-fill-color: #111 !important;
+  -webkit-text-fill-color: var(--dj-pill-hover-text) !important;
   opacity: 1 !important;
 }
 
