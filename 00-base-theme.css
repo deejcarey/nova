@@ -511,7 +511,10 @@ h3.notion-heading * {
   justify-content: center !important;
   transition: background .2s ease-in-out !important;
   color: var(--color-text-default) !important;
-  border: 1px solid var(--color-text-default) !important;
+  /* 75% opacity border, via color-mix — automatically correct in
+     both light and dark mode since it's built on the same variable
+     that already flips between them. */
+  border: 1px solid color-mix(in srgb, var(--color-text-default) 75%, transparent) !important;
   transition: background .2s ease-in-out, color .2s ease-in-out, opacity .2s ease-in-out !important;
 }
 
@@ -557,17 +560,20 @@ h3.notion-heading * {
 }
 
 /* Text-link pill hover: split out from the navbar CTA above so it
-   can have its own, color-aware treatment. A true solid-color
-   invert isn't reliably possible here — CSS can't reference "the
-   color before this rule changes it" within the same rule — so
-   instead this washes the background with a soft tint of whatever
-   color the pill already is (green stays green, just gets a subtle
-   fill), rather than swapping to solid black/white. */
+   can have its own, color-aware treatment. background: currentColor
+   works here because "color" itself is left unchanged on hover
+   (still inherit, from the rest-state rule) — so currentColor
+   correctly resolves to the pill's own color at full strength.
+   Text is darkened via -webkit-text-fill-color rather than color:
+   that property repaints the text without changing the computed
+   "color" value, so it doesn't interfere with currentColor above.
+   Widely supported (Chrome, Firefox, Safari, Edge) despite the name. */
 .notion-root .notion-text .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link:hover,
 .notion-root .notion-text strong .notion-link:hover {
-  background: color-mix(in srgb, currentColor 15%, transparent) !important;
+  background: currentColor !important;
+  -webkit-text-fill-color: #111 !important;
   opacity: 1 !important;
 }
 
