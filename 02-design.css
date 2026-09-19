@@ -10,7 +10,7 @@
    Hero cover image — opacity & fade only (not position/size)
    -------------------------------------------------------------------------- */
 :root {
-  --cover-opacity: .77;
+  --cover-opacity: .50;
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
 }
 
@@ -34,14 +34,22 @@
    Navbar — transparency & blur only (not height)
    -------------------------------------------------------------------------- */
 .super-navbar {
-  backdrop-filter: blur(4px) !important;
-  border-bottom: 1px solid var(--color-border-default) !important;
+  backdrop-filter: blur(48px) !important;
   background: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .super-navbar__menu {
-  backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(48px) !important;
   background: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.super-navbar__content {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -87,4 +95,20 @@
 
 .notion-collection-group__section-header .notion-property__title {
   color: #7D7D7D !important;
+}
+
+/* --------------------------------------------------------------------------
+   Inline pill buttons (e.g. "Learn more") — rest-state text opacity
+   70% of whatever color the pill inherits (currentColor) — the
+   theme default when no Notion color was applied, or the specific
+   color (green, blue, etc.) when one was. Automatically correct in
+   both light and dark mode, and for any color, since it's tied to
+   inheritance rather than a hard-coded variable. Hover behavior
+   (a soft tinted wash) is defined separately in 00-base-theme.css.
+   -------------------------------------------------------------------------- */
+.notion-root .notion-text .notion-link strong,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link,
+.notion-root .notion-text strong .notion-link {
+  color: color-mix(in srgb, currentColor 70%, transparent) !important;
 }
