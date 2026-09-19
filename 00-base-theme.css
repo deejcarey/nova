@@ -62,6 +62,12 @@ h2.notion-heading * {
   --dj-lightbox-bg: rgba(25, 25, 25, .8) !important;
   --color-code-bg: var(--color-bg-gray-light) !important;
   --color-ui-hover-bg: #202020 !important;
+  /* Toggle hover/open background — separate from --color-ui-hover-bg
+     above (shared with navbar items and the lightbox close button)
+     so toggles can have their own translucent treatment without
+     affecting those. White at 70% opacity so it tints whatever
+     color sits behind a toggle, rather than covering it flat. */
+  --dj-toggle-hover-bg: rgba(255, 255, 255, .7) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -72,6 +78,8 @@ h2.notion-heading * {
   --color-border-default: rgba(204, 204, 204, .4) !important;
   --dj-lightbox-bg: rgba(246, 246, 246, .8) !important;
   --color-ui-hover-bg: #F2F2F2 !important;
+  /* Black at 30% opacity — same idea as the dark-theme value above. */
+  --dj-toggle-hover-bg: rgba(0, 0, 0, .3) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -587,7 +595,7 @@ h3.notion-heading * {
    -------------------------------------------------------------------------- */
 .notion-toggle.open,
 .notion-toggle:hover {
-  background: var(--color-ui-hover-bg) !important;
+  background: var(--dj-toggle-hover-bg) !important;
 }
 
 .notion-toggle.open:before,
