@@ -598,21 +598,28 @@ h3.notion-heading * {
   background: var(--dj-toggle-hover-bg) !important;
 }
 
-/* Toggle headings (H1/H2/H3): strip the visible background tint
-   from any Notion color class (bg-orange, bg-green, etc.) — the
-   class stays on the element for other uses, this just suppresses
-   its visual background effect specifically here. Matches on
-   "notion-toggle-heading" (not a specific number) so it covers
-   H1/H2/H3 in one rule. Standard toggles are untouched — they
-   didn't show this issue and should keep normal color behavior.
+/* Toggle wrapper background: strip any leftover Notion bg-color
+   class (bg-orange, etc.) at rest, generalized to all toggle types
+   — not just headings — since Standard toggles turned out to have
+   the same leftover-color issue (confirmed: showing solid orange
+   at rest, unaffected by the heading-only version of this rule).
    :not(.open):not(:hover) — rest state only, so this doesn't
-   override the hover/open background rule above (that was the bug:
-   this rule previously applied unconditionally, on the same
-   element the hover/open rule targets, blocking it entirely). */
-.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover),
-.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h1.notion-heading,
-.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h2.notion-heading,
-.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h3.notion-heading {
+   override the hover/open background rule above. */
+.notion-toggle:not(.open):not(:hover) {
+  background: transparent !important;
+}
+
+/* Toggle heading text (H1/H2/H3): unconditional, no :not() needed
+   here — the hover/open rule above only ever targets the wrapper
+   (.notion-toggle), never the heading text directly, so there's
+   nothing for this to conflict with. This was the actual gap:
+   the wrapper fix correctly stepped aside on open/hover, but that
+   also meant the heading's own orange background showed back
+   through underneath, since nothing was suppressing it in those
+   states specifically. */
+.notion-toggle[class*="notion-toggle-heading"] h1.notion-heading,
+.notion-toggle[class*="notion-toggle-heading"] h2.notion-heading,
+.notion-toggle[class*="notion-toggle-heading"] h3.notion-heading {
   background: transparent !important;
 }
 
