@@ -67,7 +67,7 @@ h2.notion-heading * {
      so toggles can have their own translucent treatment without
      affecting those. White at 70% opacity so it tints whatever
      color sits behind a toggle, rather than covering it flat. */
-  --dj-toggle-hover-bg: rgba(255, 255, 255, .1) !important;
+  --dj-toggle-hover-bg: rgba(255, 255, 255, .05) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -79,7 +79,7 @@ h2.notion-heading * {
   --dj-lightbox-bg: rgba(246, 246, 246, .8) !important;
   --color-ui-hover-bg: #F2F2F2 !important;
   /* Black at 30% opacity — same idea as the dark-theme value above. */
-  --dj-toggle-hover-bg: rgba(0, 0, 0, .1) !important;
+  --dj-toggle-hover-bg: rgba(0, 0, 0, .05) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -604,11 +604,15 @@ h3.notion-heading * {
    its visual background effect specifically here. Matches on
    "notion-toggle-heading" (not a specific number) so it covers
    H1/H2/H3 in one rule. Standard toggles are untouched — they
-   didn't show this issue and should keep normal color behavior. */
-.notion-toggle[class*="notion-toggle-heading"],
-.notion-toggle[class*="notion-toggle-heading"] h1.notion-heading,
-.notion-toggle[class*="notion-toggle-heading"] h2.notion-heading,
-.notion-toggle[class*="notion-toggle-heading"] h3.notion-heading {
+   didn't show this issue and should keep normal color behavior.
+   :not(.open):not(:hover) — rest state only, so this doesn't
+   override the hover/open background rule above (that was the bug:
+   this rule previously applied unconditionally, on the same
+   element the hover/open rule targets, blocking it entirely). */
+.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover),
+.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h1.notion-heading,
+.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h2.notion-heading,
+.notion-toggle[class*="notion-toggle-heading"]:not(.open):not(:hover) h3.notion-heading {
   background: transparent !important;
 }
 
