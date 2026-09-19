@@ -41,7 +41,7 @@
    Normal text — line-height
    -------------------------------------------------------------------------- */
 .notion-semantic-string {
-  line-height: 1.8rem !important;
+  line-height: 2.2rem !important;
 }
 
 /* Exception: text immediately followed by a divider (e.g. an eyebrow
