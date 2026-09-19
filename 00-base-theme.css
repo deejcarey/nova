@@ -527,9 +527,17 @@ h3.notion-heading * {
   justify-content: center !important;
   transition: background .2s ease-in-out !important;
   background: var(--color-bg-default) !important;
-  color: var(--color-text-default) !important;
+  /* color: inherit, not a hard-coded variable — picks up whatever
+     Notion color class (color-green, color-blue, etc.) sits on the
+     ancestor .notion-text, so the pill automatically matches
+     whatever color the text was given. Falls back to the theme
+     default text color when no color was applied, same as before. */
+  color: inherit !important;
   margin: -2px !important;
-  border: 1px solid var(--color-text-default) !important;
+  /* border-color: currentColor, so it always matches whatever
+     "color" above resolves to (green, blue, or the default) rather
+     than being pinned to the theme's default text color. */
+  border: 1px solid currentColor !important;
   transition: background .2s ease-in-out, color .2s ease-in-out, opacity .2s ease-in-out !important;
   text-decoration: none !important;
 }
@@ -540,13 +548,26 @@ h3.notion-heading * {
   border: 1px solid var(--color-border-default) !important;
 }
 
-.notion-root .notion-text .notion-link strong:hover,
-.notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong:hover,
-.notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link:hover,
-.notion-root .notion-text strong .notion-link:hover,
+/* Navbar CTA keeps its original solid black/white invert on hover
+   — unaffected by the pill color changes below. */
 .super-navbar__cta:hover {
   background: var(--color-text-default) !important;
   color: var(--color-bg-default) !important;
+  opacity: 1 !important;
+}
+
+/* Text-link pill hover: split out from the navbar CTA above so it
+   can have its own, color-aware treatment. A true solid-color
+   invert isn't reliably possible here — CSS can't reference "the
+   color before this rule changes it" within the same rule — so
+   instead this washes the background with a soft tint of whatever
+   color the pill already is (green stays green, just gets a subtle
+   fill), rather than swapping to solid black/white. */
+.notion-root .notion-text .notion-link strong:hover,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong:hover,
+.notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link:hover,
+.notion-root .notion-text strong .notion-link:hover {
+  background: color-mix(in srgb, currentColor 15%, transparent) !important;
   opacity: 1 !important;
 }
 
