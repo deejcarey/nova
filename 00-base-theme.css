@@ -560,18 +560,23 @@ h3.notion-heading * {
 }
 
 /* Text-link pill hover: split out from the navbar CTA above so it
-   can have its own, color-aware treatment. background: currentColor
-   works here because "color" itself is left unchanged on hover
-   (still inherit, from the rest-state rule) — so currentColor
-   correctly resolves to the pill's own color at full strength.
+   can have its own, color-aware treatment.
+   color: inherit here resets the 70% opacity dimming from
+   02-design.css's rest-state rule — without this, currentColor
+   below would pick up that dimmed value (confirmed: computed to
+   0.7 alpha) instead of the full-strength color. This :hover
+   selector has higher specificity than that rest-state rule, so it
+   correctly wins despite loading earlier in the file order.
    Text is darkened via -webkit-text-fill-color rather than color:
    that property repaints the text without changing the computed
-   "color" value, so it doesn't interfere with currentColor above.
-   Widely supported (Chrome, Firefox, Safari, Edge) despite the name. */
+   "color" value, so resetting color above doesn't affect how the
+   text actually looks. Widely supported (Chrome, Firefox, Safari,
+   Edge) despite the name. */
 .notion-root .notion-text .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong:hover,
 .notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link:hover,
 .notion-root .notion-text strong .notion-link:hover {
+  color: inherit !important;
   background: currentColor !important;
   -webkit-text-fill-color: #111 !important;
   opacity: 1 !important;
