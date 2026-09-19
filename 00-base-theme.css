@@ -79,10 +79,16 @@ h2.notion-heading * {
    NOTE: this used to also hide #page-index .notion-header (the homepage
    header), which meant it hid the hero cover image on the homepage too,
    since the cover lives inside .notion-header. Removed — see section 34.
+   NOTE: .notion-toggle.bg-brown (hide toggle on brown background) was
+   removed from here and moved into Super's own CSS box, since it was
+   colliding with the bg-brown centering snippet on Toggle Heading
+   blocks (which carry both .notion-toggle and .notion-heading at
+   once). Now controlled directly in Super, using text-color-brown
+   instead of background-brown as the trigger, so the two features
+   no longer share the same class.
    -------------------------------------------------------------------------- */
 .notion-dropdown__button svg:first-of-type,
 .notion-dropdown__menu-header,
-.notion-toggle.bg-brown,
 .notion-toggle__trigger {
   display: none !important;
 }
