@@ -24,6 +24,15 @@ h2.notion-heading * {
   letter-spacing: -1px !important;
 }
 
+/* Line-height set here at the block level (not just on bold text
+   via strong) so it applies consistently whether the heading is
+   plain, fully bold, or mixed (like the homepage hero, which has
+   both bold and regular text within one H1) — matches the value
+   used for bold H1 text below, so both are now unified. */
+h1.notion-heading {
+  line-height: 1.2 !important;
+}
+
 .super-navbar__item,
 .super-navbar__theme-toggle {
   transition: background .16s ease-in-out, border .16s ease-in-out !important;
