@@ -45,10 +45,10 @@ h2.notion-heading * {
   --color-checkbox-bg: #888888 !important;
   --header-title-opacity: .5 !important;
   --cta-border-radii: 40px !important;
-  --cta-bg-color: var(--color-text-default) !important;
-  --cta-bg-hover-color: #111 !important;
-  --cta-text-color: var(--color-bg-default) !important;
-  --cta-text-hover-color: #ffffff !important;
+  --cta-bg-color: #111 !important;
+  --cta-bg-hover-color: var(--color-text-default) !important;
+  --cta-text-color: #ffffff !important;
+  --cta-text-hover-color: var(--color-bg-default) !important;
 }
 
 /* --------------------------------------------------------------------------
