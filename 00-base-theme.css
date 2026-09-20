@@ -45,10 +45,6 @@ h2.notion-heading * {
   --color-checkbox-bg: #888888 !important;
   --header-title-opacity: .5 !important;
   --cta-border-radii: 40px !important;
-  --cta-bg-color: #111 !important;
-  --cta-bg-hover-color: var(--color-text-default) !important;
-  --cta-text-color: #ffffff !important;
-  --cta-text-hover-color: var(--color-bg-default) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -72,6 +68,12 @@ h2.notion-heading * {
      dark text, since a bright colored button already pops well
      against a dark page. */
   --dj-pill-hover-text: #111 !important;
+  /* Native button: dark background/white text as the default state
+     (the swap you asked for), light background/dark text on hover. */
+  --cta-bg-color: #111 !important;
+  --cta-bg-hover-color: var(--color-text-default) !important;
+  --cta-text-color: #ffffff !important;
+  --cta-text-hover-color: var(--color-bg-default) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -88,6 +90,14 @@ h2.notion-heading * {
      "dark-ish" surface against a white page, so white text fits
      better than another dark element sitting on it. */
   --dj-pill-hover-text: #fff !important;
+  /* Native button: original theme-aware default (dark background,
+     light text — same as it's always been in light mode), with the
+     new fixed black background/white text added specifically as
+     the hover state. */
+  --cta-bg-color: var(--color-text-default) !important;
+  --cta-bg-hover-color: #111 !important;
+  --cta-text-color: var(--color-bg-default) !important;
+  --cta-text-hover-color: #ffffff !important;
 }
 
 /* --------------------------------------------------------------------------
