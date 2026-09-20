@@ -90,13 +90,15 @@ h2.notion-heading * {
      "dark-ish" surface against a white page, so white text fits
      better than another dark element sitting on it. */
   --dj-pill-hover-text: #fff !important;
-  /* Native button: original theme-aware default (dark background,
-     light text — same as it's always been in light mode), with the
-     new fixed black background/white text added specifically as
-     the hover state. */
-  --cta-bg-color: var(--color-text-default) !important;
+  /* Native button: genuinely restoring the original look — since
+     these variables were never actually applied to the button
+     before today (confirmed via Inspect), the true "old" state was
+     just a transparent, bordered button with page-matching text,
+     not a solid fill. Hover adds the new fixed black background/
+     white text specifically as the rollover treatment. */
+  --cta-bg-color: var(--color-bg-default) !important;
   --cta-bg-hover-color: #111 !important;
-  --cta-text-color: var(--color-bg-default) !important;
+  --cta-text-color: var(--color-text-default) !important;
   --cta-text-hover-color: #ffffff !important;
 }
 
