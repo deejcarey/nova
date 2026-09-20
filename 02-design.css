@@ -112,3 +112,24 @@
 .notion-root .notion-text strong .notion-link {
   color: color-mix(in srgb, currentColor 70%, transparent) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Native Notion button — background/text color.
+   The --cta-bg-color / --cta-bg-hover-color / --cta-text-color /
+   --cta-text-hover-color variables (defined in 00-base-theme.css)
+   were never actually applied anywhere — confirmed via Inspect:
+   the button had no background rule at all, and what looked like a
+   colored fill in testing was a callout background showing through
+   a transparent button on the reference/demo page. This is the
+   rule that actually reads those variables.
+   -------------------------------------------------------------------------- */
+.notion-button__content {
+  background: var(--cta-bg-color) !important;
+  color: var(--cta-text-color) !important;
+}
+
+.notion-button__content:hover {
+  background: var(--cta-bg-hover-color) !important;
+  color: var(--cta-text-hover-color) !important;
+}
+
