@@ -1,165 +1,304 @@
 /* ==========================================================================
-   02-design.css — color, transparency & visual surface treatment only
-   No positioning or sizing here — that's 01-layout.css. Load this
-   AFTER both 00-base-theme.css and 01-layout.css, since some rules
-   below (the cover fade, the callout background) only make visual
-   sense once things are correctly positioned and sized.
+   01-layout.css — spacing, sizing & positioning only
+   No color, no transparency, no blur — those live in 02-design.css.
+   Load this AFTER 00-base-theme.css. Loading this file alone should
+   move/resize things correctly, but they'll look visually "undressed"
+   (e.g. the navbar solid instead of translucent) until 02-design.css
+   is added too — that's expected, and useful for testing: if something
+   is in the wrong PLACE or wrong SIZE, the bug is in this file: if
+   something is in the right place but looks visually wrong (color,
+   transparency), the bug is in 02-design.css instead.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Hero cover image — opacity & fade only (not position/size)
+   Shared token: navbar height
+   Reads Super › Navigation › Navbar Height (--navbar-height), so the
+   slider in Super now drives both the navbar itself and how far the
+   hero cover reaches up behind it. Change it in Super, not here.
    -------------------------------------------------------------------------- */
 :root {
-  --cover-opacity: .50;
-  --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
+  --dj-nav-height: var(--navbar-height);
+}
+
+/* --------------------------------------------------------------------------
+   Navbar height
+   -------------------------------------------------------------------------- */
+.super-navbar {
+  min-height: var(--dj-nav-height) !important;
+}
+
+.super-navbar__menu {
+  min-height: var(--dj-nav-height) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Hero cover image — position & size only (not opacity/color/fade)
+   -------------------------------------------------------------------------- */
+.notion-header__cover.no-cover {
+  display: none !important;
+}
+
+.footer-cover,
+.footer-cover:before,
+.notion-header__cover.has-cover,
+.notion-header__cover:after {
+  position: absolute !important;
+  left: 0 !important;
+  width: 100% !important;
 }
 
 .notion-header__cover.has-cover {
-  opacity: var(--cover-opacity) !important;
+  top: calc(-1 * var(--dj-nav-height)) !important;
+  margin-top: 0 !important;
+  /* Cover height comes from Super › Layout › Cover height
+     (--header-cover-height, in vh), plus the navbar height so the
+     visible portion below the navbar stays the size you set. */
+  height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
+  max-height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
+  z-index: -2 !important;
+}
+
+/* Direct override for the actual <img> nested inside .notion-header__cover
+   (confirmed via inspected page data — a distinct element/class from the
+   outer div above). Forces it to fill its container regardless of
+   whatever is happening with Next.js's own fill-mode sizing. */
+.notion-header__cover-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* .notion-header likely clips anything extending above its own box by
+   default (a common pattern for hero sections) — which would silently
+   cut off exactly the portion of the cover pulled up above it, since
+   that portion now extends past .notion-header's own top edge. */
+.notion-header {
+  overflow: visible !important;
+}
+
+/* Guarantee consistent top spacing on every page, regardless of
+   whether a cover image is set. Without this, no-cover pages (like
+   Art, Work) collapse to zero header height while has-cover pages
+   (like About, Manifesto) keep the space the cover reserves —
+   creating inconsistent spacing between page types.
+   Fixed px, not --header-cover-height (30vh): that variable is
+   designed for the hero cover image, where scaling with viewport
+   makes sense. For this purpose — reserving modest, consistent
+   label space — a viewport-relative unit scales unpredictably
+   (confirmed: computed to 704px on a tall screen). 200px is a
+   starting estimate, not a measured value — easy to adjust. */
+.notion-header {
+  min-height: 60px !important;
+}
+
+/* Confirmed via computed styles: Super's own super.css sets overflow:
+   hidden directly on .notion-header__cover itself (not just its
+   parent), and it was winning. */
+.notion-header__cover {
+  overflow: visible !important;
 }
 
 .footer-cover:before,
 .notion-header__cover:after {
-  background-image: var(--cover-fade-gradient) !important;
+  content: "" !important;
+  z-index: 1 !important;
+  bottom: -2px !important;
+  height: 100% !important;
 }
 
 .footer-cover {
-  background: var(--footerCover) !important;
-  background-color: var(--color-bg-default) !important;
-  background-size: cover !important;
-  opacity: var(--cover-opacity) !important;
+  z-index: -1 !important;
+  min-width: 100% !important;
+  min-height: 25% !important;
+  height: auto !important;
+  bottom: 0 !important;
+  transform: rotate(180deg) !important;
+  border: 0 !important;
 }
 
 /* --------------------------------------------------------------------------
-   Navbar — background & blur
-   The tint (color AND transparency) now comes from Super ›
-   Colors › Navbar › Background, using an 8-digit hex code
-   (e.g. #11111126 = page black at ~15%). This file only adds the
-   blur, which Super has no setting for.
+   Gallery cards — shared reset
    -------------------------------------------------------------------------- */
-:root {
-  --dj-navbar-blur: 48px;
-}
-
-.super-navbar,
-.super-navbar__menu {
-  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  background: var(--navbar-background-color) !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.super-navbar__content {
-  border: none !important;
-  box-shadow: none !important;
+.notion-collection-gallery .notion-collection-card {
+  min-height: 60px !important;
 }
 
 /* --------------------------------------------------------------------------
-   Full-width callout section — dark mode background
-   Super's official full-width-section snippet handles the layout, but
-   not the color — the callout keeps whatever background Notion's
-   "Gray" callout color maps to, which is nearly invisible against a
-   near-black dark theme. This gives it its own explicit color in dark
-   mode only; light mode is untouched. Adjust the hex value to taste.
-   -------------------------------------------------------------------------- */
-.theme-dark .notion-callout[class*="bg-gray"] {
-  /* 4% of Super's Text color mixed into Super's Page background —
-     currently lands on #1a1a1a, and follows Super if either changes. */
-  background-color: color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default)) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Gallery cards — cover overlay gradient & no-cover text color
-   Structure/positioning for these same has-cover / no-cover cards
-   lives in 01-layout.css — this file only touches their color.
+   Gallery cards — cover vs. no-cover content behavior (all sizes)
+   CONFIRMED from real HTML: .notion-collection-card__cover is the class
+   on the <img> itself, not a wrapper div containing one — so this
+   checks for that class directly, not a descendant of it.
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__content {
-  background: linear-gradient(to top, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 100%) !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  min-height: 35% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  padding: 20px 16px 16px !important;
+}
+
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__text,
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-pill {
+  display: none !important;
+}
+
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title {
+  display: block !important;
+}
+
+.notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) {
+  height: auto !important;
 }
 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
-  background: none !important;
-  background-image: none !important;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 16px !important;
 }
 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
-  color: var(--color-text-default) !important;
+  display: block !important;
 }
 
 /* --------------------------------------------------------------------------
-   Gallery group headers — hide the divider, color the title
-   The divider is a border (or box-shadow) directly on the header,
-   not a separate element — making it transparent instead of removing
-   it preserves the exact same vertical spacing between groups.
+   Large — masonry: featured cards, dense-packed
    -------------------------------------------------------------------------- */
-.notion-collection-group__section-header {
-  border-color: transparent !important;
-  box-shadow: none !important;
+.notion-collection-gallery.large {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  grid-auto-flow: row dense !important;
+  grid-auto-rows: auto !important;
+  gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
 }
 
-.notion-collection-group__section-header .notion-property__title {
-  color: #7D7D7D !important;
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+2):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+8):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+12):not(:last-child),
+.notion-collection-gallery.large .notion-collection-card:nth-child(26n+20):not(:last-child) {
+  grid-column: span 2 !important;
+  grid-row: span 2 !important;
+}
+
+.notion-collection-gallery.large .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+@media all and (max-width: 900px) {
+  .notion-collection-gallery.large {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .notion-collection-gallery.large {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
-   Inline pill buttons (e.g. "Learn more") — rest-state text opacity
-   70% of whatever color the pill inherits (currentColor) — the
-   theme default when no Notion color was applied, or the specific
-   color (green, blue, etc.) when one was. Automatically correct in
-   both light and dark mode, and for any color, since it's tied to
-   inheritance rather than a hard-coded variable. Hover behavior
-   (a soft tinted wash) is defined separately in 00-base-theme.css.
+   Medium & Small — simple grid: uniform cells, fixed column count
    -------------------------------------------------------------------------- */
-.notion-root .notion-text .notion-link strong,
-.notion-root .notion-text .notion-text__content .notion-semantic-string span .notion-link strong,
-.notion-root .notion-text .notion-text__content .notion-semantic-string span strong .notion-link,
-.notion-root .notion-text strong .notion-link {
-  color: color-mix(in srgb, currentColor 70%, transparent) !important;
+.notion-collection-gallery.medium,
+.notion-collection-gallery.small {
+  display: grid !important;
+  gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
+}
+
+.notion-collection-gallery.medium .notion-collection-card,
+.notion-collection-gallery.small .notion-collection-card {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.notion-collection-gallery.medium {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+
+.notion-collection-gallery.medium .notion-collection-card {
+  min-height: 0 !important;
+}
+
+.notion-collection-gallery.small {
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+}
+
+.notion-collection-gallery.medium .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover,
+.notion-collection-gallery.small .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+@media all and (max-width: 900px) {
+  .notion-collection-gallery.medium {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .notion-collection-gallery.medium {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media all and (max-width: 1100px) {
+  .notion-collection-gallery.small {
+    grid-template-columns: 1fr 1fr 1fr !important;
+  }
+}
+
+@media all and (max-width: 800px) {
+  .notion-collection-gallery.small {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media all and (max-width: 500px) {
+  .notion-collection-gallery.small {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
-   Native Notion button — background/text color
-   Notion tags a colored button with a "bg-{color}-light" class. Super
-   builds that color by formula, and in dark mode the formula locks its
-   lightness at 7% — which is why colored buttons looked nearly black
-   no matter what you picked. So colored buttons now read Super's
-   dedicated Forms › Button ({color}) pickers instead
-   (--color-bg-form-btn-{color}), set per theme in Super.
-
-   NOTE: Notion button blocks use bg- classes (a background-color
-   family), NOT the color- classes text uses. See handoff gotcha #4.
+   Notion button blocks (e.g. "Learn more") — size & shape
+   Confirmed via real HTML: <a class="notion-link notion-button__content
+   color-default">. This is a native Notion button, distinct from the
+   text-link-styled-as-pill-button system elsewhere in this file.
+   border-radius matches --cta-border-radii for consistency with the
+   site's other buttons, since Super's own default here isn't visible
+   to check against.
    -------------------------------------------------------------------------- */
-
-/* Default button (no color assigned): outlined in page colors.
-   Values defined once in 00-base-theme.css, section 3. */
-.notion-button__content:not([class*="bg-"]) {
-  background: var(--cta-bg-color) !important;
-  border: 1px solid var(--cta-text-color) !important;
-  -webkit-text-fill-color: var(--cta-text-color) !important;
+.notion-button__content {
+  /* Midpoint between the native button's original 14px 28px and the
+     text-link pill's 8px 12px, to bring their proportions closer
+     together. */
+  padding: 11px 20px !important;
+  border-radius: var(--cta-border-radii) !important;
 }
 
-/* Colored buttons: fill from Super's Forms pickers. */
-.notion-button__content[class*="bg-"] {
-  border: none !important;
-  -webkit-text-fill-color: var(--dj-on-color-text) !important;
+/* --------------------------------------------------------------------------
+   Paragraph spacing — gap between separate paragraph blocks
+   Different from line-height, which controls spacing within a
+   paragraph rather than between them. 1rem (16px) is a starting
+   estimate, not a measured value — easy to adjust.
+   -------------------------------------------------------------------------- */
+.notion-text.notion-text__content.notion-semantic-string {
+  margin-bottom: 1.2rem !important;
 }
 
-.notion-button__content[class*="bg-gray"]   { background: var(--color-bg-form-btn-gray) !important; }
-.notion-button__content[class*="bg-brown"]  { background: var(--color-bg-form-btn-brown) !important; }
-.notion-button__content[class*="bg-orange"] { background: var(--color-bg-form-btn-orange) !important; }
-.notion-button__content[class*="bg-yellow"] { background: var(--color-bg-form-btn-yellow) !important; }
-.notion-button__content[class*="bg-green"]  { background: var(--color-bg-form-btn-green) !important; }
-.notion-button__content[class*="bg-blue"]   { background: var(--color-bg-form-btn-blue) !important; }
-.notion-button__content[class*="bg-purple"] { background: var(--color-bg-form-btn-purple) !important; }
-.notion-button__content[class*="bg-pink"]   { background: var(--color-bg-form-btn-pink) !important; }
-.notion-button__content[class*="bg-red"]    { background: var(--color-bg-form-btn-red) !important; }
-
-/* Hover, every button: fully inverted page colors (white-on-black in
-   dark mode, black-on-white in light). Listed after the color rules
-   and with :hover, so it wins over them. */
-.notion-button__content:hover,
-.notion-button__content[class*="bg-"]:hover {
-  background: var(--cta-bg-hover-color) !important;
-  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+/* Exception: when a paragraph is immediately followed by a divider
+   (e.g. an eyebrow label above a rule), the 1.2rem margin above is
+   too much — restoring a smaller gap just for this case. .5rem is a
+   starting estimate, not a measured "what it was before" value. */
+.notion-text.notion-text__content.notion-semantic-string:has(+ .notion-divider) {
+  margin-bottom: .5rem !important;
 }
