@@ -29,6 +29,20 @@
 }
 
 /* --------------------------------------------------------------------------
+   Homepage hero ("HEART + SOLUTIONS") — tighter line-height
+   General H1-Bold line-height is 1 (00-base-theme.css). This one
+   block wants 0.8 specifically, without changing that site-wide
+   default. Targets both the h1 itself and its inner strong spans
+   (the text is split across three color-highlighted spans, each
+   bolded), so 0.8 wins over both the general plain-H1 rule and the
+   general bold-H1 rule regardless of which would otherwise apply.
+   -------------------------------------------------------------------------- */
+#block-3c04e3cf42c9808695b8df5cb254bd15,
+#block-3c04e3cf42c9808695b8df5cb254bd15 strong {
+  line-height: 0.8 !important;
+}
+
+/* --------------------------------------------------------------------------
    Reference only — NOT an active rule in this file.
    Page name + icon are intentionally NOT hidden globally — some pages
    (e.g. a future blog) may want to keep them visible. To hide them on
