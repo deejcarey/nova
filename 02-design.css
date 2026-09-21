@@ -31,23 +31,47 @@
 }
 
 /* --------------------------------------------------------------------------
-   Navbar — background & blur
-   The tint (color AND transparency) now comes from Super ›
-   Colors › Navbar › Background, using an 8-digit hex code
-   (e.g. #11111126 = page black at ~15%). This file only adds the
-   blur, which Super has no setting for.
+   Navbar — background, blur & scroll behavior
+   The tint (color AND transparency) comes from Super › Colors ›
+   Navbar › Background, as an 8-digit hex (e.g. #11111126). This file
+   adds the blur, and the "invisible at the top" behavior.
+
+   How the scroll behavior works: 05-navbar-scroll.js labels the page
+   data-dj-nav="top" or "scrolled". At the top, the navbar goes fully
+   invisible (no tint, no blur) so the hero shows through untouched;
+   once scrolled, Super's tint + the blur fade in, and fade back out
+   on return to the top. If the script ever fails to load, the label
+   is never set and the navbar simply stays tinted + blurred — a safe
+   fallback rather than a broken one.
    -------------------------------------------------------------------------- */
 :root {
   --dj-navbar-blur: 48px;
+  --dj-navbar-fade: .35s;   /* how long the fade in/out takes */
 }
 
 .super-navbar,
 .super-navbar__menu {
+  background: var(--navbar-background-color) !important;
   backdrop-filter: blur(var(--dj-navbar-blur)) !important;
   -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  background: var(--navbar-background-color) !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+.super-navbar {
+  transition:
+    background var(--dj-navbar-fade) ease,
+    backdrop-filter var(--dj-navbar-fade) ease,
+    -webkit-backdrop-filter var(--dj-navbar-fade) ease !important;
+}
+
+/* At the top of the page: fully invisible. Only the bar itself —
+   the mobile dropdown menu (.super-navbar__menu) keeps its tint + blur
+   so its links stay readable over the hero. */
+html[data-dj-nav="top"] .super-navbar {
+  background: transparent !important;
+  backdrop-filter: blur(0px) !important;
+  -webkit-backdrop-filter: blur(0px) !important;
 }
 
 .super-navbar__content {
