@@ -9,7 +9,7 @@
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title {
   font-weight: 700 !important;
-  font-size: 1.15em !important;
+  /* Size removed — now set in Super › Databases › Title size. */
 }
 
 /* Stock clamps property text to 2 lines — fine for a caption over an
