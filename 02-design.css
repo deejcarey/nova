@@ -225,3 +225,16 @@ html[data-dj-nav="top"] .super-navbar {
   background: transparent !important;
   text-shadow: none !important;
 }
+
+/* --------------------------------------------------------------------------
+   Database list items — hover background
+   Super's own hover is a solid gray (Super's card/hover background),
+   which sits flat on top of colored full-width sections. This uses the
+   same translucent wash as toggles (--dj-toggle-hover-bg, defined in
+   00-base-theme.css section 3), so it tints whatever is behind it.
+   Tied to the toggle variable on purpose: change the strength there
+   and toggles + list rows stay matched.
+   -------------------------------------------------------------------------- */
+.notion-collection-list__item:hover {
+  background: var(--dj-toggle-hover-bg) !important;
+}
