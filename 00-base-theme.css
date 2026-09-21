@@ -65,7 +65,7 @@ h1.notion-heading {
   --card-content-bg-color: rgba(0, 0, 0, .6) !important;
   --color-border-default: rgba(255, 255, 255, .12) !important;
   --dj-lightbox-bg: rgba(25, 25, 25, .8) !important;
-  --color-code-bg: var(--color-bg-gray-light) !important;
+  --color-code-bg: var(--dj-translucent-overlay) !important;
   --color-ui-hover-bg: #202020 !important;
   /* Toggle hover/open background — separate from --color-ui-hover-bg
      above (shared with navbar items and the lightbox close button)
@@ -73,6 +73,10 @@ h1.notion-heading {
      affecting those. White at 70% opacity so it tints whatever
      color sits behind a toggle, rather than covering it flat. */
   --dj-toggle-hover-bg: rgba(255, 255, 255, .05) !important;
+  /* Generic version of the same low-opacity treatment, for reuse on
+     other flat-gray backgrounds (dropdown options, code blocks)
+     without tying them to a toggle-specific variable name. */
+  --dj-translucent-overlay: rgba(255, 255, 255, .05) !important;
   /* Colored text-link pill hover text color — dark theme keeps
      dark text, since a bright colored button already pops well
      against a dark page. */
@@ -93,8 +97,12 @@ h1.notion-heading {
   --color-border-default: rgba(204, 204, 204, .4) !important;
   --dj-lightbox-bg: rgba(246, 246, 246, .8) !important;
   --color-ui-hover-bg: #F2F2F2 !important;
+  /* Previously unset in light mode entirely — now matches the
+     dark-theme approach: translucent rather than a solid fill. */
+  --color-code-bg: var(--dj-translucent-overlay) !important;
   /* Black at 30% opacity — same idea as the dark-theme value above. */
   --dj-toggle-hover-bg: rgba(0, 0, 0, .05) !important;
+  --dj-translucent-overlay: rgba(0, 0, 0, .05) !important;
   /* White text in light mode — a colored button reads as a
      "dark-ish" surface against a white page, so white text fits
      better than another dark element sitting on it. */
@@ -588,6 +596,12 @@ h3.notion-heading * {
   border: 1px solid var(--color-border-default) !important;
 }
 
+/* Separate from the shared border rule above — .notion-toggle and
+   .super-footer.floating shouldn't get this background too. */
+.notion-code pre {
+  background: var(--color-code-bg) !important;
+}
+
 /* Navbar CTA keeps its original solid black/white invert on hover
    — unaffected by the pill color changes below. */
 .super-navbar__cta:hover {
@@ -870,7 +884,7 @@ h3.notion-heading * {
   }
 
   .notion-dropdown__option.active {
-    background: var(--color-bg-gray) !important;
+    background: var(--dj-translucent-overlay) !important;
     border: 1px solid transparent !important;
   }
 }
