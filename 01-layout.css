@@ -93,6 +93,22 @@
   min-height: 60px !important;
 }
 
+/* THE HERO / NAVBAR FIX. Confirmed via computed styles: Super sets
+   overflow: hidden auto on main.super-content, which starts at the
+   bottom of the navbar (y: 92px). Any non-visible overflow turns it
+   into a clipping box, so the part of the cover pulled up behind the
+   navbar was being cut off — leaving only the solid page background
+   behind the navbar. That's also why the navbar looked "opaque" at
+   the top of the page: it was transparent all along, just sitting
+   over plain #111 with nothing to show through.
+   overflow-x: clip keeps Super's protection against sideways
+   scrolling (e.g. from full-width sections) but, unlike hidden,
+   doesn't force the vertical direction to clip too. */
+main.super-content {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
+
 /* Confirmed via computed styles: Super's own super.css sets overflow:
    hidden directly on .notion-header__cover itself (not just its
    parent), and it was winning. */
