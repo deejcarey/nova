@@ -31,64 +31,28 @@
 }
 
 /* --------------------------------------------------------------------------
-   Navbar — background, blur, gradient falloff & scroll behavior
+   Navbar — background, blur & scroll behavior
    The tint (color AND transparency) comes from Super › Colors ›
    Navbar › Background, as an 8-digit hex (e.g. #11111126). This file
-   adds the blur, the top-to-bottom falloff, and "invisible at top".
-
-   Falloff: the tint + blur live on a separate layer behind the navbar
-   (::before) rather than on the navbar itself. That layer is masked
-   with a gradient — full strength down to --dj-navbar-falloff-start,
-   then fading smoothly to nothing at the bottom edge. Because it's a
-   mask, the tint AND the blur fade together (a "progressive blur"),
-   while the navbar links on top stay fully solid.
+   adds the blur, and the "invisible at the top" behavior.
 
    Scroll: 05-navbar-scroll.js labels the page data-dj-nav="top" or
-   "scrolled". At the top, the layer is faded out entirely; once
-   scrolled it fades in, and back out on return to the top. If the
-   script fails to load, the label is never set and the layer simply
-   stays visible — a safe fallback rather than a broken one.
+   "scrolled". At the top, the navbar goes fully invisible (no tint,
+   no blur); once scrolled, Super's tint + the blur fade in, and fade
+   back out on return to the top. If the script fails to load, the
+   label is never set and the navbar stays tinted + blurred — a safe
+   fallback rather than a broken one.
+
+   Tried and shelved: a top-to-bottom gradient falloff via a masked
+   ::before layer. Didn't render on Super across browsers; reverted to
+   this known-good version. Worth revisiting later if wanted.
    -------------------------------------------------------------------------- */
 :root {
   --dj-navbar-blur: 48px;
-  --dj-navbar-fade: .35s;              /* scroll fade in/out duration */
-  --dj-navbar-falloff-start: 50%;      /* full strength above this, fading below */
+  --dj-navbar-fade: .35s;   /* how long the fade in/out takes */
 }
 
-/* The navbar itself carries no background or blur any more — those
-   moved to the layer below. (Overrides 00-base-theme.css section 16.)
-   It must NOT have its own backdrop-filter: that would stop the
-   layer's blur from seeing the page behind it. */
-.super-navbar {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.super-navbar::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: -1 !important;          /* behind the links, inside the navbar */
-  pointer-events: none !important;
-  background: var(--navbar-background-color) !important;
-  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  -webkit-mask-image: linear-gradient(to bottom, #000 var(--dj-navbar-falloff-start), transparent 100%) !important;
-  mask-image: linear-gradient(to bottom, #000 var(--dj-navbar-falloff-start), transparent 100%) !important;
-  opacity: 1;
-  transition: opacity var(--dj-navbar-fade) ease !important;
-}
-
-/* At the top of the page: layer fully faded out. */
-html[data-dj-nav="top"] .super-navbar::before {
-  opacity: 0 !important;
-}
-
-/* Mobile dropdown menu: solid tint + blur, no falloff, never hidden —
-   its links need to stay readable over the hero. */
+.super-navbar,
 .super-navbar__menu {
   background: var(--navbar-background-color) !important;
   backdrop-filter: blur(var(--dj-navbar-blur)) !important;
@@ -97,22 +61,55 @@ html[data-dj-nav="top"] .super-navbar::before {
   box-shadow: none !important;
 }
 
+.super-navbar {
+  transition:
+    background var(--dj-navbar-fade) ease,
+    backdrop-filter var(--dj-navbar-fade) ease,
+    -webkit-backdrop-filter var(--dj-navbar-fade) ease !important;
+}
+
+/* At the top of the page: fully invisible. Only the bar itself — the
+   mobile dropdown menu keeps its tint + blur so its links stay
+   readable over the hero. */
+html[data-dj-nav="top"] .super-navbar {
+  background: transparent !important;
+  backdrop-filter: blur(0px) !important;
+  -webkit-backdrop-filter: blur(0px) !important;
+}
+
 .super-navbar__content {
   border: none !important;
   box-shadow: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   Full-width callout section — dark mode background
-   Super's official full-width-section snippet handles the layout, but
-   not the color — the callout keeps whatever background Notion's
-   "Gray" callout color maps to, which is nearly invisible against a
-   near-black dark theme. This gives it its own explicit color in dark
-   mode only; light mode is untouched. Adjust the hex value to taste.
+   Colored callouts / full-width sections — background color
+   Super builds callout backgrounds by formula with lightness locked
+   (7% in dark mode), so they couldn't be controlled from Super.
+   Instead, each color now reads the SAME Super picker as its button
+   (Forms › Button {color}), mixed into the page background at
+   --dj-section-strength. One picker per hue drives both: full
+   strength on buttons, a subdued wash on sections — so a blue button
+   on a blue section always belongs to the same family.
+   Brown is deliberately excluded (it's used as a utility trigger —
+   see the centering snippet in Super's CSS box).
    -------------------------------------------------------------------------- */
+:root {
+  --dj-section-strength: 15%;   /* how rich section colors are, both themes */
+}
+
+.notion-callout[class*="bg-orange"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-yellow"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-green"]  { background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-blue"]   { background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-purple"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-pink"]   { background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-strength), var(--color-bg-default)) !important; }
+.notion-callout[class*="bg-red"]    { background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-strength), var(--color-bg-default)) !important; }
+
+/* Gray stays a neutral, tuned separately: 4% of Super's Text color
+   mixed into the page background (currently lands on #1a1a1a in dark
+   mode). Dark mode only; light mode keeps Super's own gray. */
 .theme-dark .notion-callout[class*="bg-gray"] {
-  /* 4% of Super's Text color mixed into Super's Page background —
-     currently lands on #1a1a1a, and follows Super if either changes. */
   background-color: color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default)) !important;
 }
 
