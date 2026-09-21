@@ -138,7 +138,15 @@
    -------------------------------------------------------------------------- */
 .notion-button__content:not([class*="bg-"]) {
   background: var(--cta-bg-color) !important;
-  border: none !important;
+  /* Stroke restored here only — the default fill (dark in both
+     themes: #111 in dark mode, var(--color-text-default) in light
+     mode) otherwise blends into the page background with nothing
+     defining its edge. Colored (bg-X) buttons don't need this,
+     since their fill already stands out. Uses --cta-text-color (the
+     button's own text color) rather than a new value, since that's
+     already the color guaranteed to contrast against this fill in
+     both themes. */
+  border: 1px solid var(--cta-text-color) !important;
   -webkit-text-fill-color: var(--cta-text-color) !important;
 }
 
