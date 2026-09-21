@@ -31,18 +31,21 @@
 }
 
 /* --------------------------------------------------------------------------
-   Navbar — transparency & blur only (not height)
+   Navbar — background & blur
+   The tint (color AND transparency) now comes from Super ›
+   Colors › Navbar › Background, using an 8-digit hex code
+   (e.g. #11111126 = page black at ~15%). This file only adds the
+   blur, which Super has no setting for.
    -------------------------------------------------------------------------- */
-.super-navbar {
-  backdrop-filter: blur(48px) !important;
-  background: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
-  border: none !important;
-  box-shadow: none !important;
+:root {
+  --dj-navbar-blur: 48px;
 }
 
+.super-navbar,
 .super-navbar__menu {
-  backdrop-filter: blur(48px) !important;
-  background: color-mix(in srgb, var(--color-bg-default) 15%, transparent) !important;
+  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  background: var(--navbar-background-color) !important;
   border: none !important;
   box-shadow: none !important;
 }
@@ -61,7 +64,9 @@
    mode only; light mode is untouched. Adjust the hex value to taste.
    -------------------------------------------------------------------------- */
 .theme-dark .notion-callout[class*="bg-gray"] {
-  background-color: #1a1a1a !important;
+  /* 4% of Super's Text color mixed into Super's Page background —
+     currently lands on #1a1a1a, and follows Super if either changes. */
+  background-color: color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default)) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -114,53 +119,47 @@
 }
 
 /* --------------------------------------------------------------------------
-   Native Notion button — background/text color.
-   The --cta-bg-color / --cta-bg-hover-color / --cta-text-color /
-   --cta-text-hover-color variables (defined in 00-base-theme.css)
-   were never actually applied anywhere — confirmed via Inspect:
-   the button had no background rule at all, and what looked like a
-   colored fill in testing was a callout background showing through
-   a transparent button on the reference/demo page. This is the
-   rule that actually reads those variables.
+   Native Notion button — background/text color
+   Notion tags a colored button with a "bg-{color}-light" class. Super
+   builds that color by formula, and in dark mode the formula locks its
+   lightness at 7% — which is why colored buttons looked nearly black
+   no matter what you picked. So colored buttons now read Super's
+   dedicated Forms › Button ({color}) pickers instead
+   (--color-bg-form-btn-{color}), set per theme in Super.
 
-   Corrected via Inspect: native buttons use a different color class
-   system than text does. Text/headings get "color-green" etc.
-   (which sets the "color" property), but a button with an actual
-   color assigned gets "bg-yellow-light" etc. instead (confirmed:
-   <a class="notion-button__content bg-yellow-light">) — a
-   completely different class family that Notion's own CSS uses to
-   set background-color directly. currentColor never had a chance
-   of picking that up, since it only ever reads "color". Split in
-   two: buttons with a bg- class let Notion's own styling provide
-   the background (we just strip the border and fix text contrast);
-   buttons without one (just "color-default", no color assigned)
-   fall back to our own dark/light theme fill.
+   NOTE: Notion button blocks use bg- classes (a background-color
+   family), NOT the color- classes text uses. See handoff gotcha #4.
    -------------------------------------------------------------------------- */
+
+/* Default button (no color assigned): outlined in page colors.
+   Values defined once in 00-base-theme.css, section 3. */
 .notion-button__content:not([class*="bg-"]) {
   background: var(--cta-bg-color) !important;
-  /* Stroke restored here only — the default fill (dark in both
-     themes: #111 in dark mode, var(--color-text-default) in light
-     mode) otherwise blends into the page background with nothing
-     defining its edge. Colored (bg-X) buttons don't need this,
-     since their fill already stands out. Uses --cta-text-color (the
-     button's own text color) rather than a new value, since that's
-     already the color guaranteed to contrast against this fill in
-     both themes. */
   border: 1px solid var(--cta-text-color) !important;
   -webkit-text-fill-color: var(--cta-text-color) !important;
 }
 
+/* Colored buttons: fill from Super's Forms pickers. */
 .notion-button__content[class*="bg-"] {
   border: none !important;
-  -webkit-text-fill-color: var(--cta-text-color) !important;
+  -webkit-text-fill-color: var(--dj-on-color-text) !important;
 }
 
-/* Hover: white-on-black or black-on-white matching display mode,
-   for every button regardless of its own color — not the button's
-   color, and not the pill's hover treatment (that one still fills
-   with its own color, unchanged). */
-.notion-button__content:hover {
+.notion-button__content[class*="bg-gray"]   { background: var(--color-bg-form-btn-gray) !important; }
+.notion-button__content[class*="bg-brown"]  { background: var(--color-bg-form-btn-brown) !important; }
+.notion-button__content[class*="bg-orange"] { background: var(--color-bg-form-btn-orange) !important; }
+.notion-button__content[class*="bg-yellow"] { background: var(--color-bg-form-btn-yellow) !important; }
+.notion-button__content[class*="bg-green"]  { background: var(--color-bg-form-btn-green) !important; }
+.notion-button__content[class*="bg-blue"]   { background: var(--color-bg-form-btn-blue) !important; }
+.notion-button__content[class*="bg-purple"] { background: var(--color-bg-form-btn-purple) !important; }
+.notion-button__content[class*="bg-pink"]   { background: var(--color-bg-form-btn-pink) !important; }
+.notion-button__content[class*="bg-red"]    { background: var(--color-bg-form-btn-red) !important; }
+
+/* Hover, every button: fully inverted page colors (white-on-black in
+   dark mode, black-on-white in light). Listed after the color rules
+   and with :hover, so it wins over them. */
+.notion-button__content:hover,
+.notion-button__content[class*="bg-"]:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
 }
-
