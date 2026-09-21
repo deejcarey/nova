@@ -47,77 +47,80 @@ h1.notion-heading {
 }
 
 /* --------------------------------------------------------------------------
-   3. Design tokens — new custom properties (shared / light default)
+   3. Design tokens
+   HOW COLOR WORKS ON THIS SITE (read this first):
+   Super owns every color. Pick solid colors — or 8-digit hex codes with
+   transparency built in, e.g. #11111126 — in Super › Theme › Colors.
+   These files only ever REFERENCE Super's variables; they never set a
+   hex value for anything Super has a picker for.
+   Where we want a see-through version of a Super color (and Super has
+   no field for it), we use color-mix() with one of the "strength"
+   settings below. Tune the strength here; tune the color in Super.
+
+   Super variable reference (from the page's own inline styles):
+     --color-text-default / --color-bg-default ... Main › Text / Page bg
+     --color-text-default-light .................. Main › Light Text
+     --color-border-default ...................... Main › Border Color
+     --color-ui-hover-bg ......................... Main › Hover background
+     --color-checkbox-bg ......................... Main › Checkbox Background
+     --navbar-background-color ................... Navbar › Background
+     --color-bg-form-btn-{color} ................. Forms › Button ({color})
+     --navbar-height ............................. Navigation › Navbar Height
+     --header-cover-height ....................... Layout › Cover height
+     --collection-card-gap ....................... Databases › Card Gap
    -------------------------------------------------------------------------- */
 :root {
   --select-highlight-color: rgba(253, 215, 99, .4);
-  --color-checkbox-bg: #888888 !important;
   --header-title-opacity: .5 !important;
-  --cta-border-radii: 40px !important;
-}
 
-/* --------------------------------------------------------------------------
-   4. Design tokens — dark theme
-   -------------------------------------------------------------------------- */
-.theme-dark {
-  --color-bg-gray-light: #101010 !important;
-  --color-pill-default: #101010 !important;
-  --card-content-bg-color: rgba(0, 0, 0, .6) !important;
-  --color-border-default: rgba(255, 255, 255, .12) !important;
-  --dj-lightbox-bg: rgba(25, 25, 25, .8) !important;
+  /* Deliberate difference from Super: Super's Rounded Edges setting
+     (12px) is for images/cards/callouts. Buttons, pills and dropdown
+     options stay fully pill-shaped regardless. */
+  --cta-border-radii: 40px !important;
+
+  /* Strength settings — the ONLY place transparency amounts live. */
+  --dj-overlay-strength: 5%;   /* toggles, code blocks, dropdown active */
+  --dj-lightbox-strength: 80%; /* lightbox backdrop */
+  --dj-card-strength: 60%;     /* gallery card content backing */
+
+  /* Low-opacity wash of the text color: white-ish in dark mode,
+     near-black in light mode — automatically, from Super's Text color.
+     It tints whatever sits behind it (e.g. full-width colored sections)
+     instead of covering it flat. */
+  --dj-translucent-overlay: color-mix(in srgb, var(--color-text-default) var(--dj-overlay-strength), transparent) !important;
+  --dj-toggle-hover-bg: var(--dj-translucent-overlay) !important;
   --color-code-bg: var(--dj-translucent-overlay) !important;
-  --color-ui-hover-bg: #202020 !important;
-  /* Toggle hover/open background — separate from --color-ui-hover-bg
-     above (shared with navbar items and the lightbox close button)
-     so toggles can have their own translucent treatment without
-     affecting those. White at 70% opacity so it tints whatever
-     color sits behind a toggle, rather than covering it flat. */
-  --dj-toggle-hover-bg: rgba(255, 255, 255, .05) !important;
-  /* Generic version of the same low-opacity treatment, for reuse on
-     other flat-gray backgrounds (dropdown options, code blocks)
-     without tying them to a toggle-specific variable name. */
-  --dj-translucent-overlay: rgba(255, 255, 255, .05) !important;
-  /* Colored text-link pill hover text color — dark theme keeps
-     dark text, since a bright colored button already pops well
-     against a dark page. */
-  --dj-pill-hover-text: #111 !important;
-  /* Native button: dark background/white text as the default state
-     (the swap you asked for), light background/dark text on hover. */
-  --cta-bg-color: #111 !important;
+  --dj-lightbox-bg: color-mix(in srgb, var(--color-bg-default) var(--dj-lightbox-strength), transparent) !important;
+  --card-content-bg-color: color-mix(in srgb, var(--color-bg-default) var(--dj-card-strength), transparent) !important;
+
+  /* Text sitting on a colored fill (pill hover, colored buttons):
+     page-background color, i.e. dark text in dark mode, white text in
+     light mode. Swap to var(--color-text-default) to invert that. */
+  --dj-pill-hover-text: var(--color-bg-default) !important;
+  --dj-on-color-text: var(--color-bg-default) !important;
+
+  /* Native button, default (no color assigned): outlined in the page
+     colors at rest, fully inverted on hover. Same logic in both
+     themes, so it's defined once. */
+  --cta-bg-color: var(--color-bg-default) !important;
+  --cta-text-color: var(--color-text-default) !important;
   --cta-bg-hover-color: var(--color-text-default) !important;
-  --cta-text-color: #ffffff !important;
   --cta-text-hover-color: var(--color-bg-default) !important;
 }
 
 /* --------------------------------------------------------------------------
-   5. Design tokens — light theme
+   4. Dark-theme exceptions — values Super derives by formula and
+   offers no picker for, so they can only be set here.
    -------------------------------------------------------------------------- */
-.theme-light {
-  --card-content-bg-color: rgba(255, 255, 255, .6) !important;
-  --color-border-default: rgba(204, 204, 204, .4) !important;
-  --dj-lightbox-bg: rgba(246, 246, 246, .8) !important;
-  --color-ui-hover-bg: #F2F2F2 !important;
-  /* Previously unset in light mode entirely — now matches the
-     dark-theme approach: translucent rather than a solid fill. */
-  --color-code-bg: var(--dj-translucent-overlay) !important;
-  /* Black at 30% opacity — same idea as the dark-theme value above. */
-  --dj-toggle-hover-bg: rgba(0, 0, 0, .05) !important;
-  --dj-translucent-overlay: rgba(0, 0, 0, .05) !important;
-  /* White text in light mode — a colored button reads as a
-     "dark-ish" surface against a white page, so white text fits
-     better than another dark element sitting on it. */
-  --dj-pill-hover-text: #fff !important;
-  /* Native button: genuinely restoring the original look — since
-     these variables were never actually applied to the button
-     before today (confirmed via Inspect), the true "old" state was
-     just a transparent, bordered button with page-matching text,
-     not a solid fill. Hover adds the new fixed black background/
-     white text specifically as the rollover treatment. */
-  --cta-bg-color: var(--color-bg-default) !important;
-  --cta-bg-hover-color: #111 !important;
-  --cta-text-color: var(--color-text-default) !important;
-  --cta-text-hover-color: #ffffff !important;
+.theme-dark {
+  --color-bg-gray-light: #101010 !important;
+  --color-pill-default: #101010 !important;
 }
+
+/* --------------------------------------------------------------------------
+   5. (Light-theme tokens — none needed any more; everything is either
+   set in Super or defined once in section 3.)
+   -------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
    6. Hide elements
@@ -969,8 +972,5 @@ h3.notion-heading * {
   padding-left: 24px !important;
   letter-spacing: -.3px !important;
   border-color: var(--color-border-default) !important;
-  /* 1.5em = 150% of whatever the inherited/stock size is, rather
-     than a fixed value — a precise 50% increase regardless of what
-     that baseline actually is. */
-  font-size: 1.5em !important;
+  /* Quote size removed from here — now set in Super › Typography › Quote. */
 }
