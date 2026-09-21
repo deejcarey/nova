@@ -12,12 +12,12 @@
 
 /* --------------------------------------------------------------------------
    Shared token: navbar height
-   Used both to size the navbar itself and to calculate how far the
-   hero cover image needs to reach to start at the very top of the
-   page (behind the navbar) rather than just below it.
+   Reads Super › Navigation › Navbar Height (--navbar-height), so the
+   slider in Super now drives both the navbar itself and how far the
+   hero cover reaches up behind it. Change it in Super, not here.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-nav-height: 92px;
+  --dj-nav-height: var(--navbar-height);
 }
 
 /* --------------------------------------------------------------------------
@@ -50,8 +50,11 @@
 .notion-header__cover.has-cover {
   top: calc(-1 * var(--dj-nav-height)) !important;
   margin-top: 0 !important;
-  height: calc(60vh + var(--dj-nav-height)) !important;
-  max-height: calc(60vh + var(--dj-nav-height)) !important;
+  /* Cover height comes from Super › Layout › Cover height
+     (--header-cover-height, in vh), plus the navbar height so the
+     visible portion below the navbar stays the size you set. */
+  height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
+  max-height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
   z-index: -2 !important;
 }
 
@@ -172,7 +175,7 @@
   grid-template-columns: 1fr 1fr 1fr !important;
   grid-auto-flow: row dense !important;
   grid-auto-rows: auto !important;
-  gap: 16px !important;
+  gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
 }
 
 .notion-collection-gallery.large .notion-collection-card:nth-child(26n+2):not(:last-child),
@@ -207,7 +210,7 @@
 .notion-collection-gallery.medium,
 .notion-collection-gallery.small {
   display: grid !important;
-  gap: 16px !important;
+  gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
 }
 
 .notion-collection-gallery.medium .notion-collection-card,
