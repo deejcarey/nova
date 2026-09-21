@@ -211,7 +211,7 @@ h1.notion-heading strong,
 strong h1.notion-heading {
   margin-bottom: 12px !important;
   letter-spacing: -4px !important;
-  line-height: 0.8 !important;
+  line-height: 1 !important;
   font-size: clamp(2.6rem, 6vw, 5rem) !important;
 }
 
