@@ -275,7 +275,10 @@
    to check against.
    -------------------------------------------------------------------------- */
 .notion-button__content {
-  padding: 14px 28px !important;
+  /* Midpoint between the native button's original 14px 28px and the
+     text-link pill's 8px 12px, to bring their proportions closer
+     together. */
+  padding: 11px 20px !important;
   border-radius: var(--cta-border-radii) !important;
 }
 
