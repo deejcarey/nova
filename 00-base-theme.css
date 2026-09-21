@@ -955,4 +955,8 @@ h3.notion-heading * {
   padding-left: 24px !important;
   letter-spacing: -.3px !important;
   border-color: var(--color-border-default) !important;
+  /* 1.5em = 150% of whatever the inherited/stock size is, rather
+     than a fixed value — a precise 50% increase regardless of what
+     that baseline actually is. */
+  font-size: 1.5em !important;
 }
