@@ -903,11 +903,11 @@ h3.notion-heading * {
    which already have separate light and dark values — so code follows
    your palette and works in both themes with no extra rules.
    Same role = same color across languages (CSS, JS, HTML...):
-     red ...... selectors, HTML tags, class names
-     blue ..... properties, attributes
+     green .... selectors, HTML tags, class names
+     red ...... properties, attributes
      green .... strings, values in quotes, URLs
-     orange ... numbers, units, booleans, constants
-     purple ... keywords, @rules, !important
+     orange ... numbers, units, booleans, constants, !important
+     purple ... keywords, @rules
      yellow ... functions, built-ins
      pink ..... variables
      dimmed ... punctuation, operators, comments
@@ -915,12 +915,12 @@ h3.notion-heading * {
 .notion-code .token.selector,
 .notion-code .token.tag,
 .notion-code .token.class-name {
-  color: var(--color-text-red) !important;
+  color: var(--color-text-green) !important;
 }
 
 .notion-code .token.property,
 .notion-code .token.attr-name {
-  color: var(--color-text-blue) !important;
+  color: var(--color-text-red) !important;
 }
 
 .notion-code .token.string,
@@ -936,14 +936,14 @@ h3.notion-heading * {
 .notion-code .token.unit,
 .notion-code .token.boolean,
 .notion-code .token.constant,
-.notion-code .token.hexcode {
+.notion-code .token.hexcode,
+.notion-code .token.important {
   color: var(--color-text-orange) !important;
 }
 
 .notion-code .token.keyword,
 .notion-code .token.atrule,
-.notion-code .token.rule,
-.notion-code .token.important {
+.notion-code .token.rule {
   color: var(--color-text-purple) !important;
 }
 
