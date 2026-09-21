@@ -894,17 +894,79 @@ h3.notion-heading * {
 
 /* --------------------------------------------------------------------------
    31. Code syntax highlighting (Prism tokens)
+   Replaced Horizon's stock rules, which forced selectors to #2a2a2a
+   (near-invisible on dark), properties to #909090, and !important to
+   an undefined variable — the "three grays" that were overriding
+   Super's highlighting.
+
+   Colors now come from Super's Notion color pickers (Colors › Notion),
+   which already have separate light and dark values — so code follows
+   your palette and works in both themes with no extra rules.
+   Same role = same color across languages (CSS, JS, HTML...):
+     red ...... selectors, HTML tags, class names
+     blue ..... properties, attributes
+     green .... strings, values in quotes, URLs
+     orange ... numbers, units, booleans, constants
+     purple ... keywords, @rules, !important
+     yellow ... functions, built-ins
+     pink ..... variables
+     dimmed ... punctuation, operators, comments
    -------------------------------------------------------------------------- */
-.token.selector {
-  color: #2a2a2a !important;
+.notion-code .token.selector,
+.notion-code .token.tag,
+.notion-code .token.class-name {
+  color: var(--color-text-red) !important;
 }
 
-.token.property {
-  color: #909090 !important;
+.notion-code .token.property,
+.notion-code .token.attr-name {
+  color: var(--color-text-blue) !important;
 }
 
-.token.important {
-  color: var(--primary-color) !important;
+.notion-code .token.string,
+.notion-code .token.char,
+.notion-code .token.attr-value,
+.notion-code .token.url,
+.notion-code .token.regex,
+.notion-code .token.inserted {
+  color: var(--color-text-green) !important;
+}
+
+.notion-code .token.number,
+.notion-code .token.unit,
+.notion-code .token.boolean,
+.notion-code .token.constant,
+.notion-code .token.hexcode {
+  color: var(--color-text-orange) !important;
+}
+
+.notion-code .token.keyword,
+.notion-code .token.atrule,
+.notion-code .token.rule,
+.notion-code .token.important {
+  color: var(--color-text-purple) !important;
+}
+
+.notion-code .token.function,
+.notion-code .token.builtin {
+  color: var(--color-text-yellow) !important;
+}
+
+.notion-code .token.variable {
+  color: var(--color-text-pink) !important;
+}
+
+.notion-code .token.punctuation,
+.notion-code .token.operator {
+  color: color-mix(in srgb, var(--color-text-default) 55%, transparent) !important;
+}
+
+.notion-code .token.comment,
+.notion-code .token.prolog,
+.notion-code .token.doctype,
+.notion-code .token.cdata {
+  color: color-mix(in srgb, var(--color-text-default) 40%, transparent) !important;
+  font-style: italic !important;
 }
 
 /* --------------------------------------------------------------------------
