@@ -122,14 +122,30 @@
    colored fill in testing was a callout background showing through
    a transparent button on the reference/demo page. This is the
    rule that actually reads those variables.
+
+   Unified — "default" is treated the same as any other Notion
+   color, not a special case: every native button gets a full-bleed
+   fill of whatever color it carries (including the theme default
+   text color, when no specific color was chosen), no border, ever.
+   background: currentColor picks up Notion's own color class (e.g.
+   .color-green, or .color-default) directly, since nothing here
+   overrides "color" itself. Text visibility instead uses
+   -webkit-text-fill-color — the same technique from the pill hover
+   fix — since it repaints the text without touching the "color"
+   value currentColor reads from.
    -------------------------------------------------------------------------- */
 .notion-button__content {
-  background: var(--cta-bg-color) !important;
-  color: var(--cta-text-color) !important;
+  background: currentColor !important;
+  border: none !important;
+  -webkit-text-fill-color: var(--cta-text-color) !important;
 }
 
+/* Hover: white-on-black or black-on-white matching display mode,
+   for every button regardless of its own color — not the button's
+   color, and not the pill's hover treatment (that one still fills
+   with its own color, unchanged). */
 .notion-button__content:hover {
   background: var(--cta-bg-hover-color) !important;
-  color: var(--cta-text-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
 }
 
