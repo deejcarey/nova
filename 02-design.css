@@ -31,47 +31,70 @@
 }
 
 /* --------------------------------------------------------------------------
-   Navbar — background, blur & scroll behavior
+   Navbar — background, blur, gradient falloff & scroll behavior
    The tint (color AND transparency) comes from Super › Colors ›
    Navbar › Background, as an 8-digit hex (e.g. #11111126). This file
-   adds the blur, and the "invisible at the top" behavior.
+   adds the blur, the top-to-bottom falloff, and "invisible at top".
 
-   How the scroll behavior works: 05-navbar-scroll.js labels the page
-   data-dj-nav="top" or "scrolled". At the top, the navbar goes fully
-   invisible (no tint, no blur) so the hero shows through untouched;
-   once scrolled, Super's tint + the blur fade in, and fade back out
-   on return to the top. If the script ever fails to load, the label
-   is never set and the navbar simply stays tinted + blurred — a safe
-   fallback rather than a broken one.
+   Falloff: the tint + blur live on a separate layer behind the navbar
+   (::before) rather than on the navbar itself. That layer is masked
+   with a gradient — full strength down to --dj-navbar-falloff-start,
+   then fading smoothly to nothing at the bottom edge. Because it's a
+   mask, the tint AND the blur fade together (a "progressive blur"),
+   while the navbar links on top stay fully solid.
+
+   Scroll: 05-navbar-scroll.js labels the page data-dj-nav="top" or
+   "scrolled". At the top, the layer is faded out entirely; once
+   scrolled it fades in, and back out on return to the top. If the
+   script fails to load, the label is never set and the layer simply
+   stays visible — a safe fallback rather than a broken one.
    -------------------------------------------------------------------------- */
 :root {
   --dj-navbar-blur: 48px;
-  --dj-navbar-fade: .35s;   /* how long the fade in/out takes */
+  --dj-navbar-fade: .35s;              /* scroll fade in/out duration */
+  --dj-navbar-falloff-start: 50%;      /* full strength above this, fading below */
 }
 
-.super-navbar,
+/* The navbar itself carries no background or blur any more — those
+   moved to the layer below. (Overrides 00-base-theme.css section 16.)
+   It must NOT have its own backdrop-filter: that would stop the
+   layer's blur from seeing the page behind it. */
+.super-navbar {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.super-navbar::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;          /* behind the links, inside the navbar */
+  pointer-events: none !important;
+  background: var(--navbar-background-color) !important;
+  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 var(--dj-navbar-falloff-start), transparent 100%) !important;
+  mask-image: linear-gradient(to bottom, #000 var(--dj-navbar-falloff-start), transparent 100%) !important;
+  opacity: 1;
+  transition: opacity var(--dj-navbar-fade) ease !important;
+}
+
+/* At the top of the page: layer fully faded out. */
+html[data-dj-nav="top"] .super-navbar::before {
+  opacity: 0 !important;
+}
+
+/* Mobile dropdown menu: solid tint + blur, no falloff, never hidden —
+   its links need to stay readable over the hero. */
 .super-navbar__menu {
   background: var(--navbar-background-color) !important;
   backdrop-filter: blur(var(--dj-navbar-blur)) !important;
   -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
   border: none !important;
   box-shadow: none !important;
-}
-
-.super-navbar {
-  transition:
-    background var(--dj-navbar-fade) ease,
-    backdrop-filter var(--dj-navbar-fade) ease,
-    -webkit-backdrop-filter var(--dj-navbar-fade) ease !important;
-}
-
-/* At the top of the page: fully invisible. Only the bar itself —
-   the mobile dropdown menu (.super-navbar__menu) keeps its tint + blur
-   so its links stay readable over the hero. */
-html[data-dj-nav="top"] .super-navbar {
-  background: transparent !important;
-  backdrop-filter: blur(0px) !important;
-  -webkit-backdrop-filter: blur(0px) !important;
 }
 
 .super-navbar__content {
