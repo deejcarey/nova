@@ -207,3 +207,21 @@ html[data-dj-nav="top"] .super-navbar {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Code blocks — remove the per-line background band
+   Super's syntax-highlighting theme ("One Dark") paints its own
+   background (#282c34) on BOTH the outer <pre> box and the inner
+   <code> element. Normally the two match, so nobody notices. But we
+   give the outer box our translucent --color-code-bg instead, which
+   exposed the inner one — and because <code> is an inline element,
+   its background only covers the text on each line, first character
+   to last. That was the dark band. The outer box already provides the
+   background, so the inner one is simply cleared. Also drops the
+   theme's text-shadow, which muddies text on a translucent surface.
+   -------------------------------------------------------------------------- */
+.notion-code code,
+.notion-code code[class*="language-"] {
+  background: transparent !important;
+  text-shadow: none !important;
+}
