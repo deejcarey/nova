@@ -318,3 +318,24 @@ main.super-content {
 .notion-text.notion-text__content.notion-semantic-string:has(+ .notion-divider) {
   margin-bottom: .5rem !important;
 }
+
+/* --------------------------------------------------------------------------
+   Stacked columns (mobile) — vertical gap between them
+   Super's Layout › Column gap (46px) is the HORIZONTAL space between
+   side-by-side columns, which is right on desktop. But when columns
+   stack on mobile, that same 46px becomes vertical space — and lands
+   on top of the paragraph spacing already under an eyebrow label, so
+   a two-column "LABEL / content" row opens a big hole on phones.
+
+   row-gap only ever applies along the stacking direction, so setting
+   it here affects the stacked (mobile) case ONLY. The desktop
+   horizontal gap still comes from Super, untouched. Raise or lower
+   this one number to taste.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-stacked-row-gap: 8px;
+}
+
+.notion-row {
+  row-gap: var(--dj-stacked-row-gap) !important;
+}
