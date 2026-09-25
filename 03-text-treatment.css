@@ -81,3 +81,23 @@ h3.notion-heading.notion-semantic-string {
   font-size: 1.15em !important;
   font-weight: 700 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Gallery card properties — tighter line-height
+   Body text uses line-height: 2.2rem (an absolute value, not relative
+   to font size), which is right for legibility in a column of prose
+   but too airy inside a card full of short descriptions. This gives
+   card text its own setting. Unitless, so it scales with whatever
+   font size Super is using.
+   Applies to secondary properties only — card titles keep their own
+   sizing, and body copy elsewhere on the site is untouched.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-card-line-height: 1.5;
+}
+
+.notion-collection-card .notion-collection-card__property,
+.notion-collection-card .notion-collection-card__property .notion-semantic-string,
+.notion-collection-card .notion-collection-card__property .notion-text__content {
+  line-height: var(--dj-card-line-height) !important;
+}
