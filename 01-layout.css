@@ -339,3 +339,23 @@ main.super-content {
 .notion-row {
   row-gap: var(--dj-stacked-row-gap) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Collapsed toggles — contain their contents
+   A closed toggle collapses to 1px tall with opacity 0, but keeps
+   overflow: visible — so anything tall inside it (e.g. a long gallery)
+   still spills out, invisible but still counted in the page's scroll
+   height. On the About page that added ~3,900px of empty space below
+   the footer.
+
+   Super's overflow: hidden on main.super-content used to clip that
+   spill. The hero fix above changed it to clip horizontally only, so
+   the bottom spill is no longer contained — hence this rule, which
+   fixes the cause rather than re-clipping the whole page.
+
+   Scoped to CLOSED toggles only (:not(.open)), so open toggles expand
+   and show their contents exactly as before.
+   -------------------------------------------------------------------------- */
+.notion-toggle:not(.open) > .notion-toggle__content {
+  overflow: hidden !important;
+}
