@@ -10,7 +10,7 @@
    Hero cover image — opacity & fade only (not position/size)
    -------------------------------------------------------------------------- */
 :root {
-  --cover-opacity: .50;
+  --cover-opacity: .65;
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%);
 }
 
@@ -237,4 +237,37 @@ html[data-dj-nav="top"] .super-navbar {
    -------------------------------------------------------------------------- */
 .notion-collection-list__item:hover {
   background: var(--dj-toggle-hover-bg) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar links — dim the unselected ones
+   Super's Navbar › Text color is now pure white (dark) / black (light).
+   Rather than leaving Super's own dimming in place, every link is set
+   to 70% of that color, and the CURRENT page's link gets the full
+   strength — so the selected page still reads as selected, with a
+   cleaner contrast between the two states.
+
+   Uses color-mix rather than opacity so only the text dims, not any
+   background or border a link might carry. Hover brings a link to
+   full strength too, as a hint that it's clickable.
+
+   The "current page" selector lists several possibilities, because
+   Super's own class for it hasn't been confirmed by Inspect yet —
+   unmatched ones are simply ignored, so this is safe either way.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-navbar-item-dim: 40%;
+}
+
+.super-navbar__item-list .super-navbar__item {
+  color: color-mix(in srgb, var(--navbar-text-color) var(--dj-navbar-item-dim), transparent) !important;
+}
+
+.super-navbar__item-list .super-navbar__item:hover,
+.super-navbar__item-list .super-navbar__item:focus-visible,
+.super-navbar__item-list .super-navbar__item.active,
+.super-navbar__item-list .super-navbar__item.selected,
+.super-navbar__item-list .super-navbar__item[aria-current],
+.super-navbar__item-list .super-navbar__item[data-active="true"] {
+  color: var(--navbar-text-color) !important;
 }
