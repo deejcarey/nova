@@ -36,12 +36,12 @@
   /* H1 — applies to plain, bold, and mixed H1s alike */
   --dj-h1-line-height: 1.2;
   --dj-h1-space-before: 0;
-  --dj-h1-space-after: 12px;
+  --dj-h1-space-after: 10px;
 
   /* H2 */
-  --dj-h2-line-height: 1;
+  --dj-h2-line-height: .8;
   --dj-h2-space-before: 0;
-  --dj-h2-space-after: 12px;
+  --dj-h2-space-after: 10px;
 
   /* H3 */
   --dj-h3-line-height: 1.6;
