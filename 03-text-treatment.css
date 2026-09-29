@@ -34,17 +34,17 @@
   --dj-body-space-after: 1.2rem;
 
   /* H1 — applies to plain, bold, and mixed H1s alike */
-  --dj-h1-line-height: 1;
+  --dj-h1-line-height: 1.3;
   --dj-h1-space-before: 0;
   --dj-h1-space-after: 10px;
 
   /* H2 */
-  --dj-h2-line-height: 1.3;
+  --dj-h2-line-height: 1.4;
   --dj-h2-space-before: 0;
   --dj-h2-space-after: 10px;
 
   /* H3 */
-  --dj-h3-line-height: 1.6;
+  --dj-h3-line-height: 1.5;
   --dj-h3-space-before: 0;
   --dj-h3-space-after: 0;
 }
