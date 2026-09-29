@@ -29,7 +29,7 @@
    ========================================================================== */
 :root {
   /* Body copy */
-  --dj-body-line-height: 1.5;
+  --dj-body-line-height: 1.6;
   --dj-body-space-before: 0;
   --dj-body-space-after: .8rem;
 
@@ -51,7 +51,7 @@
   --dj-h3-space-after: 0.125rem;
 	
   /* H4 */
-  --dj-h4-line-height: 1.5;
+  --dj-h4-line-height: 1.6;
   --dj-h4-space-before: 0;
   --dj-h4-space-after: 0.125rem;
 }
