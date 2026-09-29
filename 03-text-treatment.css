@@ -29,9 +29,9 @@
    ========================================================================== */
 :root {
   /* Body copy */
-  --dj-body-line-height: 1.6;
+  --dj-body-line-height: 1.5;
   --dj-body-space-before: 0;
-  --dj-body-space-after: 1.2rem;
+  --dj-body-space-after: 1rem;
 
   /* H1 — applies to plain, bold, and mixed H1s alike */
   --dj-h1-line-height: 1.2;
@@ -51,7 +51,7 @@
   --dj-h3-space-after: 0.125rem;
 	
   /* H4 */
-  --dj-h4-line-height: 1.3;
+  --dj-h4-line-height: 1.5;
   --dj-h4-space-before: 0;
   --dj-h4-space-after: 0.125rem;
 }
