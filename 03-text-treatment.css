@@ -37,6 +37,8 @@
   --dj-h1-line-height: 1.3;
   --dj-h1-space-before: 0;
   --dj-h1-space-after: 10px;
+  /* Super header — bold H1 only. Independent of --dj-h1-line-height. */
+  --dj-h1-bold-line-height: .8;
 
   /* H2 */
   --dj-h2-line-height: 1.4;
@@ -87,6 +89,14 @@ h1.notion-heading strong,
 strong h1.notion-heading {
   margin-top: var(--dj-h1-space-before) !important;
   margin-bottom: var(--dj-h1-space-after) !important;
+}
+
+/* Super header — bold H1 gets its own line-height, overriding the
+   general H1 value above. The .notion-root prefix raises specificity
+   so this wins regardless of where it sits in the file. */
+.notion-root h1.notion-heading strong,
+.notion-root strong h1.notion-heading {
+  line-height: var(--dj-h1-bold-line-height) !important;
 }
 
 /* H2 */
