@@ -31,7 +31,7 @@
   /* Body copy */
   --dj-body-line-height: 1.5;
   --dj-body-space-before: 0;
-  --dj-body-space-after: 1rem;
+  --dj-body-space-after: .8rem;
 
   /* H1 — applies to plain, bold, and mixed H1s alike */
   --dj-h1-line-height: 1.2;
