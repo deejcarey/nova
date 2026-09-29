@@ -38,7 +38,7 @@
   --dj-h1-space-before: 0;
   --dj-h1-space-after: 10px;
   /* Super header — bold H1 only. Independent of --dj-h1-line-height. */
-  --dj-h1-bold-line-height: .8;
+  --dj-h1-bold-line-height: .9;
 
   /* H2 */
   --dj-h2-line-height: 1.4;
