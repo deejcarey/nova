@@ -83,34 +83,89 @@ html[data-dj-nav="top"] .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
-   Colored callouts / full-width sections — background color
-   Super builds callout backgrounds by formula with lightness locked
-   (7% in dark mode), so they couldn't be controlled from Super.
-   Instead, each color now reads the SAME Super picker as its button
-   (Forms › Button {color}), mixed into the page background at
-   --dj-section-strength. One picker per hue drives both: full
-   strength on buttons, a subdued wash on sections — so a blue button
-   on a blue section always belongs to the same family.
-   Brown is deliberately excluded (it's used as a utility trigger —
-   see the centering snippet in Super's CSS box).
+   Colored callouts / full-width sections — background & stroke
+   Super builds callout backgrounds by formula with the lightness
+   locked (7% in dark mode), so they couldn't be controlled from
+   Super. Instead, each color reads the SAME Super picker as its
+   button (Forms › Button {color}), mixed into the page background.
+   One picker per hue drives both: full strength on buttons, a subdued
+   wash on sections.
+
+   THE FOUR DIALS BELOW ARE THE ONLY NUMBERS TO TOUCH:
+     FILL   — how rich the background is, per mode.
+     STROKE — how strong the outline is, per mode. Previously every
+              callout shared one neutral gray border, which showed up
+              on dark fills (green, blue) and vanished on light ones
+              (orange, yellow). Now each stroke is built from that
+              callout's own color, so they're consistent across hues.
+              Set a stroke to 0% to make outlines disappear entirely.
+
+   Brown is deliberately excluded (it's a utility trigger — see the
+   centering snippet in Super's CSS box). Gray keeps a neutral
+   treatment, tuned separately at the bottom of this section.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-section-strength: 15%;   /* how rich section colors are, both themes */
+  --dj-section-fill-light: 15%;    /* light mode background richness */
+  --dj-section-fill-dark: 15%;     /* dark mode background richness */
+  --dj-section-stroke-light: 45%;  /* light mode outline strength */
+  --dj-section-stroke-dark: 45%;   /* dark mode outline strength */
 }
 
-.notion-callout[class*="bg-orange"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-yellow"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-green"]  { background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-blue"]   { background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-purple"] { background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-pink"]   { background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-strength), var(--color-bg-default)) !important; }
-.notion-callout[class*="bg-red"]    { background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-strength), var(--color-bg-default)) !important; }
+/* Wiring — picks the right pair for the active mode. No numbers here. */
+html.theme-light {
+  --dj-section-strength: var(--dj-section-fill-light);
+  --dj-section-stroke-strength: var(--dj-section-stroke-light);
+}
 
-/* Gray stays a neutral, tuned separately: 4% of Super's Text color
-   mixed into the page background (currently lands on #1a1a1a in dark
-   mode). Dark mode only; light mode keeps Super's own gray. */
+html.theme-dark {
+  --dj-section-strength: var(--dj-section-fill-dark);
+  --dj-section-stroke-strength: var(--dj-section-stroke-dark);
+}
+
+.notion-callout[class*="bg-orange"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-yellow"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-green"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-blue"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-purple"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-pink"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-red"] {
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+}
+
+/* Gray — neutral, built from Super's Text color rather than a hue, so
+   it stays a true gray in both modes. Dark mode fill only (light mode
+   keeps Super's own gray); stroke follows the same dial as the rest. */
 .theme-dark .notion-callout[class*="bg-gray"] {
   background-color: color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default)) !important;
+}
+
+.notion-callout[class*="bg-gray"] {
+  border-color: color-mix(in srgb, var(--color-text-default) calc(var(--dj-section-stroke-strength) / 3), var(--color-bg-default)) !important;
 }
 
 /* --------------------------------------------------------------------------
