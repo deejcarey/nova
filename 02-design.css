@@ -449,3 +449,46 @@ html.theme-dark {
   --navbar-background-color-hover: var(--dj-mobile-menu-hover) !important;
   --navbar-list-item-hover: var(--dj-mobile-menu-hover) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Notion form (contact page) — panel & field backgrounds
+   Confirmed via Inspect: Super renders the form natively (no iframe),
+   so every part is styleable. Stock leaves the whole thing
+   transparent — panel, inputs and all — which disappears over
+   full-bleed background imagery.
+
+   The panel is built from Super's Page background color, so it
+   follows light/dark automatically. Fields get the same translucent
+   wash used by toggles and code blocks, so they read as inset.
+
+   DIALS:
+     panel-opacity  — 100% = fully solid, lower = lets imagery through
+     panel-padding  — space inside the panel
+     field-strength — how visible the input fields are against it
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-form-panel-opacity: 92%;
+  --dj-form-panel-padding: 2rem;
+  --dj-form-field-strength: 6%;
+}
+
+.notion-form__wrapper {
+  background: color-mix(in srgb, var(--color-bg-default) var(--dj-form-panel-opacity), transparent) !important;
+  border: 1px solid var(--color-border-default) !important;
+  border-radius: var(--border-radii-layout) !important;
+  padding: var(--dj-form-panel-padding) !important;
+}
+
+.notion-form__input-field {
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-form-field-strength), transparent) !important;
+  border: 1px solid var(--color-border-default) !important;
+  border-radius: var(--border-radii-layout) !important;
+}
+
+/* Focus: strengthen the field so the active one is obvious. */
+.notion-form__input-field:focus,
+.notion-form__input-field:focus-visible {
+  background: color-mix(in srgb, var(--color-text-default) calc(var(--dj-form-field-strength) * 2), transparent) !important;
+  border-color: var(--color-text-default) !important;
+  outline: none !important;
+}
