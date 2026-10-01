@@ -361,3 +361,46 @@ main.super-content {
 .notion-toggle:not(.open) > .notion-toggle__content {
   overflow: hidden !important;
 }
+
+/* --------------------------------------------------------------------------
+   Page header — icon space normalization
+   Super reserves vertical space for a page icon (and tags the header
+   with has-icon-* classes) whether or not that icon is visible. So
+   adding an icon in Notion pushed the page's content down a line or
+   two, and pages with icons no longer lined up with pages without
+   them — even where the icon itself was hidden.
+
+   This zeroes that reserved space so every page starts at the same
+   height, with or without an icon. Keep your icons in Notion; they
+   no longer affect the layout here.
+
+   DIAL: --dj-header-space is the space above page content. Set it
+   once and every page type matches. Raise it to push all pages down
+   together.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-header-space: 0;
+}
+
+.notion-header,
+.notion-header[class*="has-icon"],
+.notion-header.page {
+  padding-top: var(--dj-header-space) !important;
+  margin-top: var(--dj-header-space) !important;
+}
+
+/* The icon's own box, neutralized so it contributes no height even
+   when Super or a page-level rule hides it. */
+.notion-header__icon-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* When the icon is hidden on a page, its wrapper shouldn't hold a
+   line of space open either. */
+.notion-header__icon-wrapper:empty,
+.notion-header__icon-wrapper[hidden] {
+  display: none !important;
+  height: 0 !important;
+}
