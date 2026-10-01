@@ -349,9 +349,9 @@ html.theme-dark {
       the whole screen instead of dropping partway down.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-mobile-menu-opacity: 97%;      /* 100% = fully solid */
-  --dj-mobile-menu-item-size: 1.75rem;/* link size in the open menu */
-  --dj-mobile-menu-item-gap: .25rem;  /* vertical space between links */
+  --dj-mobile-menu-opacity: 85%;      /* 100% = fully solid */
+  --dj-mobile-menu-item-size: 2.5rem;/* link size in the open menu */
+  --dj-mobile-menu-item-gap: .35rem;  /* vertical space between links */
   --dj-mobile-menu-item-padding: .5rem 1rem; /* space inside each link row */
   --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
