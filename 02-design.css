@@ -313,7 +313,7 @@ html.theme-dark {
    unmatched ones are simply ignored, so this is safe either way.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-navbar-item-dim: 40%;
+  --dj-navbar-item-dim: 60%;
 }
 
 .super-navbar__item-list .super-navbar__item {
