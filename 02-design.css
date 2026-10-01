@@ -52,14 +52,16 @@
   --dj-navbar-fade: .35s;   /* how long the fade in/out takes */
 }
 
-.super-navbar,
-.super-navbar__menu {
+.super-navbar {
   background: var(--navbar-background-color) !important;
   backdrop-filter: blur(var(--dj-navbar-blur)) !important;
   -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
   border: none !important;
   box-shadow: none !important;
 }
+
+/* The mobile menu is handled in its own section further down — it
+   needs an opaque background of its own, not the navbar's tint. */
 
 .super-navbar {
   transition:
@@ -325,4 +327,73 @@ html.theme-dark {
 .super-navbar__item-list .super-navbar__item[aria-current],
 .super-navbar__item-list .super-navbar__item[data-active="true"] {
   color: var(--navbar-text-color) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   Mobile menu — background, item size, hover & fullscreen
+   Three things Super gets wrong here, all fixed with the dials below:
+
+   1. BACKGROUND. Super sets --navbar-menu-background-color to the
+      SAME value as the navbar itself, which is deliberately ~15%
+      transparent — so the open menu let the page show through and the
+      links were hard to read. It now gets its own near-opaque
+      background built from Super's Page background color.
+
+   2. HOVER / ACTIVE. Super's --navbar-background-color-hover is
+      #ff280f (bright red) and has no picker in Super's UI, which is
+      why it survived. Replaced with a neutral wash of your Text
+      color, matching toggles and list rows.
+
+   3. SIZE & FULLSCREEN. Link size is now a dial, and the menu fills
+      the whole screen instead of dropping partway down.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-mobile-menu-opacity: 97%;      /* 100% = fully solid */
+  --dj-mobile-menu-item-size: 1.75rem;/* link size in the open menu */
+  --dj-mobile-menu-item-gap: .25rem;  /* vertical space between links */
+  --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
+}
+
+.super-navbar__menu {
+  background: color-mix(in srgb, var(--color-bg-default) var(--dj-mobile-menu-opacity), transparent) !important;
+  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  /* Fullscreen: fills the viewport instead of dropping partway down.
+     100dvh (not 100vh) accounts for mobile browser chrome. Delete
+     this block to go back to the stock drop-down panel. */
+  position: fixed !important;
+  inset: 0 !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  padding-top: var(--navbar-height) !important;
+  overflow-y: auto !important;
+}
+
+.super-navbar__menu .super-navbar__item-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--dj-mobile-menu-item-gap) !important;
+}
+
+.super-navbar__menu .super-navbar__item {
+  font-size: var(--dj-mobile-menu-item-size) !important;
+}
+
+/* Hover / active — replaces Super's red. */
+.super-navbar__menu .super-navbar__item:hover,
+.super-navbar__menu .super-navbar__item:active,
+.super-navbar__menu .super-navbar__item:focus-visible {
+  background: var(--dj-mobile-menu-hover) !important;
+}
+
+/* Belt and braces: kills the red at the source, in case Super uses it
+   anywhere else in the menu. */
+.super-navbar,
+.super-navbar__menu {
+  --navbar-background-color-hover: var(--dj-mobile-menu-hover) !important;
+  --navbar-list-item-hover: var(--dj-mobile-menu-hover) !important;
 }
