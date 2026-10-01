@@ -159,13 +159,26 @@ main.super-content {
   padding: 20px 16px 16px !important;
 }
 
+/* CONTENT IS NOTION'S CALL, NOT OURS.
+   This used to force every card with a cover image to show its title
+   and hide its description and tags — which silently overrode the
+   per-view Properties settings in Notion and made all cover galleries
+   behave identically.
+
+   Now each gallery shows exactly what its own Notion view is set to
+   show (none / title / title + tag / title + description + tag), and
+   this file only handles how that content sits on the card.
+
+   To change what a gallery displays: open that view in Notion, use
+   its Properties menu, and toggle the fields on or off there.
+
+   To suppress a property on ONE gallery only (rather than in Notion),
+   scope a rule to that gallery's block ID in 04-special-features.css
+   — see the testimonials fix there for the pattern. */
+.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title,
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__text,
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-pill {
-  display: none !important;
-}
-
-.notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-property__title {
-  display: block !important;
+  display: revert !important;
 }
 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) {
