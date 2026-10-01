@@ -355,6 +355,10 @@ html.theme-dark {
   --dj-mobile-menu-item-gap: .25rem;  /* vertical space between links */
   --dj-mobile-menu-item-padding: .5rem 1rem; /* space inside each link row */
   --dj-mobile-menu-top-offset: .5rem; /* gap between navbar and first link */
+  /* Space reserved at the top of the panel. Was var(--navbar-height);
+     now a third of that, moving the menu up ~2/3. Raise it if the
+     links tuck under the navbar. */
+  --dj-mobile-menu-panel-top: calc(var(--navbar-height) / 3);
   --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
 
@@ -372,7 +376,7 @@ html.theme-dark {
   inset: 0 !important;
   height: 100dvh !important;
   max-height: none !important;
-  padding-top: var(--navbar-height) !important;
+  padding-top: var(--dj-mobile-menu-panel-top) !important;
   overflow-y: auto !important;
 }
 
@@ -409,6 +413,16 @@ html.theme-dark {
 .super-navigation-menu__item,
 .super-navigation-menu__item-content {
   padding: var(--dj-mobile-menu-item-padding) !important;
+}
+
+/* Super's stylesheet gives the menu its own font family, so Inter is
+   set explicitly here. --primary-font is Super › Typography ›
+   Primary Font, so changing it there still carries through. */
+.super-navigation-menu__item-title,
+.super-navigation-menu__item .notion-link,
+.super-navigation-menu__item,
+.super-navbar__menu .super-navbar__item {
+  font-family: var(--primary-font) !important;
 }
 
 .super-navigation-menu__item-title,
