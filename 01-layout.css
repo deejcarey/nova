@@ -374,6 +374,11 @@ main.super-content {
    height, with or without an icon. Keep your icons in Notion; they
    no longer affect the layout here.
 
+   CONFIRMED via Inspect: the space lives on
+   .notion-header__title-wrapper as a 142px top margin — reserved for
+   the icon, and kept even when the icon and title are both hidden.
+   That element is the actual fix; the rest below is belt and braces.
+
    DIAL: --dj-header-space is the space above page content. Set it
    once and every page type matches. Raise it to push all pages down
    together.
@@ -387,6 +392,13 @@ main.super-content {
 .notion-header.page {
   padding-top: var(--dj-header-space) !important;
   margin-top: var(--dj-header-space) !important;
+}
+
+/* THE ACTUAL CULPRIT: the title wrapper carries a large top margin
+   reserved for the icon, whether or not the icon is visible. */
+.notion-header__title-wrapper {
+  margin-top: var(--dj-header-space) !important;
+  margin-bottom: 0 !important;
 }
 
 /* The icon's own box, neutralized so it contributes no height even
