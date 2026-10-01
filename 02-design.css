@@ -349,10 +349,12 @@ html.theme-dark {
       the whole screen instead of dropping partway down.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-mobile-menu-opacity: 85%;      /* 100% = fully solid */
-  --dj-mobile-menu-item-size: 2.5rem;/* link size in the open menu */
-  --dj-mobile-menu-item-gap: .35rem;  /* vertical space between links */
+  --dj-mobile-menu-opacity: 97%;      /* 100% = fully solid */
+  --dj-mobile-menu-item-size: 1.75rem;/* link size in the open menu */
+  --dj-mobile-menu-item-weight: 700; /* 400 regular, 500 medium, 700 bold */
+  --dj-mobile-menu-item-gap: .25rem;  /* vertical space between links */
   --dj-mobile-menu-item-padding: .5rem 1rem; /* space inside each link row */
+  --dj-mobile-menu-top-offset: .5rem; /* gap between navbar and first link */
   --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
 
@@ -380,7 +382,25 @@ html.theme-dark {
    and spacing comes from a gap on the list PLUS padding on each item.
    Both navbar and menu selectors are kept below so either markup is
    covered. */
+/* Pin the links directly under the navbar. Without this the panel
+   centers its contents vertically on tall phone screens, pushing the
+   menu far down the page. The wrapper and viewport are Super's own
+   nesting layers — zeroed so only the offset dial adds space. */
+.super-navigation-menu__items-wrapper,
+.super-navigation-menu__items-viewport {
+  display: block !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
 .super-navigation-menu__items {
+  margin-top: var(--dj-mobile-menu-top-offset) !important;
+  padding-top: 0 !important;
+  justify-content: flex-start !important;
   display: flex !important;
   flex-direction: column !important;
   gap: var(--dj-mobile-menu-item-gap) !important;
@@ -395,6 +415,7 @@ html.theme-dark {
 .super-navigation-menu__item .notion-link,
 .super-navbar__menu .super-navbar__item {
   font-size: var(--dj-mobile-menu-item-size) !important;
+  font-weight: var(--dj-mobile-menu-item-weight) !important;
   line-height: 1.2 !important;
 }
 
