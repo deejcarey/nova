@@ -416,3 +416,39 @@ main.super-content {
   display: none !important;
   height: 0 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Mobile — header space & hero cover scale
+   Phones get their own values: less space above content, and a much
+   taller hero cover so background images fill the screen instead of
+   sitting in a band at the top.
+   -------------------------------------------------------------------------- */
+@media all and (max-width: 768px) {
+  :root {
+    --dj-mobile-header-space: 0;    /* space above page content */
+    --dj-mobile-cover-height: 75vh; /* hero cover height on phones */
+    --dj-mobile-cover-opacity: .75; /* 1 = full strength */
+  }
+
+  .notion-header,
+  .notion-header.page,
+  .notion-header[class*="has-icon"],
+  .notion-header__title-wrapper {
+    margin-top: var(--dj-mobile-header-space) !important;
+    padding-top: var(--dj-mobile-header-space) !important;
+    min-height: 0 !important;
+  }
+
+  .notion-header__cover.has-cover {
+    height: calc(var(--dj-mobile-cover-height) + var(--dj-nav-height)) !important;
+    max-height: calc(var(--dj-mobile-cover-height) + var(--dj-nav-height)) !important;
+    opacity: var(--dj-mobile-cover-opacity) !important;
+  }
+
+  .notion-header__cover-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+}
