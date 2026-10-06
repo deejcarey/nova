@@ -494,20 +494,19 @@ html.theme-dark {
 }
 
 /* --------------------------------------------------------------------------
-   Callouts with an image icon — no border
-   A callout carrying an uploaded icon (PNG/SVG) reads as a designed
-   block in its own right, so the outline competes with it. This drops
-   the border for those only — callouts with an emoji icon, or no
-   icon, keep theirs.
+   Callouts containing an image block — no border
+   A callout with an image placed inside it (an uploaded PNG/SVG as
+   content, NOT the callout's Notion icon) reads as a designed block
+   in its own right, so the outline competes with it. Callouts without
+   one — including those using only a Notion icon — keep their border.
 
-   :has() asks "does this callout contain an image?", letting the
-   browser style the parent based on its contents. Listed last so it
-   wins over the colored-callout strokes above, which set border
-   colors. The four selectors cover the likely markup variations.
+   :has() asks "does this callout contain an image block?", letting
+   the browser style the parent based on its contents. Listed last so
+   it wins over the colored-callout strokes above, which set border
+   colors.
    -------------------------------------------------------------------------- */
-.notion-callout:has(.notion-callout__icon img),
-.notion-callout:has(img.notion-callout__icon),
-.notion-callout:has(.notion-callout__icon svg),
-.notion-callout:has(.notion-callout__icon-wrapper img) {
+.notion-callout:has(.notion-image),
+.notion-callout:has(figure img),
+.notion-callout:has(.notion-callout__content img) {
   border: none !important;
 }
