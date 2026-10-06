@@ -426,7 +426,7 @@ main.super-content {
 @media all and (max-width: 768px) {
   :root {
     --dj-mobile-header-space: 0;    /* space above page content */
-    --dj-mobile-cover-height: 200vh; /* hero cover height on phones */
+    --dj-mobile-cover-height: 100vh; /* hero cover height on phones */
     --dj-mobile-cover-opacity: .75; /* 1 = full strength */
   }
 
