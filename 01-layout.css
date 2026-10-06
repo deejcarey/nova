@@ -451,4 +451,12 @@ main.super-content {
     object-fit: cover !important;
     object-position: center !important;
   }
+  /* Covers sit at the top of the page regardless of whether the page has
+	an icon. Super adds its own offset on icon pages, which stacked with our
+	navbar pull-up and cropped the image. */
+  .notion-header__cover.has-cover,
+  .notion-header__cover.has-cover.has-icon,
+  .notion-header__cover.has-cover.has-icon-image {
+    top: calc(-1 * var(--dj-nav-height)) !important;
+  }
 }
