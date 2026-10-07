@@ -61,3 +61,28 @@
    The padding-bottom replaces the space the title used to take up, so
    only include it on pages where you're also hiding the title above.
    -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   Logo strip — two across on mobile
+   Super stacks columns on small screens, so each logo becomes a
+   full-width image and the strip turns into a very long scroll. This
+   keeps the columns wrapping instead, two per line.
+   Scoped to the logo callout's own block ID, so no other column row
+   on the site is affected. Confirmed via Inspect: the container class
+   is notion-column-list (not notion-row).
+   -------------------------------------------------------------------------- */
+@media all and (max-width: 768px) {
+  #block-3c14e3cf42c98081bb1ccc7efd016481 .notion-column-list {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  #block-3c14e3cf42c98081bb1ccc7efd016481 .notion-column {
+    flex: 0 0 calc(50% - 6px) !important;
+    width: calc(50% - 6px) !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
