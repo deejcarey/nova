@@ -358,7 +358,7 @@ html.theme-dark {
   /* Space reserved at the top of the panel. Was var(--navbar-height);
      now a third of that, moving the menu up ~2/3. Raise it if the
      links tuck under the navbar. */
-  --dj-mobile-menu-panel-top: calc(var(--navbar-height) / 3);
+  --dj-mobile-menu-panel-top: var(--navbar-height);
   --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
 
