@@ -512,16 +512,21 @@ html.theme-dark {
 }
 
 /* --------------------------------------------------------------------------
-   Mobile menu open — let the overlay run behind the navbar
-   Confirmed via Inspect: the menu is only in the page while open, and
-   both it and the navbar sit at z-index 40 — so the navbar paints on
-   top and the overlay looked like it started below the bar.
-   Rather than cover the navbar (which would bury the close button),
-   the navbar goes transparent while the menu is open, so the overlay
-   reads as full-screen and the logo and X stay usable.
+   Mobile menu open — full-screen overlay
+   Confirmed via Inspect: the menu panel starts at y:91 (just below the
+   92px navbar), so the top of the screen showed page background
+   instead of the overlay. This pulls the panel to the very top so it
+   covers the full viewport, and keeps the navbar transparent on top of
+   it so the logo and close button stay visible and clickable.
    -------------------------------------------------------------------------- */
+.super-navbar__menu {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
 html:has(.super-navbar__menu) .super-navbar {
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  z-index: 50 !important;
 }
