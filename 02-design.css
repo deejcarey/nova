@@ -513,12 +513,24 @@ html.theme-dark {
 
 /* --------------------------------------------------------------------------
    Mobile menu open — full-screen overlay
-   Confirmed via Inspect: the menu panel starts at y:91 (just below the
-   92px navbar), so the top of the screen showed page background
-   instead of the overlay. This pulls the panel to the very top so it
-   covers the full viewport, and keeps the navbar transparent on top of
-   it so the logo and close button stay visible and clickable.
+   Confirmed via Inspect: .super-navbar__menu-wrapper carries a
+   transform (Super uses it for the slide-down animation). A transform
+   makes that element the anchor for position:fixed inside it — so the
+   panel's "top: 0" meant the top of the wrapper, which sits below the
+   92px navbar, not the top of the screen.
+
+   Fixing the WRAPPER is what works. It gets pulled to the top of the
+   viewport, and the navbar stays transparent and above it so the logo
+   and close button remain visible and clickable.
    -------------------------------------------------------------------------- */
+.super-navbar__menu-wrapper {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
 .super-navbar__menu {
   top: 0 !important;
   margin-top: 0 !important;
