@@ -460,3 +460,22 @@ main.super-content {
     top: calc(-1 * var(--dj-nav-height)) !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Thin graphic dividers — keep a usable height on mobile
+   These dividers are very wide and only a few pixels tall (e.g.
+   1600x8). Scaled to phone width they render about 1px high, so they
+   read as missing rather than as dividers. This holds them at a
+   fixed height instead; object-fit: cover crops rather than squashing,
+   so the color stays solid edge to edge.
+   Matched on "DIV-" in the filename, so only divider images are hit.
+   -------------------------------------------------------------------------- */
+@media all and (max-width: 768px) {
+  .notion-image img[src*="DIV-"],
+  img[src*="DIV-"] {
+    height: 6px !important;
+    min-height: 6px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+}
