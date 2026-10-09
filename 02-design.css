@@ -542,3 +542,41 @@ html:has(.super-navbar__menu) .super-navbar {
   -webkit-backdrop-filter: none !important;
   z-index: 50 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Graphic dividers — draw them in CSS instead of relying on the image
+   Confirmed via Inspect: these are 1600x4 PNGs, and Super's image
+   pipeline resizes them to 196x0 — the height rounds to zero, so
+   there is literally no image left to display. No amount of CSS
+   height on the <img> can bring back pixels that aren't there.
+
+   So the image is hidden and its container is painted instead. The
+   container keeps its place in the layout, and the color comes from
+   the filename, which still says green or purple.
+
+   Height and colors are dialable below.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-divider-height: 4px;
+  --dj-divider-green: #33D588;
+  --dj-divider-purple: #8B5CF6;
+}
+
+.notion-image:has(img[src*="div-green"]),
+.notion-image:has(img[src*="div-purple"]),
+.notion-image:has(img[src*="div-gray"]) {
+  height: var(--dj-divider-height) !important;
+  min-height: var(--dj-divider-height) !important;
+  width: 100% !important;
+  border-radius: 999px !important;
+}
+
+.notion-image:has(img[src*="div-green"]) { background: var(--dj-divider-green) !important; }
+.notion-image:has(img[src*="div-purple"]) { background: var(--dj-divider-purple) !important; }
+.notion-image:has(img[src*="div-gray"]) { background: var(--color-border-default) !important; }
+
+.notion-image:has(img[src*="div-green"]) img,
+.notion-image:has(img[src*="div-purple"]) img,
+.notion-image:has(img[src*="div-gray"]) img {
+  display: none !important;
+}
