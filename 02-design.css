@@ -494,21 +494,35 @@ html.theme-dark {
 }
 
 /* --------------------------------------------------------------------------
-   Callouts containing an image block — no border
-   A callout with an image placed inside it (an uploaded PNG/SVG as
-   content, NOT the callout's Notion icon) reads as a designed block
-   in its own right, so the outline competes with it. Callouts without
-   one — including those using only a Notion icon — keep their border.
+   Callouts containing an image block — border handling
+   A COLORED callout with an image inside it reads as a designed block
+   in its own right, so the outline competes with it and comes off.
 
-   :has() asks "does this callout contain an image block?", letting
-   the browser style the parent based on its contents. Listed last so
-   it wins over the colored-callout strokes above, which set border
-   colors.
+   An UNCOLORED callout is different: its background is transparent, so
+   the border is the only thing defining the block. Stripping it there
+   made the callout invisible, leaving a stray image on the page that
+   looked like a publishing failure. Those keep their border.
+
+   :has() asks "does this callout contain an image block?", letting the
+   browser style the parent based on its contents. Listed last so it
+   wins over the colored-callout strokes above, which set border colors.
    -------------------------------------------------------------------------- */
-.notion-callout:has(.notion-image),
-.notion-callout:has(figure img),
-.notion-callout:has(.notion-callout__content img) {
+
+/* Colored + image: border off. */
+.notion-callout[class*="bg-"]:not([class*="bg-default"]):has(.notion-image),
+.notion-callout[class*="bg-"]:not([class*="bg-default"]):has(figure img),
+.notion-callout[class*="bg-"]:not([class*="bg-default"]):has(.notion-callout__content img) {
   border: none !important;
+}
+
+/* Uncolored + image: border on, from Super › Colors › Main › Border Color. */
+.notion-callout:not([class*="bg-"]):has(.notion-image),
+.notion-callout[class*="bg-default"]:has(.notion-image),
+.notion-callout:not([class*="bg-"]):has(figure img),
+.notion-callout[class*="bg-default"]:has(figure img),
+.notion-callout:not([class*="bg-"]):has(.notion-callout__content img),
+.notion-callout[class*="bg-default"]:has(.notion-callout__content img) {
+  border: 1px solid var(--color-border-default) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -542,51 +556,3 @@ html:has(.super-navbar__menu) .super-navbar {
   -webkit-backdrop-filter: none !important;
   z-index: 50 !important;
 }
-
-/* --------------------------------------------------------------------------
-   Graphic dividers — drawn in CSS, any color
-   Confirmed via Inspect: these are 1600x4 PNGs, and Super's image
-   pipeline resizes them until the height rounds to ZERO — so there's
-   no image left to display, at any CSS height.
-
-   So the image is hidden and its container is painted instead. The
-   container keeps its place in the layout, and the color comes from
-   the filename.
-
-   Matching is now generic: ANY image whose filename contains "div-"
-   becomes a divider. If its name also contains a known color, it gets
-   that color; anything else falls back to the neutral border color,
-   so a new divider is never invisible.
-
-   Colors come from Super › Colors › Forms (the same pickers that drive
-   your buttons and section backgrounds), so dividers stay in step with
-   the rest of the palette. Override any of them below.
-   -------------------------------------------------------------------------- */
-:root {
-  --dj-divider-height: 4px;
-}
-
-/* Base: every divider, whatever its color. */
-.notion-image:has(img[src*="div-"]) {
-  height: var(--dj-divider-height) !important;
-  min-height: var(--dj-divider-height) !important;
-  width: 100% !important;
-  border-radius: 999px !important;
-  overflow: hidden !important;
-  background: var(--color-border-default) !important;
-}
-
-.notion-image:has(img[src*="div-"]) img {
-  display: none !important;
-}
-
-/* Per-color. Add a line here for any new divider color. */
-.notion-image:has(img[src*="div-red"])    { background: var(--color-bg-form-btn-red) !important; }
-.notion-image:has(img[src*="div-green"])  { background: var(--color-bg-form-btn-green) !important; }
-.notion-image:has(img[src*="div-purple"]) { background: var(--color-bg-form-btn-purple) !important; }
-.notion-image:has(img[src*="div-blue"])   { background: var(--color-bg-form-btn-blue) !important; }
-.notion-image:has(img[src*="div-pink"])   { background: var(--color-bg-form-btn-pink) !important; }
-.notion-image:has(img[src*="div-orange"]) { background: var(--color-bg-form-btn-orange) !important; }
-.notion-image:has(img[src*="div-yellow"]) { background: var(--color-bg-form-btn-yellow) !important; }
-.notion-image:has(img[src*="div-brown"])  { background: var(--color-bg-form-btn-brown) !important; }
-.notion-image:has(img[src*="div-gray"])   { background: var(--color-bg-form-btn-gray) !important; }
