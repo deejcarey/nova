@@ -556,3 +556,26 @@ html:has(.super-navbar__menu) .super-navbar {
   -webkit-backdrop-filter: none !important;
   z-index: 50 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Navbar CTA — swapped states
+   Stock (00-base-theme.css) gives the CTA a transparent fill with a
+   1px border at rest, and fills it solid on hover. Swapped here:
+   solid at rest, outlined on hover.
+
+   Done as an override rather than by editing the stock rules, because
+   the hover rule there is shared with the inline text pills — editing
+   it would swap those too.
+   -------------------------------------------------------------------------- */
+.super-navbar__cta {
+  background: var(--color-text-default) !important;
+  color: var(--color-bg-default) !important;
+  border: 1px solid var(--color-text-default) !important;
+}
+
+.super-navbar__cta:hover {
+  background: transparent !important;
+  color: var(--color-text-default) !important;
+  border: 1px solid var(--color-text-default) !important;
+  opacity: 1 !important;
+}
