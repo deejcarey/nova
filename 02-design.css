@@ -582,45 +582,96 @@ html:has(.super-navbar__menu) .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
-   Lightbox caption
+   Lightbox — caption under the image, counter below that
    06-lightbox.js carries each image's Notion caption into the overlay
-   and renders it as .sg-caption. Styled here.
+   as .sg-caption. This lays the overlay out and styles it.
 
-   Positioned below the counter, centered, and width-capped so long
-   captions wrap into a readable column rather than running the full
-   width of the screen. Colors are fixed light values, not Super's,
-   because the lightbox backdrop is dark in BOTH themes.
+   REPLACES the earlier absolutely-positioned caption rules.
 
-   The script hides the element entirely when an image has no caption,
-   so nothing reserves space.
+   THE LAYOUT PROBLEM: stock pins the counter to the bottom of the
+   screen and centers the image independently, so a caption parked down
+   there could overlap the counter when it wrapped, and a very tall
+   image ran underneath both.
+
+   THE FIX: make the overlay a flex COLUMN — image, then caption, then
+   counter — and let the image shrink. Because the image is flexible
+   (min-height: 0 lets it shrink below its natural size) and the two
+   text rows are not, the browser gives the text whatever it needs and
+   hands the rest to the image. So a two- or three-line caption pushes
+   the image up on its own, with no line counting and nothing to tune.
+   object-fit: contain keeps the image undistorted as it shrinks.
+
+   The close/prev/next buttons stay absolutely positioned, as stock
+   has them, so they're outside this column and unaffected.
    -------------------------------------------------------------------------- */
 :root {
   --dj-lightbox-caption-size: .95rem;
   --dj-lightbox-caption-max: 60ch;
   --dj-lightbox-caption-color: rgba(255, 255, 255, .78);
+  --dj-lightbox-counter-color: rgba(255, 255, 255, .55);
+  --dj-lightbox-gap: .85rem;        /* space between image, caption, counter */
+  --dj-lightbox-pad: 1.25rem;       /* breathing room at the overlay edges */
+}
+
+#super-gallery-lightbox[open] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--dj-lightbox-gap) !important;
+  padding: var(--dj-lightbox-pad) !important;
+  padding-bottom: calc(var(--dj-lightbox-pad) + env(safe-area-inset-bottom)) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* The flexible row: shrinks to whatever space the text leaves. */
+#super-gallery-lightbox .sg-image {
+  order: 1 !important;
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* The fixed rows: pulled out of stock's absolute positioning and back
+   into the column, so they take their natural height. */
+#super-gallery-lightbox .sg-caption,
+#super-gallery-lightbox .sg-counter {
+  position: static !important;
+  flex: 0 0 auto !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  margin: 0 !important;
+  text-align: center !important;
+  max-width: min(var(--dj-lightbox-caption-max), 92vw) !important;
 }
 
 #super-gallery-lightbox .sg-caption {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 1.1rem !important;
-  transform: translateX(-50%) !important;
-  margin: 0 !important;
-  padding: 0 1.5rem !important;
-  max-width: min(var(--dj-lightbox-caption-max), 90vw) !important;
-  text-align: center !important;
+  order: 2 !important;
   font-size: var(--dj-lightbox-caption-size) !important;
   line-height: 1.45 !important;
   color: var(--dj-lightbox-caption-color) !important;
   text-wrap: pretty;
 }
 
+#super-gallery-lightbox .sg-counter {
+  order: 3 !important;
+  color: var(--dj-lightbox-counter-color) !important;
+}
+
+/* No caption: the script hides the element, so the column closes up. */
 #super-gallery-lightbox .sg-caption[hidden] {
   display: none !important;
 }
 
-/* Counter sits just above the caption so the two don't collide. */
-#super-gallery-lightbox .sg-counter {
-  bottom: 3.4rem !important;
-}
+/* Mobile: stock moves prev/next to the bottom corners, so the column
+   needs clearance underneath to avoid running into them. */
+@media all and (max-width: 600px) {
+  #super-gallery-lightbox[open] {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)) !important;
+  }
 }
