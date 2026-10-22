@@ -558,57 +558,25 @@ html:has(.super-navbar__menu) .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
-   Navbar CTA — swapped states
-   Stock (00-base-theme.css) gives the CTA a transparent fill with a
-   1px border at rest, and fills it solid on hover. Swapped here:
-   solid at rest, outlined on hover.
+   Content images — subtle border
+   A white or light image loses its edge against a light background (and
+   a dark one against dark), so images get the same hairline the gallery
+   cards use. Corner radius follows Super › Layout › Rounded Edges.
 
-   Done as an override rather than by editing the stock rules, because
-   the hover rule there is shared with the inline text pills — editing
-   it would swap those too.
-   -------------------------------------------------------------------------- */
-.super-navbar__cta {
-  background: var(--color-text-default) !important;
-  color: var(--color-bg-default) !important;
-  border: 1px solid var(--color-text-default) !important;
-}
+   WHAT'S EXCLUDED: anything 06-lightbox.js has tagged with
+   data-dj-noborder — set by a "-" or "-nb" caption flag, a "-ui" or
+   "div-" filename, or simply being under 24px tall. CSS can't read
+   caption text, so the script writes that attribute for it; the two
+   systems share one flag syntax.
 
-.super-navbar__cta:hover {
-  background: transparent !important;
-  color: var(--color-text-default) !important;
-  border: 1px solid var(--color-text-default) !important;
-  opacity: 1 !important;
-}
-
-/* --------------------------------------------------------------------------
-   Navbar items, theme toggle & CTA — translucent hover
-   Stock uses Super's Main › Hover background, a solid gray in both
-   modes. That reads muddy over full-bleed imagery, since it's an
-   opaque swatch sitting on top of a photo.
-
-   These three now use a wash of Super's TEXT color instead, which
-   tints what's behind it rather than covering it — white in dark
-   mode, near-black in light, automatically. A border at a higher
-   strength gives the hover a defined edge.
-
-   Deliberately separate from --dj-overlay-strength (5%), which stays
-   where it is for toggles, list rows, code blocks and dropdowns.
-   The lightbox close button also keeps its solid hover, since it only
-   ever sits over a dark backdrop.
+   Gallery card covers are untouched — their cards already carry a
+   border of their own.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-nav-hover-bg: 12%;      /* navbar items + theme toggle, fill */
-  --dj-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
-  --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
+  --dj-image-border: 1px solid var(--color-border-default);
 }
 
-.super-navbar__item-list .super-navbar__item:hover,
-.super-navbar__theme-toggle:hover {
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
-}
-
-/* CTA keeps its solid border (set above); only the fill changes. */
-.super-navbar__cta:hover {
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-cta-hover-bg), transparent) !important;
+.notion-image:not([data-dj-noborder]) img {
+  border: var(--dj-image-border) !important;
+  border-radius: var(--border-radii-layout) !important;
 }
