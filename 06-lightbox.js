@@ -29,6 +29,12 @@
    treated as "-". And any image under MIN_HEIGHT px tall is excluded
    automatically, which covers the dividers with no tagging at all.
 
+   CAPTIONS IN THE OVERLAY: an image's Notion caption is carried into
+   the lightbox and shown under the image (styled in 02-design.css).
+   A caption that is only flags shows nothing, since it carries no
+   meaning for a reader. Images without a caption show nothing and
+   reserve no space.
+
    Everything else — paging, keyboard, swipe, history handling — is
    unchanged from Super's original.
    ========================================================================== */
@@ -87,6 +93,15 @@
     return flagsFor(img).noLightbox;
   }
 
+  // The caption to SHOW in the overlay. A caption made only of flags
+  // carries no meaning for a reader, so it returns empty for those.
+  function displayCaptionFor(img) {
+    const f = flagsFor(img);
+    if (f.flagCaption) return '';
+    const cap = captionFor(img);
+    return cap ? cap.textContent.trim() : '';
+  }
+
   // Writes the flags onto the DOM so CSS can style off them, and hides
   // any caption that exists only to carry flags.
   function applyFlags() {
@@ -120,6 +135,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
     </button>
     <p class="sg-counter" role="status" aria-live="polite" aria-atomic="true"></p>
+    <p class="sg-caption" aria-live="polite"></p>
   `;
   document.body.appendChild(dialog);
 
@@ -128,6 +144,7 @@
   const previousButton = dialog.querySelector('.sg-prev');
   const nextButton = dialog.querySelector('.sg-next');
   const counter = dialog.querySelector('.sg-counter');
+  const caption = dialog.querySelector('.sg-caption');
   let gallery = [];
   let index = 0;
   let pageURL = '';
@@ -139,6 +156,10 @@
     image.src = gallery[index].src;
     image.alt = gallery[index].alt || `Image ${index + 1} of ${gallery.length}`;
     counter.textContent = `${index + 1} / ${gallery.length}`;
+    // Hidden entirely when the image has no caption, so the overlay
+    // doesn't reserve empty space for one.
+    caption.textContent = gallery[index].caption || '';
+    caption.hidden = !gallery[index].caption;
     previousButton.hidden = nextButton.hidden = gallery.length < 2;
   }
 
@@ -176,7 +197,8 @@
     if (index < 0) return;
     gallery = images.map(img => ({
       src: img.currentSrc || img.src,
-      alt: img.alt === 'image' ? '' : img.alt
+      alt: img.alt === 'image' ? '' : img.alt,
+      caption: displayCaptionFor(img)
     }));
     pageURL = location.href;
     history.pushState({ ...history.state, [historyKey]: session }, '', pageURL);
