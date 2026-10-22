@@ -579,3 +579,36 @@ html:has(.super-navbar__menu) .super-navbar {
   border: 1px solid var(--color-text-default) !important;
   opacity: 1 !important;
 }
+
+/* --------------------------------------------------------------------------
+   Navbar items, theme toggle & CTA — translucent hover
+   Stock uses Super's Main › Hover background, a solid gray in both
+   modes. That reads muddy over full-bleed imagery, since it's an
+   opaque swatch sitting on top of a photo.
+
+   These three now use a wash of Super's TEXT color instead, which
+   tints what's behind it rather than covering it — white in dark
+   mode, near-black in light, automatically. A border at a higher
+   strength gives the hover a defined edge.
+
+   Deliberately separate from --dj-overlay-strength (5%), which stays
+   where it is for toggles, list rows, code blocks and dropdowns.
+   The lightbox close button also keeps its solid hover, since it only
+   ever sits over a dark backdrop.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-nav-hover-bg: 12%;      /* navbar items + theme toggle, fill */
+  --dj-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
+  --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
+}
+
+.super-navbar__item-list .super-navbar__item:hover,
+.super-navbar__theme-toggle:hover {
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
+}
+
+/* CTA keeps its solid border (set above); only the fill changes. */
+.super-navbar__cta:hover {
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-cta-hover-bg), transparent) !important;
+}
