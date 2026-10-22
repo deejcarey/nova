@@ -9,12 +9,25 @@
    a 4px divider ruins the flow. The original is hosted by Super and
    can't be edited, so this copy adds an exclusion step.
 
-   HOW TO EXCLUDE AN IMAGE — any ONE of these:
-     1. Give it a caption of "-" (a single hyphen) in Notion. This
-        file hides that caption, so nothing shows on the page.
-     2. Name the file with "-ui" in it (e.g. headshot-ui.png).
-     3. Nothing: images under MIN_HEIGHT px tall are skipped
-        automatically, which covers the dividers without any tagging.
+   IT ALSO TAGS IMAGES FOR CSS. CSS can't read caption text, so this
+   script writes the result of each flag onto the image's container as
+   a data attribute:
+       data-dj-nolightbox   — skipped by the gallery
+       data-dj-noborder     — image border suppressed (see 02-design.css)
+   That way one flag syntax drives both behaviors.
+
+   FLAG SYNTAX — put these in the image's CAPTION in Notion:
+       -      UI image: no lightbox AND no border (the common case)
+       -nl    no lightbox only (still gets a border)
+       -nb    no border only (still opens in the lightbox) — charts
+              like the A-Frame and flywheel, where a box fights the art
+   Combine with a space: "-nl -nb" is the same as "-".
+   A caption made only of flags is hidden, so nothing shows on the
+   page. A caption with real text in it is left alone and displayed.
+
+   Filenames still work too: anything containing "-ui" or "div-" is
+   treated as "-". And any image under MIN_HEIGHT px tall is excluded
+   automatically, which covers the dividers with no tagging at all.
 
    Everything else — paging, keyboard, swipe, history handling — is
    unchanged from Super's original.
@@ -23,34 +36,72 @@
   if (window.__superGalleryLightboxInstalled) return;
   window.__superGalleryLightboxInstalled = true;
 
-  /* ---- exclusion settings -------------------------------------------- */
-  const MIN_HEIGHT = 24;          // images shorter than this are skipped
-  const FLAG_CAPTION = '-';       // caption that marks an image as UI
-  const FLAG_SRC = ['-ui', 'div-']; // filename fragments that mark UI images
+  /* ---- flags & exclusion settings ------------------------------------ */
+  const MIN_HEIGHT = 24;             // images shorter than this: skip + no border
+  const FLAG_ALL = '-';              // no lightbox AND no border
+  const FLAG_NO_LIGHTBOX = '-nl';    // no lightbox only
+  const FLAG_NO_BORDER = '-nb';      // no border only
+  const FLAG_SRC = ['-ui', 'div-'];  // filename fragments treated as FLAG_ALL
+
+  const FLAGS = [FLAG_ALL, FLAG_NO_LIGHTBOX, FLAG_NO_BORDER];
+
+  function boxFor(img) {
+    return img.closest('.notion-image') || img.closest('figure');
+  }
 
   function captionFor(img) {
-    const box = img.closest('.notion-image') || img.closest('figure');
-    if (!box) return null;
-    return box.querySelector('figcaption, [class*="caption"]');
+    const box = boxFor(img);
+    return box ? box.querySelector('figcaption, [class*="caption"]') : null;
+  }
+
+  // Reads an image's flags from its caption, filename and size.
+  function flagsFor(img) {
+    const out = { noLightbox: false, noBorder: false, flagCaption: null };
+    const src = (img.currentSrc || img.src || '').toLowerCase();
+
+    if (FLAG_SRC.some(f => src.includes(f))) {
+      out.noLightbox = out.noBorder = true;
+    }
+    if (img.getBoundingClientRect().height < MIN_HEIGHT) {
+      out.noLightbox = out.noBorder = true;
+    }
+
+    const cap = captionFor(img);
+    if (cap) {
+      const tokens = cap.textContent.trim().split(/\s+/).filter(Boolean);
+      // Only treat the caption as flags when EVERY token is a flag —
+      // a real caption that happens to start with a dash stays visible.
+      if (tokens.length && tokens.every(t => FLAGS.includes(t))) {
+        out.flagCaption = cap;
+        tokens.forEach(t => {
+          if (t === FLAG_ALL) out.noLightbox = out.noBorder = true;
+          if (t === FLAG_NO_LIGHTBOX) out.noLightbox = true;
+          if (t === FLAG_NO_BORDER) out.noBorder = true;
+        });
+      }
+    }
+    return out;
   }
 
   function isExcluded(img) {
-    const src = (img.currentSrc || img.src || '').toLowerCase();
-    if (FLAG_SRC.some(f => src.includes(f))) return true;
-    if (img.getBoundingClientRect().height < MIN_HEIGHT) return true;
-    const cap = captionFor(img);
-    if (cap && cap.textContent.trim() === FLAG_CAPTION) return true;
-    return false;
+    return flagsFor(img).noLightbox;
   }
 
-  // Hide any caption used purely as a flag, so it never shows on the page.
-  function hideFlagCaptions() {
-    document.querySelectorAll('.notion-image figcaption, .notion-image [class*="caption"]')
-      .forEach(cap => {
-        if (cap.textContent.trim() === FLAG_CAPTION) cap.style.display = 'none';
-      });
+  // Writes the flags onto the DOM so CSS can style off them, and hides
+  // any caption that exists only to carry flags.
+  function applyFlags() {
+    document.querySelectorAll('.notion-image img').forEach(img => {
+      const f = flagsFor(img);
+      const box = boxFor(img);
+      if (box) {
+        box.toggleAttribute('data-dj-nolightbox', f.noLightbox);
+        box.toggleAttribute('data-dj-noborder', f.noBorder);
+      }
+      if (f.flagCaption) f.flagCaption.style.display = 'none';
+    });
   }
-  hideFlagCaptions();
+  applyFlags();
+  window.addEventListener('load', applyFlags);
 
   const historyKey = '__superGalleryLightbox';
   const session = Math.random().toString(36).slice(2);
@@ -207,6 +258,6 @@
 
   new MutationObserver(() => {
     if (dialog.open && location.href !== pageURL) hide();
-    hideFlagCaptions();
+    applyFlags();
   }).observe(document.body, { childList: true, subtree: true });
 })();
