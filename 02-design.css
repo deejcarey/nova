@@ -582,21 +582,45 @@ html:has(.super-navbar__menu) .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
-   Lightbox image — border
-   The gallery builds its own <img> inside a dialog, so the page's
-   image border (which keys off data-dj-noborder) never reaches it.
-   Dark images then blend into the dark backdrop with nothing defining
-   their edge.
+   Lightbox caption
+   06-lightbox.js carries each image's Notion caption into the overlay
+   and renders it as .sg-caption. Styled here.
 
-   This border is a fixed white wash rather than Super's border color,
-   because the lightbox backdrop is dark in BOTH themes — a light-mode
-   border color would be too dark to see against it.
+   Positioned below the counter, centered, and width-capped so long
+   captions wrap into a readable column rather than running the full
+   width of the screen. Colors are fixed light values, not Super's,
+   because the lightbox backdrop is dark in BOTH themes.
+
+   The script hides the element entirely when an image has no caption,
+   so nothing reserves space.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-lightbox-image-border: 20%;  /* white strength on the edge */
+  --dj-lightbox-caption-size: .95rem;
+  --dj-lightbox-caption-max: 60ch;
+  --dj-lightbox-caption-color: rgba(255, 255, 255, .78);
 }
 
-#super-gallery-lightbox .sg-image {
-  border: 1px solid color-mix(in srgb, #FFFFFF var(--dj-lightbox-image-border), transparent) !important;
-  border-radius: var(--border-radii-layout) !important;
+#super-gallery-lightbox .sg-caption {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 1.1rem !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  padding: 0 1.5rem !important;
+  max-width: min(var(--dj-lightbox-caption-max), 90vw) !important;
+  text-align: center !important;
+  font-size: var(--dj-lightbox-caption-size) !important;
+  line-height: 1.45 !important;
+  color: var(--dj-lightbox-caption-color) !important;
+  text-wrap: pretty;
+}
+
+#super-gallery-lightbox .sg-caption[hidden] {
+  display: none !important;
+}
+
+/* Counter sits just above the caption so the two don't collide. */
+#super-gallery-lightbox .sg-counter {
+  bottom: 3.4rem !important;
+}
 }
