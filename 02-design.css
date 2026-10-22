@@ -582,35 +582,51 @@ html:has(.super-navbar__menu) .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
-   Lightbox — caption under the image, counter below that
+   Lightbox — layout & caption
    06-lightbox.js carries each image's Notion caption into the overlay
    as .sg-caption. This lays the overlay out and styles it.
 
-   REPLACES the earlier absolutely-positioned caption rules.
+   THE LAYOUT: image and caption behave as ONE centered group, with the
+   counter anchored to the bottom of the screen in both layouts.
 
-   THE LAYOUT PROBLEM: stock pins the counter to the bottom of the
-   screen and centers the image independently, so a caption parked down
-   there could overlap the counter when it wrapped, and a very tall
-   image ran underneath both.
+     +--------------------------------------------+
+     |                                            |
+     |  [<]          IMAGE           [>]          |  desktop: nav at
+     |              caption                       |  the sides
+     |                                            |
+     |                 4 / 45                     |  counter: bottom
+     +--------------------------------------------+
 
-   THE FIX: make the overlay a flex COLUMN — image, then caption, then
-   counter — and let the image shrink. Because the image is flexible
-   (min-height: 0 lets it shrink below its natural size) and the two
-   text rows are not, the browser gives the text whatever it needs and
-   hands the rest to the image. So a two- or three-line caption pushes
-   the image up on its own, with no line counting and nothing to tune.
-   object-fit: contain keeps the image undistorted as it shrinks.
+     +------------------------+
+     |                        |
+     |         IMAGE          |  mobile: image fills
+     |                        |  to the top
+     |        caption         |  caption full width
+     |  [<]    4 / 45    [>]  |  counter between the
+     +------------------------+  bottom-corner nav
 
-   The close/prev/next buttons stay absolutely positioned, as stock
-   has them, so they're outside this column and unaffected.
+   The image+caption group is a flex column where the image is the
+   flexible row (min-height: 0 lets it shrink below its natural size)
+   and the caption is not. So the browser gives the caption whatever
+   height it needs and hands the rest to the image — a caption that
+   wraps to three lines pushes the image up on its own, with no line
+   counting and nothing to tune. object-fit: contain keeps the image
+   undistorted as it shrinks.
+
+   Padding on the overlay reserves the space the absolutely-positioned
+   buttons and counter occupy, so the group never runs under them:
+   left/right for the nav buttons on desktop, bottom for the counter
+   (and, on mobile, for the nav buttons that move down to the corners).
    -------------------------------------------------------------------------- */
 :root {
   --dj-lightbox-caption-size: .95rem;
   --dj-lightbox-caption-max: 60ch;
   --dj-lightbox-caption-color: rgba(255, 255, 255, .78);
   --dj-lightbox-counter-color: rgba(255, 255, 255, .55);
-  --dj-lightbox-gap: .85rem;        /* space between image, caption, counter */
+  --dj-lightbox-gap: .85rem;        /* space between image and caption */
   --dj-lightbox-pad: 1.25rem;       /* breathing room at the overlay edges */
+  --dj-lightbox-nav-clear: 5.5rem;  /* side space reserved for prev/next */
+  --dj-lightbox-bottom-clear: 3.5rem; /* bottom space reserved for the counter */
 }
 
 #super-gallery-lightbox[open] {
@@ -619,13 +635,14 @@ html:has(.super-navbar__menu) .super-navbar {
   align-items: center !important;
   justify-content: center !important;
   gap: var(--dj-lightbox-gap) !important;
-  padding: var(--dj-lightbox-pad) !important;
-  padding-bottom: calc(var(--dj-lightbox-pad) + env(safe-area-inset-bottom)) !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
+  padding: var(--dj-lightbox-pad) var(--dj-lightbox-nav-clear)
+           calc(var(--dj-lightbox-bottom-clear) + env(safe-area-inset-bottom))
+           var(--dj-lightbox-nav-clear) !important;
 }
 
-/* The flexible row: shrinks to whatever space the text leaves. */
+/* The flexible row: shrinks to whatever space the caption leaves. */
 #super-gallery-lightbox .sg-image {
   order: 1 !important;
   flex: 0 1 auto !important;
@@ -635,10 +652,9 @@ html:has(.super-navbar__menu) .super-navbar {
   object-fit: contain !important;
 }
 
-/* The fixed rows: pulled out of stock's absolute positioning and back
-   into the column, so they take their natural height. */
-#super-gallery-lightbox .sg-caption,
-#super-gallery-lightbox .sg-counter {
+/* Caption: in the column, directly under the image. */
+#super-gallery-lightbox .sg-caption {
+  order: 2 !important;
   position: static !important;
   flex: 0 0 auto !important;
   transform: none !important;
@@ -646,32 +662,42 @@ html:has(.super-navbar__menu) .super-navbar {
   right: auto !important;
   bottom: auto !important;
   margin: 0 !important;
+  max-width: min(var(--dj-lightbox-caption-max), 100%) !important;
   text-align: center !important;
-  max-width: min(var(--dj-lightbox-caption-max), 92vw) !important;
-}
-
-#super-gallery-lightbox .sg-caption {
-  order: 2 !important;
   font-size: var(--dj-lightbox-caption-size) !important;
   line-height: 1.45 !important;
   color: var(--dj-lightbox-caption-color) !important;
   text-wrap: pretty;
 }
 
-#super-gallery-lightbox .sg-counter {
-  order: 3 !important;
-  color: var(--dj-lightbox-counter-color) !important;
-}
-
-/* No caption: the script hides the element, so the column closes up. */
 #super-gallery-lightbox .sg-caption[hidden] {
   display: none !important;
 }
 
-/* Mobile: stock moves prev/next to the bottom corners, so the column
-   needs clearance underneath to avoid running into them. */
+/* Counter: out of the column entirely, pinned to the bottom of the
+   screen in both layouts. */
+#super-gallery-lightbox .sg-counter {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  text-align: center !important;
+  color: var(--dj-lightbox-counter-color) !important;
+}
+
+/* Mobile: stock moves prev/next to the bottom corners, onto the same
+   band as the counter. The image can use the full width (nothing is
+   beside it any more) but needs more clearance below. */
 @media all and (max-width: 600px) {
   #super-gallery-lightbox[open] {
-    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)) !important;
+    padding: var(--dj-lightbox-pad) var(--dj-lightbox-pad)
+             calc(4.75rem + env(safe-area-inset-bottom))
+             var(--dj-lightbox-pad) !important;
+  }
+
+  #super-gallery-lightbox .sg-caption {
+    max-width: 100% !important;
   }
 }
