@@ -580,3 +580,23 @@ html:has(.super-navbar__menu) .super-navbar {
   border: var(--dj-image-border) !important;
   border-radius: var(--border-radii-layout) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Lightbox image — border
+   The gallery builds its own <img> inside a dialog, so the page's
+   image border (which keys off data-dj-noborder) never reaches it.
+   Dark images then blend into the dark backdrop with nothing defining
+   their edge.
+
+   This border is a fixed white wash rather than Super's border color,
+   because the lightbox backdrop is dark in BOTH themes — a light-mode
+   border color would be too dark to see against it.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-lightbox-image-border: 20%;  /* white strength on the edge */
+}
+
+#super-gallery-lightbox .sg-image {
+  border: 1px solid color-mix(in srgb, #FFFFFF var(--dj-lightbox-image-border), transparent) !important;
+  border-radius: var(--border-radii-layout) !important;
+}
