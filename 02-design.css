@@ -10,7 +10,7 @@
    Hero cover image — opacity & fade only (not position/size)
    -------------------------------------------------------------------------- */
 :root {
-  --cover-opacity: .80;
+  --cover-opacity: .90;
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%); /* FULL GRADIENT */
   /* --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, var(--color-bg-default) 100%); DELAYED GRADIENT*/
 }
