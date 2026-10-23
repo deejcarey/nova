@@ -582,33 +582,221 @@ html:has(.super-navbar__menu) .super-navbar {
   border-radius: var(--border-radii-layout) !important;
 }
 
+
 /* --------------------------------------------------------------------------
-   Lightbox caption
+   Graphic dividers — drawn in CSS, any color
+   Confirmed via Inspect: these are 1600x4 PNGs, and Super's image
+   pipeline resizes them until the height rounds to ZERO — so there's
+   no image left to display, at any CSS height. That's why they
+   vanished on mobile while still showing on desktop.
+
+   So the image is hidden and its container is painted instead. The
+   container keeps its place in the layout, and the color comes from
+   the filename.
+
+   Matching is generic: ANY image whose filename contains "div-"
+   becomes a divider. If its name also contains a known color, it gets
+   that color; anything else falls back to the neutral border color,
+   so a new divider is never invisible.
+
+   Colors come from Super › Colors › Forms (the same pickers that drive
+   your buttons and section backgrounds), so dividers stay in step with
+   the rest of the palette.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-divider-height: 4px;
+}
+
+/* Base: every divider, whatever its color. */
+.notion-image:has(img[src*="div-"]) {
+  height: var(--dj-divider-height) !important;
+  min-height: var(--dj-divider-height) !important;
+  width: 100% !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: var(--color-border-default) !important;
+}
+
+.notion-image:has(img[src*="div-"]) img {
+  display: none !important;
+}
+
+/* Per-color. Add a line here for any new divider color. */
+.notion-image:has(img[src*="div-red"])    { background: var(--color-bg-form-btn-red) !important; }
+.notion-image:has(img[src*="div-green"])  { background: var(--color-bg-form-btn-green) !important; }
+.notion-image:has(img[src*="div-purple"]) { background: var(--color-bg-form-btn-purple) !important; }
+.notion-image:has(img[src*="div-blue"])   { background: var(--color-bg-form-btn-blue) !important; }
+.notion-image:has(img[src*="div-pink"])   { background: var(--color-bg-form-btn-pink) !important; }
+.notion-image:has(img[src*="div-orange"]) { background: var(--color-bg-form-btn-orange) !important; }
+.notion-image:has(img[src*="div-yellow"]) { background: var(--color-bg-form-btn-yellow) !important; }
+.notion-image:has(img[src*="div-brown"])  { background: var(--color-bg-form-btn-brown) !important; }
+.notion-image:has(img[src*="div-gray"])   { background: var(--color-bg-form-btn-gray) !important; }
+
+/* --------------------------------------------------------------------------
+   Navbar CTA — swapped states
+   Stock (00-base-theme.css, section 27) gives the CTA a transparent
+   fill with a 1px border at rest, and fills it solid on hover.
+   Swapped here: SOLID at rest, outlined on hover.
+
+   Done as an override rather than by editing the stock rules, because
+   the hover rule there is shared with the inline text pills — editing
+   it would swap those too.
+   -------------------------------------------------------------------------- */
+.super-navbar__cta {
+  background: var(--color-text-default) !important;
+  color: var(--color-bg-default) !important;
+  border: 1px solid var(--color-text-default) !important;
+}
+
+.super-navbar__cta:hover {
+  background: transparent !important;
+  color: var(--color-text-default) !important;
+  border: 1px solid var(--color-text-default) !important;
+  opacity: 1 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar items, theme toggle & CTA — translucent hover
+   Stock uses Super's Main › Hover background, a solid gray in both
+   modes. That reads muddy over full-bleed imagery, since it's an
+   opaque swatch sitting on top of a photo.
+
+   These three now use a wash of Super's TEXT color instead, which
+   tints what's behind it rather than covering it — white in dark
+   mode, near-black in light, automatically. A border at a higher
+   strength gives the hover a defined edge.
+
+   Deliberately separate from --dj-overlay-strength (5%), which stays
+   where it is for toggles, list rows, code blocks and dropdowns.
+   The lightbox close button also keeps its solid hover, since it only
+   ever sits over a dark backdrop.
+
+   MUST stay after the CTA block above: the CTA's :hover here only
+   changes the fill, and relies on that block for its border.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-nav-hover-bg: 12%;      /* navbar items + theme toggle, fill */
+  --dj-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
+  --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
+}
+
+.super-navbar__item-list .super-navbar__item:hover,
+.super-navbar__theme-toggle:hover {
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
+}
+
+/* CTA keeps its solid border (set above); only the fill changes. */
+.super-navbar__cta:hover {
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-cta-hover-bg), transparent) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Lightbox image — border
+   The gallery builds its own <img> inside a dialog, so the page's
+   image border (which keys off data-dj-noborder) never reaches it.
+   Dark images then blend into the dark backdrop with nothing defining
+   their edge.
+
+   This border is a fixed white wash rather than Super's border color,
+   because the lightbox backdrop is dark in BOTH themes — a light-mode
+   border color would be too dark to see against it.
+
+   NOTE: this applies to every image in the lightbox. The dialog image
+   is built from just the source URL, so the -nb flag doesn't carry
+   over to it.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-lightbox-image-border: 20%;  /* white strength on the edge */
+}
+
+#super-gallery-lightbox .sg-image {
+  border: 1px solid color-mix(in srgb, #FFFFFF var(--dj-lightbox-image-border), transparent) !important;
+  border-radius: var(--border-radii-layout) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Lightbox — layout & caption
    06-lightbox.js carries each image's Notion caption into the overlay
-   and renders it as .sg-caption. Styled here.
+   as .sg-caption. This lays the overlay out and styles it.
 
-   Positioned below the counter, centered, and width-capped so long
-   captions wrap into a readable column rather than running the full
-   width of the screen. Colors are fixed light values, not Super's,
-   because the lightbox backdrop is dark in BOTH themes.
+   THE LAYOUT: image and caption behave as ONE centered group, with the
+   counter anchored to the bottom of the screen in both layouts.
 
-   The script hides the element entirely when an image has no caption,
-   so nothing reserves space.
+     +--------------------------------------------+
+     |                                            |
+     |  [<]          IMAGE           [>]          |  desktop: nav at
+     |              caption                       |  the sides
+     |                                            |
+     |                 4 / 45                     |  counter: bottom
+     +--------------------------------------------+
+
+     +------------------------+
+     |                        |
+     |         IMAGE          |  mobile: image fills
+     |                        |  to the top
+     |        caption         |  caption full width
+     |  [<]    4 / 45    [>]  |  counter between the
+     +------------------------+  bottom-corner nav
+
+   The image+caption group is a flex COLUMN where the image is the
+   flexible row (min-height: 0 lets it shrink below its natural size)
+   and the caption is not. So the browser gives the caption whatever
+   height it needs and hands the rest to the image — a caption that
+   wraps to three lines pushes the image up on its own, with no line
+   counting and nothing to tune. object-fit: contain keeps the image
+   undistorted as it shrinks.
+
+   Padding on the overlay reserves the space the absolutely-positioned
+   buttons and counter occupy, so the group never runs under them:
+   left/right for the nav buttons on desktop, bottom for the counter
+   (and, on mobile, for the nav buttons that move down to the corners).
    -------------------------------------------------------------------------- */
 :root {
   --dj-lightbox-caption-size: .95rem;
   --dj-lightbox-caption-max: 60ch;
   --dj-lightbox-caption-color: rgba(255, 255, 255, .78);
+  --dj-lightbox-counter-color: rgba(255, 255, 255, .55);
+  --dj-lightbox-gap: .85rem;          /* space between image and caption */
+  --dj-lightbox-pad: 1.25rem;         /* breathing room at the overlay edges */
+  --dj-lightbox-nav-clear: 5.5rem;    /* side space reserved for prev/next */
+  --dj-lightbox-bottom-clear: 3.5rem; /* bottom space reserved for the counter */
 }
 
+#super-gallery-lightbox[open] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--dj-lightbox-gap) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  padding: var(--dj-lightbox-pad) var(--dj-lightbox-nav-clear)
+           calc(var(--dj-lightbox-bottom-clear) + env(safe-area-inset-bottom))
+           var(--dj-lightbox-nav-clear) !important;
+}
+
+/* The flexible row: shrinks to whatever space the caption leaves. */
+#super-gallery-lightbox .sg-image {
+  order: 1 !important;
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* Caption: in the column, directly under the image. */
 #super-gallery-lightbox .sg-caption {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 1.1rem !important;
-  transform: translateX(-50%) !important;
+  order: 2 !important;
+  position: static !important;
+  flex: 0 0 auto !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
   margin: 0 !important;
-  padding: 0 1.5rem !important;
-  max-width: min(var(--dj-lightbox-caption-max), 90vw) !important;
+  max-width: min(var(--dj-lightbox-caption-max), 100%) !important;
   text-align: center !important;
   font-size: var(--dj-lightbox-caption-size) !important;
   line-height: 1.45 !important;
@@ -620,8 +808,30 @@ html:has(.super-navbar__menu) .super-navbar {
   display: none !important;
 }
 
-/* Counter sits just above the caption so the two don't collide. */
+/* Counter: out of the column entirely, pinned to the bottom of the
+   screen in both layouts. */
 #super-gallery-lightbox .sg-counter {
-  bottom: 3.4rem !important;
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  text-align: center !important;
+  color: var(--dj-lightbox-counter-color) !important;
 }
+
+/* Mobile: stock moves prev/next to the bottom corners, onto the same
+   band as the counter. The image can use the full width (nothing is
+   beside it any more) but needs more clearance below. */
+@media all and (max-width: 600px) {
+  #super-gallery-lightbox[open] {
+    padding: var(--dj-lightbox-pad) var(--dj-lightbox-pad)
+             calc(4.75rem + env(safe-area-inset-bottom))
+             var(--dj-lightbox-pad) !important;
+  }
+
+  #super-gallery-lightbox .sg-caption {
+    max-width: 100% !important;
+  }
 }
