@@ -479,3 +479,64 @@ main.super-content {
     object-fit: cover !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Full-width hero image (coverless pages)
+   For a page with NO cover image that opens with a full-width image
+   block — e.g. a Stories post. The image becomes the hero: it starts
+   right at the bottom of the navbar, runs edge to edge, and keeps its
+   own aspect ratio at every width.
+
+   Applies automatically to any page whose FIRST block is a full-width
+   image. Nothing to tag.
+
+   THE THREE THINGS THIS FIXES, all confirmed via Inspect on
+   /stories/color-grading-tips-for-beginners:
+
+   1. THE GAP. A coverless page still renders .notion-header, which
+      01-layout.css gives min-height: 60px so pages without covers
+      don't collapse. Plus the image block's own 8px top margin, the
+      image started at y=160 while the navbar ends at y=92. The pull
+      below removes exactly the header's height.
+
+   2. THE EDGE INSET. The image was already full width (979px, with
+      the remaining 15px being the scrollbar) — the visible inset was
+      the 1px border and 12px corner radius that the content-image
+      rule adds to every image. A hero wants neither.
+
+   3. MOBILE SCALING. The image rendered 979x742 where its natural
+      ratio (994x661) calls for 979x651 — something was forcing a
+      height and cropping. height: auto hands control back to the
+      image's own proportions, so it scales down cleanly on phones.
+
+   The navbar is untouched: it stays transparent until scroll on every
+   page, so the bar sits over the page background and the image begins
+   immediately below it.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Must match .notion-header's min-height in 01-layout.css. If you
+     change that, change this. */
+  --dj-hero-pull: 60px;
+  /* auto = keep the image's own proportions (recommended).
+     Set a value like 70vh to crop to a fixed hero height instead. */
+  --dj-hero-height: auto;
+}
+
+.notion-root > .notion-image.full-width:first-child {
+  margin-top: calc(-1 * var(--dj-hero-pull)) !important;
+  margin-bottom: 0 !important;
+}
+
+.notion-root > .notion-image.full-width:first-child img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: var(--dj-hero-height) !important;
+  max-height: none !important;
+  /* Only meaningful when --dj-hero-height is NOT auto; ignored otherwise. */
+  object-fit: cover !important;
+  object-position: center !important;
+  /* A hero is the page's own edge — no hairline, no rounded corners. */
+  border: none !important;
+  border-radius: 0 !important;
+}
