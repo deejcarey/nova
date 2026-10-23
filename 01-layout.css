@@ -436,7 +436,7 @@ main.super-content {
   .notion-header__title-wrapper {
     margin-top: var(--dj-mobile-header-space) !important;
     padding-top: var(--dj-mobile-header-space) !important;
-    min-height: 0 !important;
+    min-height: 60 !important;
   }
 
   .notion-header__cover.has-cover {
