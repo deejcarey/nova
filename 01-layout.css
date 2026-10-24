@@ -418,17 +418,83 @@ main.super-content {
 }
 
 /* --------------------------------------------------------------------------
-   Mobile — header space & hero cover scale
-   Phones get their own values: less space above content, and a much
-   taller hero cover so background images fill the screen instead of
-   sitting in a band at the top.
+   Hero rows on mobile — avatar sizing & spacing
+   CONFIRMED via Inspect on the homepage at 425px wide: the hero's two
+   columns stack, so the image column renders full width ABOVE the
+   text. Left alone it ate ~473px before the headline started, putting
+   the H1 at y=625 — below the fold on a phone.
+
+   Sized by WIDTH, not height. An earlier version capped max-height,
+   which worked but shrank the avatar and left it hugging the left
+   edge: an image constrained by height takes whatever width its
+   proportions give it, and that was narrower than the column.
+
+   SCOPE: :has(h1.notion-heading) matches only a column row that
+   CONTAINS a top-level heading — true of the hero rows on the
+   homepage and About, false for the Approach and Process rows, whose
+   graphics must keep their full size. So this never touches those.
+
+   THE THREE DIALS:
+     img-width    — how much of the column width the avatar fills.
+                    100% is edge to edge. Lower it to pull the
+                    headline up; the image stays centered at any value.
+     space-above  — gap between the navbar and the top of the avatar.
+     space-below  — gap between the avatar and the headline.
+
+   The space dials exist because Super stacks several sources of
+   padding here — the column's own 12px, the image block's margin, and
+   the row's — which add up to a visible band above and below the
+   avatar that serves no purpose once the image is full width.
    -------------------------------------------------------------------------- */
 @media all and (max-width: 768px) {
   :root {
-    --dj-mobile-header-space: 0;    /* space above page content */
-    --dj-mobile-cover-height: 100vh; /* hero cover height on phones */
-    --dj-mobile-cover-opacity: .75; /* 1 = full strength */
+    --dj-mobile-hero-img-width: 100%;
+    --dj-mobile-hero-space-above: 0px;
+    --dj-mobile-hero-space-below: .5rem;
   }
+
+  /* Collapse Super's stacked padding in the hero row. */
+  .notion-column-list:has(h1.notion-heading) {
+    margin-top: var(--dj-mobile-hero-space-above) !important;
+    padding-top: 0 !important;
+    row-gap: var(--dj-mobile-hero-space-below) !important;
+  }
+
+  .notion-column-list:has(h1.notion-heading) .notion-column {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .notion-column-list:has(h1.notion-heading) .notion-image {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .notion-column-list:has(h1.notion-heading) .notion-image img {
+    width: var(--dj-mobile-hero-img-width) !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* The column shrinks with the image rather than holding open space
+     it no longer uses. */
+  .notion-column-list:has(h1.notion-heading) .notion-column:has(.notion-image) {
+    min-height: 0 !important;
+  }
+
+  /* The headline shouldn't carry its own top margin on top of the
+     row gap above. */
+  .notion-column-list:has(h1.notion-heading) h1.notion-heading {
+    margin-top: 0 !important;
+  }
+}
 
   .notion-header,
   .notion-header.page,
