@@ -89,8 +89,29 @@
    label space — a viewport-relative unit scales unpredictably
    (confirmed: computed to 704px on a tall screen). 200px is a
    starting estimate, not a measured value — easy to adjust. */
+:root {
+  /* DESKTOP header space — the gap between the bottom of the navbar
+     and the start of page content.
+
+     This exists so pages without a cover image don't collapse to zero
+     header height while cover pages keep the space the cover reserves.
+     It is NOT viewport-relative on purpose: --header-cover-height
+     (30vh) is right for a hero image but computes to ~700px on a tall
+     screen, which is far too much for reserving label space.
+
+     Was 60px. Halved to 30px so content starts higher now that the
+     navbar is transparent on load and there's no bar to clear.
+
+     --dj-hero-pull below is derived from this, so the full-width hero
+     on coverless pages stays in sync automatically. Change this one
+     number and both follow.
+
+     Mobile has its own value: --dj-mobile-header-min-height. */
+  --dj-header-min-height: 30px;
+}
+
 .notion-header {
-  min-height: 60px !important;
+  min-height: var(--dj-header-min-height) !important;
 }
 
 /* THE HERO / NAVBAR FIX. Confirmed via computed styles: Super sets
@@ -514,8 +535,8 @@ main.super-content {
    /stories/color-grading-tips-for-beginners:
 
    1. THE GAP. A coverless page still renders .notion-header, which
-      this file gives min-height: 60px so pages without covers don't
-      collapse. Plus the image block's own 8px top margin, the image
+      this file gives a min-height (--dj-header-min-height) so pages
+      without covers don't collapse. Plus the image block's own 8px top margin, the image
       started at y=160 while the navbar ends at y=92. The pull below
       removes exactly the header's height.
 
@@ -542,9 +563,10 @@ main.super-content {
    immediately below it.
    -------------------------------------------------------------------------- */
 :root {
-  /* Must match .notion-header's min-height above. Change one, change
-     the other. */
-  --dj-hero-pull: 60px;
+  /* Derived from the header's min-height, so these can no longer
+     drift apart — the hero pull must cancel exactly the space the
+     header reserves, or the image leaves a gap or overlaps. */
+  --dj-hero-pull: var(--dj-header-min-height);
   /* auto = keep the image's own proportions (recommended).
      Set a value like 70vh to crop to a fixed hero height instead. */
   --dj-hero-height: auto;
