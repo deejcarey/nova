@@ -561,59 +561,51 @@ main.super-content {
 }
 
 /* --------------------------------------------------------------------------
-   Hero rows on mobile — cap the stacked image
+   Hero rows on mobile — avatar sizing
    CONFIRMED via Inspect on the homepage at 425px wide: the hero's two
    columns stack, so the image column renders full width ABOVE the
-   text and eats ~473px before the headline starts. The H1 landed at
-   y=625 — below the fold on a phone, so a visitor saw almost nothing
-   on load.
+   text. Left alone it ate ~473px before the headline started, putting
+   the H1 at y=625 — below the fold on a phone.
 
-   Capping the image's height on mobile pulls everything under it up.
-   At the default below the headline lands around y=350, leaving room
-   for the sub-head too.
+   Sized by WIDTH, not height. An earlier version capped max-height,
+   which worked but shrank the avatar and left it hugging the left
+   edge: an image constrained by height takes whatever width its
+   proportions give it, and that was narrower than the column.
 
    SCOPE: :has(h1.notion-heading) matches only a column row that
-   CONTAINS a top-level heading — which is true of the hero rows on
-   the homepage and About, and false for the Approach and Process
-   rows, whose graphics must keep their full size. So this never
-   touches those.
+   CONTAINS a top-level heading — true of the hero rows on the
+   homepage and About, false for the Approach and Process rows, whose
+   graphics must keep their full size. So this never touches those.
 
-   width: auto alongside the cap keeps the image's proportions as it
-   shrinks, rather than squashing it.
+   DIAL: --dj-mobile-hero-img-width is how much of the column width the
+   avatar fills. 100% is edge to edge. Lower it (80%, 70%) to pull the
+   headline further up the screen — the image stays centered at any
+   value, and the space it frees goes straight to the text below.
    -------------------------------------------------------------------------- */
 @media all and (max-width: 768px) {
   :root {
-    --dj-mobile-hero-img-max: 200px;
+    --dj-mobile-hero-img-width: 100%;
+  }
+
+  .notion-column-list:has(h1.notion-heading) .notion-image {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
   }
 
   .notion-column-list:has(h1.notion-heading) .notion-image img {
-    max-height: var(--dj-mobile-hero-img-max) !important;
-    width: auto !important;
+    width: var(--dj-mobile-hero-img-width) !important;
+    max-width: 100% !important;
     height: auto !important;
+    max-height: none !important;
     object-fit: contain !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  /* The image's own column shrinks with it, so it doesn't hold open
-     space the image is no longer using. */
+  /* The column shrinks with the image rather than holding open space
+     it no longer uses. */
   .notion-column-list:has(h1.notion-heading) .notion-column:has(.notion-image) {
     min-height: 0 !important;
   }
-
-  /* OPTIONAL — text first, image after.
-     Uncomment to put the headline at the very top on phones and move
-     the image below it. The strongest version of "see the headline
-     immediately", at the cost of the image no longer leading.
-  .notion-column-list:has(h1.notion-heading) {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .notion-column-list:has(h1.notion-heading) .notion-column:has(h1.notion-heading) {
-    order: 1 !important;
-  }
-
-  .notion-column-list:has(h1.notion-heading) .notion-column:has(.notion-image) {
-    order: 2 !important;
-  }
-  */
 }
