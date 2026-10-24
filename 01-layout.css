@@ -609,7 +609,6 @@ main.super-content {
    -------------------------------------------------------------------------- */
 @media all and (max-width: 768px) {
   :root {
-    --dj-mobile-hero-img-width: 100%;
     --dj-mobile-hero-space-above: 0px;
     --dj-mobile-hero-space-below: .5rem;
   }
@@ -635,44 +634,20 @@ main.super-content {
     margin-bottom: 0 !important;
   }
 
+  /* Lift Super's mobile height cap on hero images — and nothing else.
+     Super caps image height on phones. A tall image hitting that cap
+     is scaled down to fit it, which also shrinks its width, so the
+     avatar rendered small and sat left in its column. Removing the cap
+     is the whole fix.
+
+     Width, max-width and alignment are deliberately NOT set here, so
+     the size you give an image in Notion is the size it renders. That
+     also means no exclusions are needed for other images on the page
+     — this rule can only ever remove a constraint, never impose one. */
   .notion-column-list:has(h1.notion-heading) .notion-image img {
-    width: var(--dj-mobile-hero-img-width) !important;
-    max-width: 100% !important;
-    height: auto !important;
     max-height: none !important;
-    object-fit: contain !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    height: auto !important;
   }
-
-  /* ----------------------------------------------------------------
-     EXCLUSION LIST — rows this must NOT touch.
-
-     The scoping selector above matches any column row containing an
-     h1, which is true of the Good Vibes Only row as well as the hero.
-     Forcing 100% there made four differently-sized profile images all
-     go full width.
-
-     TO EXCLUDE A ROW: get its block ID from Notion (right-click the
-     block, Copy link to block — the ID is the part after the last
-     dash, and Super renders it as id="block-<that id>"), then
-     uncomment the rule below and paste it in. Add more selectors to
-     the same rule, comma-separated, for any other row that needs it.
-
-     This restores Notion's own sizing for that row only; the hero
-     keeps the full-width treatment.
-     ---------------------------------------------------------------- */
-  /*
-  #block-PASTE_GOOD_VIBES_BLOCK_ID_HERE .notion-image img {
-    width: revert !important;
-    max-width: 100% !important;
-    height: revert !important;
-    max-height: revert !important;
-    object-fit: revert !important;
-    margin-left: revert !important;
-    margin-right: revert !important;
-  }
-  */
 
   /* The column shrinks with the image instead of holding open space. */
   .notion-column-list:has(h1.notion-heading) .notion-column:has(.notion-image) {
