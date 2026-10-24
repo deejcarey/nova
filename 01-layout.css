@@ -426,6 +426,12 @@ main.super-content {
 @media all and (max-width: 768px) {
   :root {
     --dj-mobile-header-space: 0;    /* space above page content */
+    /* Header min-height on phones. The desktop value (60px) exists so
+       COVERLESS pages don't collapse to nothing. On a page that has a
+       cover it just reserves 60px of empty space above the hero, which
+       is what was pushing the headline off the bottom of the screen.
+       0 here; the rule below restores 60px on coverless pages only. */
+    --dj-mobile-header-min-height: 0px;
     /* hero cover height on phones. 100vh on iOS resolves to the
        LARGE viewport — the height the page would have if Safari's URL
        bar were already collapsed — so on load the cover is sized
@@ -444,6 +450,12 @@ main.super-content {
   .notion-header__title-wrapper {
     margin-top: var(--dj-mobile-header-space) !important;
     padding-top: var(--dj-mobile-header-space) !important;
+    min-height: var(--dj-mobile-header-min-height) !important;
+  }
+
+  /* Coverless pages keep the reserved space so their titles don't sit
+     flush against the navbar. Only cover pages give it up. */
+  .notion-header:not(:has(.notion-header__cover.has-cover)) {
     min-height: 60px !important;
   }
 
