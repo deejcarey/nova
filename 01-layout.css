@@ -156,6 +156,27 @@ main.super-content {
 }
 
 /* --------------------------------------------------------------------------
+   Empty collection headers — remove the space they reserve
+   CONFIRMED by measuring /work and /art: a Notion collection whose
+   view has no visible header still renders an empty
+   .notion-collection__header-wrapper. It has no content and no height
+   of its own, but it carries an 8px bottom margin and still occupies a
+   slot above the gallery — 16px of dead space in total.
+
+   This is why Case Studies looked tighter than Older Work, Series and
+   Single Pieces: that one collection renders no header wrapper at all,
+   so its gallery starts flush under its label while the other three
+   sat 16px lower.
+
+   :empty matches only a wrapper with nothing inside it — confirmed
+   true for all four here — so a collection that DOES show a header
+   keeps its spacing untouched.
+   -------------------------------------------------------------------------- */
+.notion-collection__header-wrapper:empty {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
    Gallery cards — shared reset
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card {
