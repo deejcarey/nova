@@ -681,3 +681,44 @@ main.super-content {
     margin-top: 0 !important;
   }
 }
+
+
+/* --------------------------------------------------------------------------
+   Full-width hero image — mobile breathing room
+   On desktop the image is pulled up by --dj-hero-pull to cancel the
+   space .notion-header reserves, so it starts flush under the navbar.
+
+   On a phone that cancellation overshoots. --dj-hero-pull derives from
+   --dj-header-min-height (30px, the DESKTOP value), but mobile sets
+   --dj-mobile-header-min-height to 0 — so there are 30px of pull
+   against 0px of reserved space, and the image rides up under the
+   navbar, landing flush against the logo and CTA with no gap.
+
+   This replaces the pull with an explicit gap on phones.
+
+   THE DIAL: --dj-mobile-hero-image-gap is the space between the bottom
+   of the navbar and the top of the image. 0 = flush against the bar,
+   which is the intended look — the image reads as starting exactly
+   where the navbar ends.
+
+   Flush also hides the hairline that sits under the navbar: it's a
+   border on the header, and the image covering it is what kept it out
+   of sight. Any positive value here exposes it again.
+
+   WHY PADDING AND NOT MARGIN: a first child's top margin COLLAPSES
+   into its parent instead of opening a gap inside it, so margin-top
+   here moved .notion-root rather than the image and produced no
+   visible change at all. Padding never collapses, so the dial works
+   predictably at any value. The margin is explicitly zeroed so the
+   desktop pull above doesn't still apply on phones.
+   -------------------------------------------------------------------------- */
+@media all and (max-width: 768px) {
+  :root {
+    --dj-mobile-hero-image-gap: 0px;
+  }
+
+  .notion-root > .notion-image.full-width:first-child {
+    margin-top: 0 !important;
+    padding-top: var(--dj-mobile-hero-image-gap) !important;
+  }
+}
