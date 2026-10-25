@@ -86,6 +86,41 @@ html[data-nova-nav="top"] .super-navbar {
 }
 
 /* --------------------------------------------------------------------------
+   ONE PALETTE — Notion's text colors remapped to your chosen colors
+   Super ships TWO unrelated color sets: the Notion text palette
+   (Themes › Colors › Notion) and the Forms › Button pickers. Nothing
+   keeps them in step, and every hue differed — green was
+   rgb(0,255,128) as text but rgb(0,204,102) as a button, pink
+   rgb(255,0,102) against rgb(227,0,170).
+
+   That split showed up anywhere the two met: a pink text button next
+   to a pink heading read as two different pinks.
+
+   This points Notion's text colors at the Forms pickers, making ONE
+   picker per hue the source of truth for everything — colored text,
+   headings, filled text buttons, callout fills and strokes, dividers
+   and Notion button blocks. Change a hue in Super › Colors › Forms ›
+   Button and every use of it moves together.
+
+   CONSEQUENCE WORTH KNOWING: Super › Colors › Notion is now inert for
+   these nine hues. Setting a color there will appear to do nothing.
+   Tune hues in Forms › Button instead.
+
+   Declared BEFORE the rules that consume these colors so anything
+   below can still override a specific case. color-default is
+   untouched — it follows the theme's own text color as it should.
+   -------------------------------------------------------------------------- */
+.notion-root .color-gray { color: var(--color-bg-form-btn-gray) !important; }
+.notion-root .color-brown { color: var(--color-bg-form-btn-brown) !important; }
+.notion-root .color-orange { color: var(--color-bg-form-btn-orange) !important; }
+.notion-root .color-yellow { color: var(--color-bg-form-btn-yellow) !important; }
+.notion-root .color-green { color: var(--color-bg-form-btn-green) !important; }
+.notion-root .color-blue { color: var(--color-bg-form-btn-blue) !important; }
+.notion-root .color-purple { color: var(--color-bg-form-btn-purple) !important; }
+.notion-root .color-pink { color: var(--color-bg-form-btn-pink) !important; }
+.notion-root .color-red { color: var(--color-bg-form-btn-red) !important; }
+
+/* --------------------------------------------------------------------------
    Colored callouts / full-width sections — background & stroke
    Super builds callout backgrounds by formula with the lightness
    locked (7% in dark mode), so they couldn't be controlled from
@@ -930,84 +965,36 @@ html:has(.super-navbar__menu) .super-navbar {
    capture the bold-WITHOUT-italic case and swap it to filled-at-rest,
    mirroring the navbar CTA.
 
-   :not(em > strong) is what excludes the italic case. Doing it this
+   :not(em strong) is what excludes the italic case. Doing it this
    way means there are no competing rules to out-specify — without it,
    each of the ten colored fills below would need a matching
    bold+italic override to beat it, and the specificity race between
    them is exactly the kind of thing that breaks silently later.
 
-   COLOR: fills come from Super › Colors › Forms › Button {color} —
-   the same pickers driving Notion buttons, section backgrounds and
-   dividers — so a green text button and a green Notion button are
-   the same green. An uncolored one fills with currentColor, which
-   resolves to the theme's text color: solid white in dark mode,
+   COLOR: the fill is currentColor — whatever color the link's text
+   would have been. A pink link fills with the SAME pink as the
+   heading beside it, which is the point: these buttons sit inline
+   with copy and have to belong to it. An uncolored one resolves to
+   the theme's text color, so it's solid white in dark mode and
    near-black in light, like the navbar CTA.
+
+   This deliberately does NOT use the Forms › Button pickers. Those
+   are a separate palette from Notion's text colors — Forms pink is
+   rgb(227,0,170) while text pink is rgb(255,0,102) — so a filled
+   text button built from Forms visibly mismatched the words around
+   it. Notion button BLOCKS still use Forms, as they always have;
+   they're their own element, not part of a sentence.
    -------------------------------------------------------------------------- */
 
 /* Uncolored: fill with the inherited text color. color: inherit
    cancels the 70% dimming applied to rest-state pills earlier in this
    file — without it currentColor would pick up that dimmed value. */
-.notion-root .notion-text strong:not(em > strong) > .notion-link {
+.notion-root .notion-text strong:not(em strong) > .notion-link {
   color: inherit !important;
   background: currentColor !important;
   -webkit-text-fill-color: var(--nova-pill-hover-text) !important;
   border-color: transparent !important;
   opacity: 1 !important;
-}
-
-/* Colored: matched to the Notion button palette, per hue. */
-.notion-root .notion-text[class*="color-gray"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-gray"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-gray) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-brown"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-brown"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-brown) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-orange"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-orange"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-orange) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-yellow"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-yellow"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-yellow) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-green"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-green"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-green) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-blue"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-blue"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-blue) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-purple"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-purple"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-purple) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-pink"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-pink"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-pink) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
-}
-
-.notion-root .notion-text[class*="color-red"] strong:not(em > strong) > .notion-link,
-.notion-root .notion-text [class*="color-red"] strong:not(em > strong) > .notion-link {
-  background: var(--color-bg-form-btn-red) !important;
-  -webkit-text-fill-color: var(--nova-on-color-text) !important;
 }
 
 /* HOVER, UNCOLORED: the navbar CTA's treatment — outlined, with a
@@ -1022,7 +1009,7 @@ html:has(.super-navbar__menu) .super-navbar {
    color: inherit cancels the 70% rest-state dimming applied earlier
    in this file, so currentColor resolves to the full-strength text
    color for both the border and the wash. */
-.notion-root .notion-text strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text strong:not(em strong) > .notion-link:hover {
   color: inherit !important;
   background: color-mix(in srgb, var(--color-text-default) var(--nova-cta-hover-bg), transparent) !important;
   -webkit-text-fill-color: currentColor !important;
@@ -1035,64 +1022,64 @@ html:has(.super-navbar__menu) .super-navbar {
 
    One extra class each, so these beat the uncolored rule above
    without relying on source order. */
-.notion-root .notion-text[class*="color-gray"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-gray"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-gray"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-gray"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-brown"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-brown"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-brown"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-brown"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-orange"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-orange"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-orange"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-orange"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-yellow"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-yellow"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-yellow"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-yellow"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-green"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-green"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-green"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-green"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-blue"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-blue"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-blue"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-blue"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-purple"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-purple"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-purple"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-purple"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-pink"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-pink"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-pink"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-pink"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
 
-.notion-root .notion-text[class*="color-red"] strong:not(em > strong) > .notion-link:hover,
-.notion-root .notion-text [class*="color-red"] strong:not(em > strong) > .notion-link:hover {
+.notion-root .notion-text[class*="color-red"] strong:not(em strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-red"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
