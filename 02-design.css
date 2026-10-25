@@ -882,3 +882,215 @@ html:has(.super-navbar__menu) .super-navbar {
     max-width: 100% !important;
   }
 }
+
+
+/* --------------------------------------------------------------------------
+   TEXT BUTTONS — three weights of emphasis
+   Gives three distinct button strengths that can sit side by side on
+   one line, which a Notion button block can't do (it's its own block,
+   so it always takes a line of its own).
+
+     NOTION BUTTON BLOCK   heaviest. Filled, and 20% larger than
+                           everything else — see --nova-button-scale
+                           in 01-layout.css.
+     **BOLD** LINK         filled, at normal text size.
+     ***BOLD + ITALIC***   outlined.
+     plain link            underlined text, untouched.
+
+   CONFIRMED via Inspect on /staging/blocks, which has all three in
+   all ten Notion colors. The markup nests like this, em OUTSIDE
+   strong:
+
+     bold           <strong><a class="notion-link link">
+     bold + italic  <em><strong><a class="notion-link link">
+
+   HOW THE SPLIT WORKS: 00-base-theme.css already styles every bold
+   link as an outlined pill that fills on hover — which is exactly
+   what bold+italic should do. So nothing here touches bold+italic at
+   all; it simply keeps the existing treatment. These rules only
+   capture the bold-WITHOUT-italic case and swap it to filled-at-rest,
+   mirroring the navbar CTA.
+
+   :not(em > strong) is what excludes the italic case. Doing it this
+   way means there are no competing rules to out-specify — without it,
+   each of the ten colored fills below would need a matching
+   bold+italic override to beat it, and the specificity race between
+   them is exactly the kind of thing that breaks silently later.
+
+   COLOR: fills come from Super › Colors › Forms › Button {color} —
+   the same pickers driving Notion buttons, section backgrounds and
+   dividers — so a green text button and a green Notion button are
+   the same green. An uncolored one fills with currentColor, which
+   resolves to the theme's text color: solid white in dark mode,
+   near-black in light, like the navbar CTA.
+   -------------------------------------------------------------------------- */
+
+/* Uncolored: fill with the inherited text color. color: inherit
+   cancels the 70% dimming applied to rest-state pills earlier in this
+   file — without it currentColor would pick up that dimmed value. */
+.notion-root .notion-text strong:not(em > strong) > .notion-link {
+  color: inherit !important;
+  background: currentColor !important;
+  -webkit-text-fill-color: var(--nova-pill-hover-text) !important;
+  border-color: transparent !important;
+  opacity: 1 !important;
+}
+
+/* Colored: matched to the Notion button palette, per hue. */
+.notion-root .notion-text[class*="color-gray"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-gray"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-gray) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-brown"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-brown"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-brown) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-orange"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-orange"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-orange) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-yellow"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-yellow"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-yellow) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-green"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-green"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-green) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-blue"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-blue"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-blue) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-purple"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-purple"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-purple) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-pink"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-pink"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-pink) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+.notion-root .notion-text[class*="color-red"] strong:not(em > strong) > .notion-link,
+.notion-root .notion-text [class*="color-red"] strong:not(em > strong) > .notion-link {
+  background: var(--color-bg-form-btn-red) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
+}
+
+/* HOVER, UNCOLORED: the navbar CTA's treatment — outlined, with a
+   semi-transparent wash of the text color behind it. Reuses
+   --nova-cta-hover-bg so the two stay matched if that dial moves.
+
+   Why this case is different: an uncolored button is ALREADY white in
+   dark mode, so inverting it to white would leave it looking
+   identical and give no hover feedback at all. A colored one has
+   somewhere to invert to, and keeps the solid treatment below.
+
+   color: inherit cancels the 70% rest-state dimming applied earlier
+   in this file, so currentColor resolves to the full-strength text
+   color for both the border and the wash. */
+.notion-root .notion-text strong:not(em > strong) > .notion-link:hover {
+  color: inherit !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-cta-hover-bg), transparent) !important;
+  -webkit-text-fill-color: currentColor !important;
+  border: 1px solid currentColor !important;
+}
+
+/* HOVER, COLORED: solid white in dark mode, solid black in light —
+   the SAME hover a Notion button block uses, through the same two
+   variables, so both button weights behave identically.
+
+   One extra class each, so these beat the uncolored rule above
+   without relying on source order. */
+.notion-root .notion-text[class*="color-gray"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-gray"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-brown"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-brown"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-orange"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-orange"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-yellow"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-yellow"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-green"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-green"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-blue"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-blue"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-purple"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-purple"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-pink"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-pink"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+.notion-root .notion-text[class*="color-red"] strong:not(em > strong) > .notion-link:hover,
+.notion-root .notion-text [class*="color-red"] strong:not(em > strong) > .notion-link:hover {
+  background: var(--cta-bg-hover-color) !important;
+  -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+  border-color: transparent !important;
+}
+
+/* --------------------------------------------------------------------------
+   BOLD + ITALIC — upright text
+   The italic is a SWITCH, not a style: it selects the outlined
+   treatment, and the label itself should read as normal upright text
+   like every other button on the page.
+
+   font-style is inherited from the <em> that wraps the link, so it's
+   reset on the anchor itself. Everything else about this tier —
+   outlined at rest, colored fill on hover — already comes from
+   00-base-theme.css and is deliberately left alone.
+   -------------------------------------------------------------------------- */
+.notion-root .notion-text em strong > .notion-link,
+.notion-root .notion-text em strong > .notion-link:hover {
+  font-style: normal !important;
+}
