@@ -29,31 +29,31 @@
    ========================================================================== */
 :root {
   /* Body copy */
-  --dj-body-line-height: 1.6;
-  --dj-body-space-before: 0;
-  --dj-body-space-after: .8rem;
+  --nova-body-line-height: 1.6;
+  --nova-body-space-before: 0;
+  --nova-body-space-after: .8rem;
 
   /* H1 — applies to plain, bold, and mixed H1s alike */
-  --dj-h1-line-height: 1.25;
-  --dj-h1-space-before: 0;
-  --dj-h1-space-after: 0.5rem;
-  /* Super header — bold H1 only. Independent of --dj-h1-line-height. */
-  --dj-h1-bold-line-height: .9;
+  --nova-h1-line-height: 1.25;
+  --nova-h1-space-before: 0;
+  --nova-h1-space-after: 0.5rem;
+  /* Super header — bold H1 only. Independent of --nova-h1-line-height. */
+  --nova-h1-bold-line-height: .9;
 
   /* H2 */
-  --dj-h2-line-height: 1.35;
-  --dj-h2-space-before: 0;
-  --dj-h2-space-after: 0.5rem;
+  --nova-h2-line-height: 1.35;
+  --nova-h2-space-before: 0;
+  --nova-h2-space-after: 0.5rem;
 
   /* H3 */
-  --dj-h3-line-height: 1.35;
-  --dj-h3-space-before: 0;
-  --dj-h3-space-after: 0.5rem;
+  --nova-h3-line-height: 1.35;
+  --nova-h3-space-before: 0;
+  --nova-h3-space-after: 0.5rem;
 	
   /* H4 */
-  --dj-h4-line-height: 1.6;
-  --dj-h4-space-before: 0;
-  --dj-h4-space-after: 0.25rem;
+  --nova-h4-line-height: 1.6;
+  --nova-h4-space-before: 0;
+  --nova-h4-space-after: 0.25rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -67,12 +67,12 @@
 /* Body */
 .notion-text.notion-text__content.notion-semantic-string,
 .notion-semantic-string {
-  line-height: var(--dj-body-line-height) !important;
+  line-height: var(--nova-body-line-height) !important;
 }
 
 .notion-text {
-  margin-top: var(--dj-body-space-before) !important;
-  margin-bottom: var(--dj-body-space-after) !important;
+  margin-top: var(--nova-body-space-before) !important;
+  margin-bottom: var(--nova-body-space-after) !important;
 }
 
 /* Stock adds a second gap inside the block; zeroed so only the
@@ -86,14 +86,14 @@ h1.notion-heading,
 h1.notion-heading *,
 h1.notion-heading strong,
 strong h1.notion-heading {
-  line-height: var(--dj-h1-line-height) !important;
+  line-height: var(--nova-h1-line-height) !important;
 }
 
 h1.notion-heading,
 h1.notion-heading strong,
 strong h1.notion-heading {
-  margin-top: var(--dj-h1-space-before) !important;
-  margin-bottom: var(--dj-h1-space-after) !important;
+  margin-top: var(--nova-h1-space-before) !important;
+  margin-bottom: var(--nova-h1-space-after) !important;
 }
 
 /* Super header — bold H1 gets its own line-height, overriding the
@@ -101,43 +101,43 @@ strong h1.notion-heading {
    so this wins regardless of where it sits in the file. */
 .notion-root h1.notion-heading strong,
 .notion-root strong h1.notion-heading {
-  line-height: var(--dj-h1-bold-line-height) !important;
+  line-height: var(--nova-h1-bold-line-height) !important;
 }
 
 /* H2 */
 h2.notion-heading,
 h2.notion-heading * {
-  line-height: var(--dj-h2-line-height) !important;
+  line-height: var(--nova-h2-line-height) !important;
 }
 
 h2.notion-heading,
 h2.notion-heading:not(.toggle) {
-  margin-top: var(--dj-h2-space-before) !important;
-  margin-bottom: var(--dj-h2-space-after) !important;
+  margin-top: var(--nova-h2-space-before) !important;
+  margin-bottom: var(--nova-h2-space-after) !important;
 }
 
 /* H3 */
 h3.notion-heading,
 h3.notion-heading.notion-semantic-string,
 h3.notion-heading * {
-  line-height: var(--dj-h3-line-height) !important;
+  line-height: var(--nova-h3-line-height) !important;
 }
 
 h3.notion-heading {
-  margin-top: var(--dj-h3-space-before) !important;
-  margin-bottom: var(--dj-h3-space-after) !important;
+  margin-top: var(--nova-h3-space-before) !important;
+  margin-bottom: var(--nova-h3-space-after) !important;
 }
 
 /* H4 */
 h4.notion-heading,
 h4.notion-heading.notion-semantic-string,
 h4.notion-heading * {
-  line-height: var(--dj-h4-line-height) !important;
+  line-height: var(--nova-h4-line-height) !important;
 }
 
 h4.notion-heading {
-  margin-top: var(--dj-h4-space-before) !important;
-  margin-bottom: var(--dj-h4-space-after) !important;
+  margin-top: var(--nova-h4-space-before) !important;
+  margin-bottom: var(--nova-h4-space-after) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -219,11 +219,11 @@ h4.notion-heading {
    sizing, and body copy elsewhere on the site is untouched.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-card-line-height: 1.5;
+  --nova-card-line-height: 1.5;
 }
 
 .notion-collection-card .notion-collection-card__property,
 .notion-collection-card .notion-collection-card__property .notion-semantic-string,
 .notion-collection-card .notion-collection-card__property .notion-text__content {
-  line-height: var(--dj-card-line-height) !important;
+  line-height: var(--nova-card-line-height) !important;
 }
