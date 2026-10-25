@@ -12,8 +12,8 @@
    IT ALSO TAGS IMAGES FOR CSS. CSS can't read caption text, so this
    script writes the result of each flag onto the image's container as
    a data attribute:
-       data-dj-nolightbox   — skipped by the gallery
-       data-dj-noborder     — image border suppressed (see 02-design.css)
+       data-nova-nolightbox   — skipped by the gallery
+       data-nova-noborder     — image border suppressed (see 02-design.css)
    That way one flag syntax drives both behaviors.
 
    FLAG SYNTAX — put these in the image's CAPTION in Notion:
@@ -109,8 +109,8 @@
       const f = flagsFor(img);
       const box = boxFor(img);
       if (box) {
-        box.toggleAttribute('data-dj-nolightbox', f.noLightbox);
-        box.toggleAttribute('data-dj-noborder', f.noBorder);
+        box.toggleAttribute('data-nova-nolightbox', f.noLightbox);
+        box.toggleAttribute('data-nova-noborder', f.noBorder);
       }
       if (f.flagCaption) f.flagCaption.style.display = 'none';
     });
