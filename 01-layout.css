@@ -17,18 +17,18 @@
    hero cover reaches up behind it. Change it in Super, not here.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-nav-height: var(--navbar-height);
+  --nova-nav-height: var(--navbar-height);
 }
 
 /* --------------------------------------------------------------------------
    Navbar height
    -------------------------------------------------------------------------- */
 .super-navbar {
-  min-height: var(--dj-nav-height) !important;
+  min-height: var(--nova-nav-height) !important;
 }
 
 .super-navbar__menu {
-  min-height: var(--dj-nav-height) !important;
+  min-height: var(--nova-nav-height) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -48,13 +48,13 @@
 }
 
 .notion-header__cover.has-cover {
-  top: calc(-1 * var(--dj-nav-height)) !important;
+  top: calc(-1 * var(--nova-nav-height)) !important;
   margin-top: 0 !important;
   /* Cover height comes from Super › Layout › Cover height
      (--header-cover-height, in vh), plus the navbar height so the
      visible portion below the navbar stays the size you set. */
-  height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
-  max-height: calc(var(--header-cover-height) + var(--dj-nav-height)) !important;
+  height: calc(var(--header-cover-height) + var(--nova-nav-height)) !important;
+  max-height: calc(var(--header-cover-height) + var(--nova-nav-height)) !important;
   z-index: -2 !important;
 }
 
@@ -102,16 +102,16 @@
      Was 60px. Halved to 30px so content starts higher now that the
      navbar is transparent on load and there's no bar to clear.
 
-     --dj-hero-pull below is derived from this, so the full-width hero
+     --nova-hero-pull below is derived from this, so the full-width hero
      on coverless pages stays in sync automatically. Change this one
      number and both follow.
 
-     Mobile has its own value: --dj-mobile-header-min-height. */
-  --dj-header-min-height: 30px;
+     Mobile has its own value: --nova-mobile-header-min-height. */
+  --nova-header-min-height: 30px;
 }
 
 .notion-header {
-  min-height: var(--dj-header-min-height) !important;
+  min-height: var(--nova-header-min-height) !important;
 }
 
 /* THE HERO / NAVBAR FIX. Confirmed via computed styles: Super sets
@@ -377,11 +377,11 @@ main.super-content {
    this one number to taste.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-stacked-row-gap: 8px;
+  --nova-stacked-row-gap: 8px;
 }
 
 .notion-row {
-  row-gap: var(--dj-stacked-row-gap) !important;
+  row-gap: var(--nova-stacked-row-gap) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -421,25 +421,25 @@ main.super-content {
    the icon, and kept even when the icon and title are both hidden.
    That element is the actual fix; the rest below is belt and braces.
 
-   DIAL: --dj-header-space is the space above page content. Set it
+   DIAL: --nova-header-space is the space above page content. Set it
    once and every page type matches. Raise it to push all pages down
    together.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-header-space: 0;
+  --nova-header-space: 0;
 }
 
 .notion-header,
 .notion-header[class*="has-icon"],
 .notion-header.page {
-  padding-top: var(--dj-header-space) !important;
-  margin-top: var(--dj-header-space) !important;
+  padding-top: var(--nova-header-space) !important;
+  margin-top: var(--nova-header-space) !important;
 }
 
 /* THE ACTUAL CULPRIT: the title wrapper carries a large top margin
    reserved for the icon, whether or not the icon is visible. */
 .notion-header__title-wrapper {
-  margin-top: var(--dj-header-space) !important;
+  margin-top: var(--nova-header-space) !important;
   margin-bottom: 0 !important;
 }
 
@@ -467,7 +467,7 @@ main.super-content {
    -------------------------------------------------------------------------- */
 @media all and (max-width: 768px) {
   :root {
-    --dj-mobile-header-space: 0;    /* space above page content */
+    --nova-mobile-header-space: 0;    /* space above page content */
     /* Header min-height on phones — ONE value for every page type.
        The desktop value (60px) exists so coverless pages don't collapse
        to nothing. On a phone that 60px just reserved empty space above
@@ -479,7 +479,7 @@ main.super-content {
 
        Raise this and every page moves together, so the cadence across
        the site holds at any value. */
-    --dj-mobile-header-min-height: 0px;
+    --nova-mobile-header-min-height: 0px;
 
     /* hero cover height on phones. 100vh on iOS resolves to the
        LARGE viewport — the height the page would have if Safari's URL
@@ -488,24 +488,24 @@ main.super-content {
        fold until the bar hides. 100svh is the SMALL viewport: always
        the area actually visible with browser chrome showing. The vh
        line first is a fallback for anything that doesn't know svh. */
-    --dj-mobile-cover-height: 100vh;
-    --dj-mobile-cover-height: 100svh;
-    --dj-mobile-cover-opacity: .75; /* 1 = full strength */
+    --nova-mobile-cover-height: 100vh;
+    --nova-mobile-cover-height: 100svh;
+    --nova-mobile-cover-opacity: .75; /* 1 = full strength */
   }
 
   .notion-header,
   .notion-header.page,
   .notion-header[class*="has-icon"],
   .notion-header__title-wrapper {
-    margin-top: var(--dj-mobile-header-space) !important;
-    padding-top: var(--dj-mobile-header-space) !important;
-    min-height: var(--dj-mobile-header-min-height) !important;
+    margin-top: var(--nova-mobile-header-space) !important;
+    padding-top: var(--nova-mobile-header-space) !important;
+    min-height: var(--nova-mobile-header-min-height) !important;
   }
 
   .notion-header__cover.has-cover {
-    height: calc(var(--dj-mobile-cover-height) + var(--dj-nav-height)) !important;
-    max-height: calc(var(--dj-mobile-cover-height) + var(--dj-nav-height)) !important;
-    opacity: var(--dj-mobile-cover-opacity) !important;
+    height: calc(var(--nova-mobile-cover-height) + var(--nova-nav-height)) !important;
+    max-height: calc(var(--nova-mobile-cover-height) + var(--nova-nav-height)) !important;
+    opacity: var(--nova-mobile-cover-opacity) !important;
   }
 
   .notion-header__cover-image {
@@ -520,7 +520,7 @@ main.super-content {
   .notion-header__cover.has-cover,
   .notion-header__cover.has-cover.has-icon,
   .notion-header__cover.has-cover.has-icon-image {
-    top: calc(-1 * var(--dj-nav-height)) !important;
+    top: calc(-1 * var(--nova-nav-height)) !important;
   }
 }
 
@@ -557,7 +557,7 @@ main.super-content {
    /stories/color-grading-tips-for-beginners:
 
    1. THE GAP. A coverless page still renders .notion-header, which
-      this file gives a min-height (--dj-header-min-height) so pages
+      this file gives a min-height (--nova-header-min-height) so pages
       without covers don't collapse. Plus the image block's own 8px top margin, the image
       started at y=160 while the navbar ends at y=92. The pull below
       removes exactly the header's height.
@@ -572,7 +572,7 @@ main.super-content {
       100vw element overflows the page by the scrollbar's width and
       gets clipped — cropping a sliver off each side. CSS can't
       measure a scrollbar, so 05-navbar-scroll.js publishes it as
-      --dj-scrollbar and we subtract it. If that script doesn't run,
+      --nova-scrollbar and we subtract it. If that script doesn't run,
       the fallback of 0px gives ordinary 100vw behavior.
 
    3. MOBILE SCALING. The image rendered 979x742 where its natural
@@ -588,23 +588,23 @@ main.super-content {
   /* Derived from the header's min-height, so these can no longer
      drift apart — the hero pull must cancel exactly the space the
      header reserves, or the image leaves a gap or overlaps. */
-  --dj-hero-pull: var(--dj-header-min-height);
+  --nova-hero-pull: var(--nova-header-min-height);
   /* auto = keep the image's own proportions (recommended).
      Set a value like 70vh to crop to a fixed hero height instead. */
-  --dj-hero-height: auto;
-  /* Width of the viewport minus the scrollbar. --dj-scrollbar is set
+  --nova-hero-height: auto;
+  /* Width of the viewport minus the scrollbar. --nova-scrollbar is set
      by 05-navbar-scroll.js; the 0px fallback is plain 100vw. */
-  --dj-bleed-width: calc(100vw - var(--dj-scrollbar, 0px));
+  --nova-bleed-width: calc(100vw - var(--nova-scrollbar, 0px));
 }
 
 /* MOBILE PULL — MUST STAY AFTER THE :root BLOCK ABOVE.
-   --dj-hero-pull cancels the space .notion-header reserves, so a
+   --nova-hero-pull cancels the space .notion-header reserves, so a
    coverless page's first full-width image starts flush under the
    navbar. Desktop reserves 30px; mobile reserves 0.
 
    CONFIRMED by measuring the live page at 420px wide: an override
    placed in the mobile section earlier in this file had NO EFFECT —
-   --dj-hero-pull still computed to 30px. A media query adds nothing to
+   --nova-hero-pull still computed to 30px. A media query adds nothing to
    specificity, so between two :root declarations the one LATER IN THE
    FILE wins at every viewport. The mobile block sits above the :root
    block that defines the desktop value, so it was being overwritten.
@@ -614,30 +614,30 @@ main.super-content {
    the image rides up into the navbar, level with the logo. */
 @media all and (max-width: 768px) {
   :root {
-    --dj-hero-pull: var(--dj-mobile-header-min-height);
+    --nova-hero-pull: var(--nova-mobile-header-min-height);
   }
 }
 
 .notion-root > .notion-image.full-width:first-child {
-  margin-top: calc(-1 * var(--dj-hero-pull)) !important;
+  margin-top: calc(-1 * var(--nova-hero-pull)) !important;
   margin-bottom: 0 !important;
   /* Escape .notion-root's padding and max-width. The left margin is
      half the difference between the full bleed width and this
      element's own containing block, which pulls it back to the
      viewport's left edge at any screen size. */
-  width: var(--dj-bleed-width) !important;
-  max-width: var(--dj-bleed-width) !important;
-  margin-left: calc((100% - var(--dj-bleed-width)) / 2) !important;
-  margin-right: calc((100% - var(--dj-bleed-width)) / 2) !important;
+  width: var(--nova-bleed-width) !important;
+  max-width: var(--nova-bleed-width) !important;
+  margin-left: calc((100% - var(--nova-bleed-width)) / 2) !important;
+  margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
 }
 
 .notion-root > .notion-image.full-width:first-child img {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
-  height: var(--dj-hero-height) !important;
+  height: var(--nova-hero-height) !important;
   max-height: none !important;
-  /* Only meaningful when --dj-hero-height is NOT auto; ignored otherwise. */
+  /* Only meaningful when --nova-hero-height is NOT auto; ignored otherwise. */
   object-fit: cover !important;
   object-position: center !important;
   /* A hero is the page's own edge — no hairline, no rounded corners. */
@@ -674,16 +674,16 @@ main.super-content {
    -------------------------------------------------------------------------- */
 @media all and (max-width: 768px) {
   :root {
-    --dj-mobile-hero-space-above: 0px;
-    --dj-mobile-hero-space-below: .5rem;
+    --nova-mobile-hero-space-above: 0px;
+    --nova-mobile-hero-space-below: .5rem;
   }
 
   /* Collapse the three stacked sources of padding Super puts here:
      the column's own 12px, the image block's margin, and the row gap. */
   .notion-column-list:has(h1.notion-heading) {
-    margin-top: var(--dj-mobile-hero-space-above) !important;
+    margin-top: var(--nova-mobile-hero-space-above) !important;
     padding-top: 0 !important;
-    row-gap: var(--dj-mobile-hero-space-below) !important;
+    row-gap: var(--nova-mobile-hero-space-below) !important;
   }
 
   .notion-column-list:has(h1.notion-heading) .notion-column {
