@@ -348,11 +348,29 @@ main.super-content {
    site's other buttons, since Super's own default here isn't visible
    to check against.
    -------------------------------------------------------------------------- */
+:root {
+  /* Overall size of a Notion button block, as a multiplier. 1 = the
+     size it was before this dial existed. 1.2 makes it 20% larger so
+     it reads clearly as the heaviest button on the page, a step above
+     a filled text button.
+
+     Scales font size AND padding together, so proportions stay
+     identical at any value — only the whole thing gets bigger.
+
+     MEASURED BASE VALUES: Super renders this button at 1.15em
+     (18.4px against the 16px body) with 11px 20px padding. Those are
+     the numbers the multiplier is applied to below. */
+  --nova-button-scale: 1.2;
+}
+
 .notion-button__content {
-  /* Midpoint between the native button's original 14px 28px and the
-     text-link pill's 8px 12px, to bring their proportions closer
-     together. */
-  padding: 11px 20px !important;
+  /* Padding only. The FONT SIZE half of this scale lives in
+     03-text-treatment.css, which sets .notion-button__content's
+     font-size and loads after this file — a font-size declared here
+     could never win, however !important it was. Both halves read the
+     same --nova-button-scale, so they stay in step. */
+  padding: calc(11px * var(--nova-button-scale))
+           calc(20px * var(--nova-button-scale)) !important;
   border-radius: var(--cta-border-radii) !important;
 }
 
