@@ -1,5 +1,5 @@
 /* ==========================================================================
-   00-base-theme.css — Horizon theme (stock), for DJCarey.com
+   00-base-theme.css — Horizon theme (stock), base layer for Nova
    This is the official Horizon theme, formatted for readability, with
    ONE deliberate change from stock: in section 6, ".notion-header" is
    no longer hidden on the homepage (#page-index) — stock Horizon hid
@@ -79,25 +79,25 @@ h1.notion-heading {
   --cta-border-radii: 40px !important;
 
   /* Strength settings — the ONLY place transparency amounts live. */
-  --dj-overlay-strength: 5%;   /* toggles, code blocks, dropdown active */
-  --dj-lightbox-strength: 80%; /* lightbox backdrop */
-  --dj-card-strength: 60%;     /* gallery card content backing */
+  --nova-overlay-strength: 5%;   /* toggles, code blocks, dropdown active */
+  --nova-lightbox-strength: 80%; /* lightbox backdrop */
+  --nova-card-strength: 60%;     /* gallery card content backing */
 
   /* Low-opacity wash of the text color: white-ish in dark mode,
      near-black in light mode — automatically, from Super's Text color.
      It tints whatever sits behind it (e.g. full-width colored sections)
      instead of covering it flat. */
-  --dj-translucent-overlay: color-mix(in srgb, var(--color-text-default) var(--dj-overlay-strength), transparent) !important;
-  --dj-toggle-hover-bg: var(--dj-translucent-overlay) !important;
-  --color-code-bg: var(--dj-translucent-overlay) !important;
-  --dj-lightbox-bg: color-mix(in srgb, var(--color-bg-default) var(--dj-lightbox-strength), transparent) !important;
-  --card-content-bg-color: color-mix(in srgb, var(--color-bg-default) var(--dj-card-strength), transparent) !important;
+  --nova-translucent-overlay: color-mix(in srgb, var(--color-text-default) var(--nova-overlay-strength), transparent) !important;
+  --nova-toggle-hover-bg: var(--nova-translucent-overlay) !important;
+  --color-code-bg: var(--nova-translucent-overlay) !important;
+  --nova-lightbox-bg: color-mix(in srgb, var(--color-bg-default) var(--nova-lightbox-strength), transparent) !important;
+  --card-content-bg-color: color-mix(in srgb, var(--color-bg-default) var(--nova-card-strength), transparent) !important;
 
   /* Text sitting on a colored fill (pill hover, colored buttons):
      page-background color, i.e. dark text in dark mode, white text in
      light mode. Swap to var(--color-text-default) to invert that. */
-  --dj-pill-hover-text: var(--color-bg-default) !important;
-  --dj-on-color-text: var(--color-bg-default) !important;
+  --nova-pill-hover-text: var(--color-bg-default) !important;
+  --nova-on-color-text: var(--color-bg-default) !important;
 
   /* Native button, default (no color assigned): outlined in the page
      colors at rest, fully inverted on hover. Same logic in both
@@ -632,7 +632,7 @@ h3.notion-heading * {
 .notion-root .notion-text strong .notion-link:hover {
   color: inherit !important;
   background: currentColor !important;
-  -webkit-text-fill-color: var(--dj-pill-hover-text) !important;
+  -webkit-text-fill-color: var(--nova-pill-hover-text) !important;
   opacity: 1 !important;
 }
 
@@ -641,7 +641,7 @@ h3.notion-heading * {
    -------------------------------------------------------------------------- */
 .notion-toggle.open,
 .notion-toggle:hover {
-  background: var(--dj-toggle-hover-bg) !important;
+  background: var(--nova-toggle-hover-bg) !important;
 }
 
 /* Toggle wrapper background: strip any leftover Notion bg-color
@@ -887,7 +887,7 @@ h3.notion-heading * {
   }
 
   .notion-dropdown__option.active {
-    background: var(--dj-translucent-overlay) !important;
+    background: var(--nova-translucent-overlay) !important;
     border: 1px solid transparent !important;
   }
 }
@@ -999,7 +999,7 @@ h3.notion-heading * {
   align-items: center;
   margin: 20px;
   font-size: 2rem;
-  background: var(--dj-lightbox-bg);
+  background: var(--nova-lightbox-bg);
   border: 1px solid var(--color-border-default);
   color: var(--color-text-default);
   border-radius: 500px;
