@@ -301,20 +301,24 @@ html.theme-dark {
    Navbar links — dim the unselected ones
    Super's Navbar › Text color is now pure white (dark) / black (light).
    Rather than leaving Super's own dimming in place, every link is set
-   to 70% of that color, and the CURRENT page's link gets the full
-   strength — so the selected page still reads as selected, with a
-   cleaner contrast between the two states.
+   to a fraction of that color, and the CURRENT page's link gets full
+   strength.
 
    Uses color-mix rather than opacity so only the text dims, not any
    background or border a link might carry. Hover brings a link to
    full strength too, as a hint that it's clickable.
 
-   The "current page" selector lists several possibilities, because
-   Super's own class for it hasn't been confirmed by Inspect yet —
-   unmatched ones are simply ignored, so this is safe either way.
+   Was 60%, which disappeared over full-bleed background imagery.
+   Raised to 80% — roughly halfway to full — so unselected links stay
+   legible over a photo while the selected one still reads as selected.
+
+   CONFIRMED via Inspect: Super marks the current page with .active on
+   .super-navbar__item. The earlier speculative selectors (.selected,
+   [aria-current], [data-active]) never matched anything and have been
+   removed.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-navbar-item-dim: 60%;
+  --dj-navbar-item-dim: 80%;
 }
 
 .super-navbar__item-list .super-navbar__item {
@@ -323,10 +327,7 @@ html.theme-dark {
 
 .super-navbar__item-list .super-navbar__item:hover,
 .super-navbar__item-list .super-navbar__item:focus-visible,
-.super-navbar__item-list .super-navbar__item.active,
-.super-navbar__item-list .super-navbar__item.selected,
-.super-navbar__item-list .super-navbar__item[aria-current],
-.super-navbar__item-list .super-navbar__item[data-active="true"] {
+.super-navbar__item-list .super-navbar__item.active {
   color: var(--navbar-text-color) !important;
 }
 
@@ -680,15 +681,55 @@ html:has(.super-navbar__menu) .super-navbar {
   --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
 }
 
+/* The edge is an INSET BOX-SHADOW, not a border. A border adds to an
+   element's box, so a navbar item that only has one in some states
+   renders larger in those states and knocks the row out of alignment.
+   An inset shadow paints inside the existing box and changes no
+   geometry, so the item is identical in size whatever state it's in. */
 .super-navbar__item-list .super-navbar__item:hover,
 .super-navbar__theme-toggle:hover {
   background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
+  border: none !important;
 }
 
 /* CTA keeps its solid border (set above); only the fill changes. */
 .super-navbar__cta:hover {
   background: color-mix(in srgb, var(--color-text-default) var(--dj-cta-hover-bg), transparent) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Current page — holds the hover treatment permanently
+   The only thing marking the current page used to be a text-opacity
+   difference, too subtle to read at a glance and invisible over busy
+   imagery. The current page now keeps the pill — wash, edge and
+   full-strength text — so the navbar itself says where you are.
+
+   SAME INSET-SHADOW APPROACH as the hover rule above, and for the same
+   reason: a real border would make the selected item 2px bigger than
+   its neighbours and misalign the whole row. An earlier version of
+   this rule used a border and did exactly that.
+
+   DELIBERATELY INERT ON HOVER: this sits after the :hover rule and
+   matches at the same specificity, so hovering the current page
+   changes nothing. You're already there.
+
+   Its dials are separate from the hover dials and set slightly
+   stronger, because a persistent state competes with background
+   imagery in a way a transient hover doesn't. Set them equal to the
+   hover values (12% / 25%) if you'd rather the two match exactly.
+   -------------------------------------------------------------------------- */
+:root {
+  --dj-nav-active-bg: 18%;      /* current-page pill fill */
+  --dj-nav-active-border: 35%;  /* current-page pill edge */
+}
+
+.super-navbar__item-list .super-navbar__item.active,
+.super-navbar__item-list .super-navbar__item.active:hover {
+  color: var(--navbar-text-color) !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-bg), transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-border), transparent) !important;
+  border: none !important;
 }
 
 /* --------------------------------------------------------------------------
