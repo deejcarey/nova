@@ -230,3 +230,39 @@ h4.notion-heading {
 .notion-collection-card .notion-collection-card__property .notion-text__content {
   line-height: var(--nova-card-line-height) !important;
 }
+
+
+/* --------------------------------------------------------------------------
+   Text link underlines — offset & color
+   CONFIRMED via Inspect: Notion sets the underline 2px below the
+   baseline and paints it rgb(242,242,242), while the link text itself
+   is rgb(240,240,240) — close enough to look like a mistake rather
+   than a choice, and tight enough that descenders (g, y, p) collide
+   with the line.
+
+   currentColor ties the underline to whatever color the link actually
+   is, including any Notion color applied to it, so the two can never
+   drift apart again.
+
+   WHY BOTH LIVE HERE rather than the color going in 02-design.css:
+   they are two halves of one declaration on one element, and the
+   button scale earlier in this project showed what happens when a
+   single visual property gets split across files that load in a fixed
+   order. An underline is text treatment; it belongs in the text file.
+
+   Buttons are unaffected — they already carry text-decoration: none,
+   so these two properties have no line to act on.
+
+   THE DIAL: distance between the text baseline and the line. 2px is
+   Notion's default; 4px clears most descenders.
+   -------------------------------------------------------------------------- */
+:root {
+  --nova-link-underline-offset: 4px;
+}
+
+.notion-root .notion-text a.notion-link,
+.notion-root .notion-semantic-string a.notion-link,
+.notion-root a.notion-link.link {
+  text-underline-offset: var(--nova-link-underline-offset) !important;
+  text-decoration-color: currentColor !important;
+}
