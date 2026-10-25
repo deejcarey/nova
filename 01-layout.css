@@ -460,22 +460,6 @@ main.super-content {
        the site holds at any value. */
     --dj-mobile-header-min-height: 0px;
 
-    /* Keep the full-width hero's pull matched to the header space on
-       phones too.
-
-       --dj-hero-pull exists to cancel the space .notion-header
-       reserves, so a coverless page's first full-width image starts
-       flush under the navbar. It derives from --dj-header-min-height,
-       which is the DESKTOP value (30px) — but mobile reserves 0px
-       here, so without this line there were 30px of pull against 0px
-       of space and the image rode up 30px INTO the navbar, landing
-       level with the logo.
-
-       Pointing it at the mobile value keeps the same single mechanism
-       working at both sizes: pull always equals reserved space, so the
-       image is always flush. Nothing else is needed — no extra margin
-       or padding rule. */
-    --dj-hero-pull: var(--dj-mobile-header-min-height);
     /* hero cover height on phones. 100vh on iOS resolves to the
        LARGE viewport — the height the page would have if Safari's URL
        bar were already collapsed — so on load the cover is sized
@@ -590,6 +574,27 @@ main.super-content {
   /* Width of the viewport minus the scrollbar. --dj-scrollbar is set
      by 05-navbar-scroll.js; the 0px fallback is plain 100vw. */
   --dj-bleed-width: calc(100vw - var(--dj-scrollbar, 0px));
+}
+
+/* MOBILE PULL — MUST STAY AFTER THE :root BLOCK ABOVE.
+   --dj-hero-pull cancels the space .notion-header reserves, so a
+   coverless page's first full-width image starts flush under the
+   navbar. Desktop reserves 30px; mobile reserves 0.
+
+   CONFIRMED by measuring the live page at 420px wide: an override
+   placed in the mobile section earlier in this file had NO EFFECT —
+   --dj-hero-pull still computed to 30px. A media query adds nothing to
+   specificity, so between two :root declarations the one LATER IN THE
+   FILE wins at every viewport. The mobile block sits above the :root
+   block that defines the desktop value, so it was being overwritten.
+
+   Declared here, after it, this one wins on phones. Keep it last.
+   Without it there are 30px of pull against 0px of reserved space and
+   the image rides up into the navbar, level with the logo. */
+@media all and (max-width: 768px) {
+  :root {
+    --dj-hero-pull: var(--dj-mobile-header-min-height);
+  }
 }
 
 .notion-root > .notion-image.full-width:first-child {
