@@ -681,16 +681,22 @@ html:has(.super-navbar__menu) .super-navbar {
   --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
 }
 
-/* The edge is an INSET BOX-SHADOW, not a border. A border adds to an
-   element's box, so a navbar item that only has one in some states
-   renders larger in those states and knocks the row out of alignment.
-   An inset shadow paints inside the existing box and changes no
-   geometry, so the item is identical in size whatever state it's in. */
+/* The edge is an INSET BOX-SHADOW, not a border, and the border
+   property is NOT TOUCHED here — both details matter.
+
+   Super already gives every navbar item a 1px transparent border. The
+   original rule painted that border on hover, which kept the box the
+   same size. Replacing it with `border: none` REMOVED those 2px, so
+   items shrank on hover and the row jumped sideways under the cursor.
+
+   Leaving border alone keeps Super's transparent 1px in place in every
+   state, and the inset shadow paints the visible edge inside the
+   existing box. Nothing changes size, so nothing moves. Do not add a
+   border declaration to these rules. */
 .super-navbar__item-list .super-navbar__item:hover,
 .super-navbar__theme-toggle:hover {
   background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
-  border: none !important;
 }
 
 /* CTA keeps its solid border (set above); only the fill changes. */
@@ -705,10 +711,11 @@ html:has(.super-navbar__menu) .super-navbar {
    imagery. The current page now keeps the pill — wash, edge and
    full-strength text — so the navbar itself says where you are.
 
-   SAME INSET-SHADOW APPROACH as the hover rule above, and for the same
-   reason: a real border would make the selected item 2px bigger than
-   its neighbours and misalign the whole row. An earlier version of
-   this rule used a border and did exactly that.
+   SAME INSET-SHADOW APPROACH as the hover rule above, and the border
+   property is left alone here for the same reason — see the note
+   there. Two earlier versions of this rule got that wrong in opposite
+   directions: one added a border (selected item 2px too big), the next
+   set border: none (hovered item 2px too small).
 
    DELIBERATELY INERT ON HOVER: this sits after the :hover rule and
    matches at the same specificity, so hovering the current page
@@ -729,7 +736,6 @@ html:has(.super-navbar__menu) .super-navbar {
   color: var(--navbar-text-color) !important;
   background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-bg), transparent) !important;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-border), transparent) !important;
-  border: none !important;
 }
 
 /* --------------------------------------------------------------------------
