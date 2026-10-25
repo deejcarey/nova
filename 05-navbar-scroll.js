@@ -1,6 +1,6 @@
 /* ==========================================================================
    05-navbar-scroll.js — tells the CSS whether the page is scrolled
-   Sets data-dj-nav="top" or "scrolled" on the <html> element. All the
+   Sets data-nova-nav="top" or "scrolled" on the <html> element. All the
    visual behavior lives in 02-design.css; this file only sets the label.
    Uses a data attribute rather than a class on purpose: Super/Next.js
    manages <html>'s classes (e.g. theme-dark), and could wipe ours.
@@ -11,7 +11,7 @@
    being removed and puts it straight back, and re-checks once the page
    has fully loaded.
 
-   v3: also publishes --dj-scrollbar, the width of the vertical
+   v3: also publishes --nova-scrollbar, the width of the vertical
    scrollbar, on <html>. CSS has no way to measure that, and 100vw
    INCLUDES it — so a full-bleed element sized at 100vw overflows the
    page by exactly the scrollbar's width. The full-width hero image
@@ -47,8 +47,8 @@
     var state = scrollPosition() > THRESHOLD ? 'scrolled' : 'top';
     // Only writes when the value actually differs, so the watcher
     // below never triggers itself in a loop.
-    if (root.getAttribute('data-dj-nav') !== state) {
-      root.setAttribute('data-dj-nav', state);
+    if (root.getAttribute('data-nova-nav') !== state) {
+      root.setAttribute('data-nova-nav', state);
     }
   }
 
@@ -56,7 +56,7 @@
   // measures) and the document's visible area (which content fills).
   function measureScrollbar() {
     var w = window.innerWidth - root.clientWidth;
-    root.style.setProperty('--dj-scrollbar', (w > 0 ? w : 0) + 'px');
+    root.style.setProperty('--nova-scrollbar', (w > 0 ? w : 0) + 'px');
   }
   measureScrollbar();
   window.addEventListener('resize', measureScrollbar, { passive: true });
@@ -80,7 +80,7 @@
   // Watch the label: if anything removes or changes it, restore it.
   new MutationObserver(update).observe(root, {
     attributes: true,
-    attributeFilter: ['data-dj-nav']
+    attributeFilter: ['data-nova-nav']
   });
 
   update();
@@ -94,7 +94,7 @@
      /workshop. The logo (href="/") and any absolute/external link are
      skipped, since "/" is a prefix of everything.
 
-     Items we mark are tagged data-dj-section-active so they can be
+     Items we mark are tagged data-nova-section-active so they can be
      un-marked on navigation without disturbing an .active class Super
      set itself.
 
@@ -112,10 +112,10 @@
   }
 
   function clearOurMarks() {
-    var marked = document.querySelectorAll('[data-dj-section-active]');
+    var marked = document.querySelectorAll('[data-nova-section-active]');
     for (var i = 0; i < marked.length; i++) {
       marked[i].classList.remove('active');
-      marked[i].removeAttribute('data-dj-section-active');
+      marked[i].removeAttribute('data-nova-section-active');
     }
   }
 
@@ -147,7 +147,7 @@
       if (path === href || path.indexOf(href + '/') === 0) {
         if (!el.classList.contains('active')) {
           el.classList.add('active');
-          el.setAttribute('data-dj-section-active', '');
+          el.setAttribute('data-nova-section-active', '');
         }
       }
     }
