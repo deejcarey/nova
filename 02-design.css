@@ -233,12 +233,17 @@ html.theme-dark {
    family), NOT the color- classes text uses. See handoff gotcha #4.
    -------------------------------------------------------------------------- */
 
-/* Default button (no color assigned): outlined in page colors.
-   Values defined once in 00-base-theme.css, section 3. */
+/* Default button (no color assigned): FILLED in page colors — solid
+   white in dark mode, solid black in light — so it reads as the same
+   weight of button as a colored one rather than dropping to an
+   outline. Matches an uncolored bold text link exactly; the two are
+   the same button at two sizes.
+
+   Its hover is further down, with the other uncolored-button hovers. */
 .notion-button__content:not([class*="bg-"]) {
-  background: var(--cta-bg-color) !important;
-  border: 1px solid var(--cta-text-color) !important;
-  -webkit-text-fill-color: var(--cta-text-color) !important;
+  background: var(--color-text-default) !important;
+  border-color: transparent !important;
+  -webkit-text-fill-color: var(--color-bg-default) !important;
 }
 
 /* Colored buttons: fill from Super's Forms pickers. */
@@ -257,13 +262,27 @@ html.theme-dark {
 .notion-button__content[class*="bg-pink"]   { background: var(--color-bg-form-btn-pink) !important; }
 .notion-button__content[class*="bg-red"]    { background: var(--color-bg-form-btn-red) !important; }
 
-/* Hover, every button: fully inverted page colors (white-on-black in
-   dark mode, black-on-white in light). Listed after the color rules
-   and with :hover, so it wins over them. */
+/* Hover, COLORED buttons: fully inverted page colors (white-on-black
+   in dark mode, black-on-white in light). Listed after the color
+   rules and with :hover, so it wins over them. */
 .notion-button__content:hover,
 .notion-button__content[class*="bg-"]:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
+}
+
+/* Hover, UNCOLORED buttons: the navbar CTA treatment — outlined with
+   a semi-transparent wash — through the same --nova-cta-hover-bg dial
+   used by the CTA and by uncolored bold text links.
+
+   Needed because an uncolored button is already white in dark mode,
+   so the inverted hover above would leave it looking unchanged and
+   give no feedback. The :not() carries the extra specificity that
+   beats the rule above without depending on source order. */
+.notion-button__content:not([class*="bg-"]):hover {
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-cta-hover-bg), transparent) !important;
+  border: 1px solid var(--color-text-default) !important;
+  -webkit-text-fill-color: var(--color-text-default) !important;
 }
 
 /* --------------------------------------------------------------------------
