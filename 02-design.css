@@ -37,7 +37,7 @@
    Navbar › Background, as an 8-digit hex (e.g. #11111126). This file
    adds the blur, and the "invisible at the top" behavior.
 
-   Scroll: 05-navbar-scroll.js labels the page data-dj-nav="top" or
+   Scroll: 05-navbar-scroll.js labels the page data-nova-nav="top" or
    "scrolled". At the top, the navbar goes fully invisible (no tint,
    no blur); once scrolled, Super's tint + the blur fade in, and fade
    back out on return to the top. If the script fails to load, the
@@ -49,14 +49,14 @@
    this known-good version. Worth revisiting later if wanted.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-navbar-blur: 48px;
-  --dj-navbar-fade: .35s;   /* how long the fade in/out takes */
+  --nova-navbar-blur: 48px;
+  --nova-navbar-fade: .35s;   /* how long the fade in/out takes */
 }
 
 .super-navbar {
   background: var(--navbar-background-color) !important;
-  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  backdrop-filter: blur(var(--nova-navbar-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--nova-navbar-blur)) !important;
   border: none !important;
   box-shadow: none !important;
 }
@@ -66,15 +66,15 @@
 
 .super-navbar {
   transition:
-    background var(--dj-navbar-fade) ease,
-    backdrop-filter var(--dj-navbar-fade) ease,
-    -webkit-backdrop-filter var(--dj-navbar-fade) ease !important;
+    background var(--nova-navbar-fade) ease,
+    backdrop-filter var(--nova-navbar-fade) ease,
+    -webkit-backdrop-filter var(--nova-navbar-fade) ease !important;
 }
 
 /* At the top of the page: fully invisible. Only the bar itself — the
    mobile dropdown menu keeps its tint + blur so its links stay
    readable over the hero. */
-html[data-dj-nav="top"] .super-navbar {
+html[data-nova-nav="top"] .super-navbar {
   background: transparent !important;
   backdrop-filter: blur(0px) !important;
   -webkit-backdrop-filter: blur(0px) !important;
@@ -108,56 +108,56 @@ html[data-dj-nav="top"] .super-navbar {
    treatment, tuned separately at the bottom of this section.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-section-fill-light: 15%;    /* light mode background richness */
-  --dj-section-fill-dark: 15%;     /* dark mode background richness */
-  --dj-section-stroke-light: 45%;  /* light mode outline strength */
-  --dj-section-stroke-dark: 45%;   /* dark mode outline strength */
+  --nova-section-fill-light: 15%;    /* light mode background richness */
+  --nova-section-fill-dark: 15%;     /* dark mode background richness */
+  --nova-section-stroke-light: 45%;  /* light mode outline strength */
+  --nova-section-stroke-dark: 45%;   /* dark mode outline strength */
 }
 
 /* Wiring — picks the right pair for the active mode. No numbers here. */
 html.theme-light {
-  --dj-section-strength: var(--dj-section-fill-light);
-  --dj-section-stroke-strength: var(--dj-section-stroke-light);
+  --nova-section-strength: var(--nova-section-fill-light);
+  --nova-section-stroke-strength: var(--nova-section-stroke-light);
 }
 
 html.theme-dark {
-  --dj-section-strength: var(--dj-section-fill-dark);
-  --dj-section-stroke-strength: var(--dj-section-stroke-dark);
+  --nova-section-strength: var(--nova-section-fill-dark);
+  --nova-section-stroke-strength: var(--nova-section-stroke-dark);
 }
 
 .notion-callout[class*="bg-orange"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-yellow"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-green"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-blue"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-purple"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-pink"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 .notion-callout[class*="bg-red"] {
-  background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-strength), var(--color-bg-default)) !important;
-  border-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--dj-section-stroke-strength), var(--color-bg-default)) !important;
+  background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--nova-section-strength), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
 
 /* Gray — neutral, built from Super's Text color rather than a hue, so
@@ -168,7 +168,7 @@ html.theme-dark {
 }
 
 .notion-callout[class*="bg-gray"] {
-  border-color: color-mix(in srgb, var(--color-text-default) calc(var(--dj-section-stroke-strength) / 3), var(--color-bg-default)) !important;
+  border-color: color-mix(in srgb, var(--color-text-default) calc(var(--nova-section-stroke-strength) / 3), var(--color-bg-default)) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -244,7 +244,7 @@ html.theme-dark {
 /* Colored buttons: fill from Super's Forms pickers. */
 .notion-button__content[class*="bg-"] {
   border: none !important;
-  -webkit-text-fill-color: var(--dj-on-color-text) !important;
+  -webkit-text-fill-color: var(--nova-on-color-text) !important;
 }
 
 .notion-button__content[class*="bg-gray"]   { background: var(--color-bg-form-btn-gray) !important; }
@@ -288,13 +288,13 @@ html.theme-dark {
    Database list items — hover background
    Super's own hover is a solid gray (Super's card/hover background),
    which sits flat on top of colored full-width sections. This uses the
-   same translucent wash as toggles (--dj-toggle-hover-bg, defined in
+   same translucent wash as toggles (--nova-toggle-hover-bg, defined in
    00-base-theme.css section 3), so it tints whatever is behind it.
    Tied to the toggle variable on purpose: change the strength there
    and toggles + list rows stay matched.
    -------------------------------------------------------------------------- */
 .notion-collection-list__item:hover {
-  background: var(--dj-toggle-hover-bg) !important;
+  background: var(--nova-toggle-hover-bg) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -318,11 +318,11 @@ html.theme-dark {
    removed.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-navbar-item-dim: 80%;
+  --nova-navbar-item-dim: 80%;
 }
 
 .super-navbar__item-list .super-navbar__item {
-  color: color-mix(in srgb, var(--navbar-text-color) var(--dj-navbar-item-dim), transparent) !important;
+  color: color-mix(in srgb, var(--navbar-text-color) var(--nova-navbar-item-dim), transparent) !important;
 }
 
 .super-navbar__item-list .super-navbar__item:hover,
@@ -351,23 +351,23 @@ html.theme-dark {
       the whole screen instead of dropping partway down.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-mobile-menu-opacity: 97%;      /* 100% = fully solid */
-  --dj-mobile-menu-item-size: 1.75rem;/* link size in the open menu */
-  --dj-mobile-menu-item-weight: 700; /* 400 regular, 500 medium, 700 bold */
-  --dj-mobile-menu-item-gap: .25rem;  /* vertical space between links */
-  --dj-mobile-menu-item-padding: .5rem 1rem; /* space inside each link row */
-  --dj-mobile-menu-top-offset: .5rem; /* gap between navbar and first link */
+  --nova-mobile-menu-opacity: 97%;      /* 100% = fully solid */
+  --nova-mobile-menu-item-size: 1.75rem;/* link size in the open menu */
+  --nova-mobile-menu-item-weight: 700; /* 400 regular, 500 medium, 700 bold */
+  --nova-mobile-menu-item-gap: .25rem;  /* vertical space between links */
+  --nova-mobile-menu-item-padding: .5rem 1rem; /* space inside each link row */
+  --nova-mobile-menu-top-offset: .5rem; /* gap between navbar and first link */
   /* Space reserved at the top of the panel. Was var(--navbar-height);
      now a third of that, moving the menu up ~2/3. Raise it if the
      links tuck under the navbar. */
-  --dj-mobile-menu-panel-top: var(--navbar-height);
-  --dj-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
+  --nova-mobile-menu-panel-top: var(--navbar-height);
+  --nova-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
 
 .super-navbar__menu {
-  background: color-mix(in srgb, var(--color-bg-default) var(--dj-mobile-menu-opacity), transparent) !important;
-  backdrop-filter: blur(var(--dj-navbar-blur)) !important;
-  -webkit-backdrop-filter: blur(var(--dj-navbar-blur)) !important;
+  background: color-mix(in srgb, var(--color-bg-default) var(--nova-mobile-menu-opacity), transparent) !important;
+  backdrop-filter: blur(var(--nova-navbar-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--nova-navbar-blur)) !important;
   border: none !important;
   box-shadow: none !important;
 
@@ -378,7 +378,7 @@ html.theme-dark {
   inset: 0 !important;
   height: 100dvh !important;
   max-height: none !important;
-  padding-top: var(--dj-mobile-menu-panel-top) !important;
+  padding-top: var(--nova-mobile-menu-panel-top) !important;
   overflow-y: auto !important;
 }
 
@@ -404,17 +404,17 @@ html.theme-dark {
 }
 
 .super-navigation-menu__items {
-  margin-top: var(--dj-mobile-menu-top-offset) !important;
+  margin-top: var(--nova-mobile-menu-top-offset) !important;
   padding-top: 0 !important;
   justify-content: flex-start !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: var(--dj-mobile-menu-item-gap) !important;
+  gap: var(--nova-mobile-menu-item-gap) !important;
 }
 
 .super-navigation-menu__item,
 .super-navigation-menu__item-content {
-  padding: var(--dj-mobile-menu-item-padding) !important;
+  padding: var(--nova-mobile-menu-item-padding) !important;
 }
 
 /* Super's stylesheet gives the menu its own font family, so Inter is
@@ -430,8 +430,8 @@ html.theme-dark {
 .super-navigation-menu__item-title,
 .super-navigation-menu__item .notion-link,
 .super-navbar__menu .super-navbar__item {
-  font-size: var(--dj-mobile-menu-item-size) !important;
-  font-weight: var(--dj-mobile-menu-item-weight) !important;
+  font-size: var(--nova-mobile-menu-item-size) !important;
+  font-weight: var(--nova-mobile-menu-item-weight) !important;
   line-height: 1.2 !important;
 }
 
@@ -440,7 +440,7 @@ html.theme-dark {
 .super-navigation-menu__item:focus-visible,
 .super-navigation-menu__item[data-highlighted],
 .super-navbar__menu .super-navbar__item:hover {
-  background: var(--dj-mobile-menu-hover) !important;
+  background: var(--nova-mobile-menu-hover) !important;
 }
 
 /* Belt and braces: kills the red at the source, in case Super uses it
@@ -448,8 +448,8 @@ html.theme-dark {
 .super-navbar,
 .super-navbar__menu,
 .super-navigation-menu__items-wrapper {
-  --navbar-background-color-hover: var(--dj-mobile-menu-hover) !important;
-  --navbar-list-item-hover: var(--dj-mobile-menu-hover) !important;
+  --navbar-background-color-hover: var(--nova-mobile-menu-hover) !important;
+  --navbar-list-item-hover: var(--nova-mobile-menu-hover) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -469,20 +469,20 @@ html.theme-dark {
      field-strength — how visible the input fields are against it
    -------------------------------------------------------------------------- */
 :root {
-  --dj-form-panel-opacity: 92%;
-  --dj-form-panel-padding: 2rem;
-  --dj-form-field-strength: 6%;
+  --nova-form-panel-opacity: 92%;
+  --nova-form-panel-padding: 2rem;
+  --nova-form-field-strength: 6%;
 }
 
 .notion-form__wrapper {
-  background: color-mix(in srgb, var(--color-bg-default) var(--dj-form-panel-opacity), transparent) !important;
+  background: color-mix(in srgb, var(--color-bg-default) var(--nova-form-panel-opacity), transparent) !important;
   border: 1px solid var(--color-border-default) !important;
   border-radius: var(--border-radii-layout) !important;
-  padding: var(--dj-form-panel-padding) !important;
+  padding: var(--nova-form-panel-padding) !important;
 }
 
 .notion-form__input-field {
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-form-field-strength), transparent) !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-form-field-strength), transparent) !important;
   border: 1px solid var(--color-border-default) !important;
   border-radius: var(--border-radii-layout) !important;
 }
@@ -490,7 +490,7 @@ html.theme-dark {
 /* Focus: strengthen the field so the active one is obvious. */
 .notion-form__input-field:focus,
 .notion-form__input-field:focus-visible {
-  background: color-mix(in srgb, var(--color-text-default) calc(var(--dj-form-field-strength) * 2), transparent) !important;
+  background: color-mix(in srgb, var(--color-text-default) calc(var(--nova-form-field-strength) * 2), transparent) !important;
   border-color: var(--color-text-default) !important;
   outline: none !important;
 }
@@ -566,7 +566,7 @@ html:has(.super-navbar__menu) .super-navbar {
    cards use. Corner radius follows Super › Layout › Rounded Edges.
 
    WHAT'S EXCLUDED: anything 06-lightbox.js has tagged with
-   data-dj-noborder — set by a "-" or "-nb" caption flag, a "-ui" or
+   data-nova-noborder — set by a "-" or "-nb" caption flag, a "-ui" or
    "div-" filename, or simply being under 24px tall. CSS can't read
    caption text, so the script writes that attribute for it; the two
    systems share one flag syntax.
@@ -575,11 +575,11 @@ html:has(.super-navbar__menu) .super-navbar {
    border of their own.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-image-border: 1px solid var(--color-border-default);
+  --nova-image-border: 1px solid var(--color-border-default);
 }
 
-.notion-image:not([data-dj-noborder]) img {
-  border: var(--dj-image-border) !important;
+.notion-image:not([data-nova-noborder]) img {
+  border: var(--nova-image-border) !important;
   border-radius: var(--border-radii-layout) !important;
 }
 
@@ -605,13 +605,13 @@ html:has(.super-navbar__menu) .super-navbar {
    the rest of the palette.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-divider-height: 4px;
+  --nova-divider-height: 4px;
 }
 
 /* Base: every divider, whatever its color. */
 .notion-image:has(img[src*="div-"]) {
-  height: var(--dj-divider-height) !important;
-  min-height: var(--dj-divider-height) !important;
+  height: var(--nova-divider-height) !important;
+  min-height: var(--nova-divider-height) !important;
   width: 100% !important;
   border-radius: 999px !important;
   overflow: hidden !important;
@@ -667,7 +667,7 @@ html:has(.super-navbar__menu) .super-navbar {
    mode, near-black in light, automatically. A border at a higher
    strength gives the hover a defined edge.
 
-   Deliberately separate from --dj-overlay-strength (5%), which stays
+   Deliberately separate from --nova-overlay-strength (5%), which stays
    where it is for toggles, list rows, code blocks and dropdowns.
    The lightbox close button also keeps its solid hover, since it only
    ever sits over a dark backdrop.
@@ -676,9 +676,9 @@ html:has(.super-navbar__menu) .super-navbar {
    changes the fill, and relies on that block for its border.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-nav-hover-bg: 12%;      /* navbar items + theme toggle, fill */
-  --dj-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
-  --dj-cta-hover-bg: 25%;      /* CTA fill on hover */
+  --nova-nav-hover-bg: 12%;      /* navbar items + theme toggle, fill */
+  --nova-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
+  --nova-cta-hover-bg: 25%;      /* CTA fill on hover */
 }
 
 /* The edge is an INSET BOX-SHADOW, not a border, and the border
@@ -695,13 +695,13 @@ html:has(.super-navbar__menu) .super-navbar {
    border declaration to these rules. */
 .super-navbar__item-list .super-navbar__item:hover,
 .super-navbar__theme-toggle:hover {
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-bg), transparent) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-hover-border), transparent) !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-nav-hover-bg), transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--nova-nav-hover-border), transparent) !important;
 }
 
 /* CTA keeps its solid border (set above); only the fill changes. */
 .super-navbar__cta:hover {
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-cta-hover-bg), transparent) !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-cta-hover-bg), transparent) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -727,21 +727,21 @@ html:has(.super-navbar__menu) .super-navbar {
    hover values (12% / 25%) if you'd rather the two match exactly.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-nav-active-bg: 18%;      /* current-page pill fill */
-  --dj-nav-active-border: 35%;  /* current-page pill edge */
+  --nova-nav-active-bg: 18%;      /* current-page pill fill */
+  --nova-nav-active-border: 35%;  /* current-page pill edge */
 }
 
 .super-navbar__item-list .super-navbar__item.active,
 .super-navbar__item-list .super-navbar__item.active:hover {
   color: var(--navbar-text-color) !important;
-  background: color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-bg), transparent) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--dj-nav-active-border), transparent) !important;
+  background: color-mix(in srgb, var(--color-text-default) var(--nova-nav-active-bg), transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--nova-nav-active-border), transparent) !important;
 }
 
 /* --------------------------------------------------------------------------
    Lightbox image — border
    The gallery builds its own <img> inside a dialog, so the page's
-   image border (which keys off data-dj-noborder) never reaches it.
+   image border (which keys off data-nova-noborder) never reaches it.
    Dark images then blend into the dark backdrop with nothing defining
    their edge.
 
@@ -754,11 +754,11 @@ html:has(.super-navbar__menu) .super-navbar {
    over to it.
    -------------------------------------------------------------------------- */
 :root {
-  --dj-lightbox-image-border: 20%;  /* white strength on the edge */
+  --nova-lightbox-image-border: 20%;  /* white strength on the edge */
 }
 
 #super-gallery-lightbox .sg-image {
-  border: 1px solid color-mix(in srgb, #FFFFFF var(--dj-lightbox-image-border), transparent) !important;
+  border: 1px solid color-mix(in srgb, #FFFFFF var(--nova-lightbox-image-border), transparent) !important;
   border-radius: var(--border-radii-layout) !important;
 }
 
@@ -800,14 +800,14 @@ html:has(.super-navbar__menu) .super-navbar {
    (and, on mobile, for the nav buttons that move down to the corners).
    -------------------------------------------------------------------------- */
 :root {
-  --dj-lightbox-caption-size: .95rem;
-  --dj-lightbox-caption-max: 60ch;
-  --dj-lightbox-caption-color: rgba(255, 255, 255, .78);
-  --dj-lightbox-counter-color: rgba(255, 255, 255, .55);
-  --dj-lightbox-gap: .85rem;          /* space between image and caption */
-  --dj-lightbox-pad: 1.25rem;         /* breathing room at the overlay edges */
-  --dj-lightbox-nav-clear: 5.5rem;    /* side space reserved for prev/next */
-  --dj-lightbox-bottom-clear: 3.5rem; /* bottom space reserved for the counter */
+  --nova-lightbox-caption-size: .95rem;
+  --nova-lightbox-caption-max: 60ch;
+  --nova-lightbox-caption-color: rgba(255, 255, 255, .78);
+  --nova-lightbox-counter-color: rgba(255, 255, 255, .55);
+  --nova-lightbox-gap: .85rem;          /* space between image and caption */
+  --nova-lightbox-pad: 1.25rem;         /* breathing room at the overlay edges */
+  --nova-lightbox-nav-clear: 5.5rem;    /* side space reserved for prev/next */
+  --nova-lightbox-bottom-clear: 3.5rem; /* bottom space reserved for the counter */
 }
 
 #super-gallery-lightbox[open] {
@@ -815,12 +815,12 @@ html:has(.super-navbar__menu) .super-navbar {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: var(--dj-lightbox-gap) !important;
+  gap: var(--nova-lightbox-gap) !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
-  padding: var(--dj-lightbox-pad) var(--dj-lightbox-nav-clear)
-           calc(var(--dj-lightbox-bottom-clear) + env(safe-area-inset-bottom))
-           var(--dj-lightbox-nav-clear) !important;
+  padding: var(--nova-lightbox-pad) var(--nova-lightbox-nav-clear)
+           calc(var(--nova-lightbox-bottom-clear) + env(safe-area-inset-bottom))
+           var(--nova-lightbox-nav-clear) !important;
 }
 
 /* The flexible row: shrinks to whatever space the caption leaves. */
@@ -843,11 +843,11 @@ html:has(.super-navbar__menu) .super-navbar {
   right: auto !important;
   bottom: auto !important;
   margin: 0 !important;
-  max-width: min(var(--dj-lightbox-caption-max), 100%) !important;
+  max-width: min(var(--nova-lightbox-caption-max), 100%) !important;
   text-align: center !important;
-  font-size: var(--dj-lightbox-caption-size) !important;
+  font-size: var(--nova-lightbox-caption-size) !important;
   line-height: 1.45 !important;
-  color: var(--dj-lightbox-caption-color) !important;
+  color: var(--nova-lightbox-caption-color) !important;
   text-wrap: pretty;
 }
 
@@ -865,7 +865,7 @@ html:has(.super-navbar__menu) .super-navbar {
   bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
   margin: 0 !important;
   text-align: center !important;
-  color: var(--dj-lightbox-counter-color) !important;
+  color: var(--nova-lightbox-counter-color) !important;
 }
 
 /* Mobile: stock moves prev/next to the bottom corners, onto the same
@@ -873,9 +873,9 @@ html:has(.super-navbar__menu) .super-navbar {
    beside it any more) but needs more clearance below. */
 @media all and (max-width: 600px) {
   #super-gallery-lightbox[open] {
-    padding: var(--dj-lightbox-pad) var(--dj-lightbox-pad)
+    padding: var(--nova-lightbox-pad) var(--nova-lightbox-pad)
              calc(4.75rem + env(safe-area-inset-bottom))
-             var(--dj-lightbox-pad) !important;
+             var(--nova-lightbox-pad) !important;
   }
 
   #super-gallery-lightbox .sg-caption {
