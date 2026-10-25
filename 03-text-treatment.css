@@ -204,7 +204,10 @@ h4.notion-heading {
    Notion button blocks (e.g. "Learn more") — bold, enlarged text
    -------------------------------------------------------------------------- */
 .notion-button__content {
-  font-size: 1.15em !important;
+  /* 1.15em is Super's own button size; --nova-button-scale (defined
+     in 01-layout.css) scales it, and scales the padding there by the
+     same factor, so the button grows evenly. */
+  font-size: calc(1.15em * var(--nova-button-scale, 1)) !important;
   font-weight: 700 !important;
 }
 
