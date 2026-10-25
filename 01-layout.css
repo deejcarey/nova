@@ -459,6 +459,23 @@ main.super-content {
        Raise this and every page moves together, so the cadence across
        the site holds at any value. */
     --dj-mobile-header-min-height: 0px;
+
+    /* Keep the full-width hero's pull matched to the header space on
+       phones too.
+
+       --dj-hero-pull exists to cancel the space .notion-header
+       reserves, so a coverless page's first full-width image starts
+       flush under the navbar. It derives from --dj-header-min-height,
+       which is the DESKTOP value (30px) — but mobile reserves 0px
+       here, so without this line there were 30px of pull against 0px
+       of space and the image rode up 30px INTO the navbar, landing
+       level with the logo.
+
+       Pointing it at the mobile value keeps the same single mechanism
+       working at both sizes: pull always equals reserved space, so the
+       image is always flush. Nothing else is needed — no extra margin
+       or padding rule. */
+    --dj-hero-pull: var(--dj-mobile-header-min-height);
     /* hero cover height on phones. 100vh on iOS resolves to the
        LARGE viewport — the height the page would have if Safari's URL
        bar were already collapsed — so on load the cover is sized
