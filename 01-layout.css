@@ -761,15 +761,37 @@ main.super-content {
      -8px  -> about 17px (the default here)
       0px  -> about 25px
      -16px -> about 9px, very tight
+
+   HEADINGS ARE EXEMPT. A heading carries its own bottom margin, which
+   is doing real typographic work — pulling the divider up into it
+   leaves the two touching. Confirmed on the homepage: every divider
+   is a direct child of .notion-root, and the one under "What I offer"
+   has an actual <h2> as its previous sibling while the others follow
+   a .notion-column-list. That makes the two cases cleanly separable
+   with a sibling selector, so each gets its own dial.
+
+   The heading value restores Super's original 8px, which is what the
+   spacing was before any of this.
    -------------------------------------------------------------------------- */
 :root {
-  --nova-divider-space-above: -8px;
+  --nova-divider-space-above: -8px;        /* after regular content */
+  --nova-divider-space-after-heading: 8px; /* after an H1–H4 */
   --nova-divider-space-below: 8px;
 }
 
 .notion-divider {
   margin-top: var(--nova-divider-space-above) !important;
   margin-bottom: var(--nova-divider-space-below) !important;
+}
+
+/* A divider immediately after a heading keeps normal spacing. Listed
+   after the rule above, and more specific, so it wins. */
+h1 + .notion-divider,
+h2 + .notion-divider,
+h3 + .notion-divider,
+h4 + .notion-divider,
+.notion-heading + .notion-divider {
+  margin-top: var(--nova-divider-space-after-heading) !important;
 }
 
 
