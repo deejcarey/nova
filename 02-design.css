@@ -1142,3 +1142,41 @@ html:has(.super-navbar__menu) .super-navbar {
 .notion-root .notion-text em strong > .notion-link:hover {
   font-style: normal !important;
 }
+
+/* --------------------------------------------------------------------------
+   BOLD + ITALIC — translucent fill at rest
+   00-base-theme.css gives this tier a solid --color-bg-default fill,
+   which over a photo or a colored section reads as a hard black or
+   white slab — heavier than an outlined button should be.
+
+   The fill is knocked back so the button sits INTO its surroundings
+   while the border stays at full strength and carries the shape. The
+   border is untouched here; only the fill changes.
+
+   Transparency, not a lighter color: a fixed lighter value would
+   cover whatever is behind it just as flatly. This lets the page,
+   the cover image or a colored section show through.
+
+   Hover is deliberately NOT touched — it keeps the solid colored fill
+   from 00-base-theme.css. That rule carries a :hover and so outranks
+   this one; no override needed.
+
+   THE DIAL: 100% is the old solid fill, 0% is fully see-through.
+   -------------------------------------------------------------------------- */
+:root {
+  --nova-outline-button-bg: 25%;   /* fill strength; 100% = the old solid */
+  --nova-outline-button-text: 70%; /* label strength; border is always 100% */
+}
+
+.notion-root .notion-text em strong > .notion-link {
+  /* color: inherit cancels the 70% rest-state dimming applied earlier
+     in this file, so currentColor below is the FULL-strength color.
+     That gets the border to 100% as intended. */
+  color: inherit !important;
+  background: color-mix(in srgb, var(--color-bg-default) var(--nova-outline-button-bg), transparent) !important;
+  border: 1px solid currentColor !important;
+  /* The label keeps the softer 70% it had before — only the border
+     was asked to go full strength. Set this to currentColor if you
+     want the text at 100% as well. */
+  -webkit-text-fill-color: color-mix(in srgb, currentColor var(--nova-outline-button-text), transparent) !important;
+}
