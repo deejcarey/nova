@@ -106,11 +106,32 @@ html[data-nova-nav="top"] .super-navbar {
    these nine hues. Setting a color there will appear to do nothing.
    Tune hues in Forms › Button instead.
 
+   TWO PATHS, BOTH REMAPPED. Super exposes its Notion palette in two
+   independent ways and they do NOT feed each other — confirmed by
+   forcing --color-text-green and watching .color-green ignore it:
+
+     .color-{hue} classes .... colored text, headings, links
+     --color-text-{hue} vars .. Prism syntax tokens in code blocks
+
+   Remapping only the classes left code blocks on the old palette, so
+   a green in a code sample didn't match a green anywhere else. Both
+   are pointed at the Forms pickers below.
+
    Declared BEFORE the rules that consume these colors so anything
    below can still override a specific case. color-default is
    untouched — it follows the theme's own text color as it should.
    -------------------------------------------------------------------------- */
-.notion-root .color-gray { color: var(--color-bg-form-btn-gray) !important; }
+:root {
+  --color-text-brown: var(--color-bg-form-btn-brown) !important;
+  --color-text-orange: var(--color-bg-form-btn-orange) !important;
+  --color-text-yellow: var(--color-bg-form-btn-yellow) !important;
+  --color-text-green: var(--color-bg-form-btn-green) !important;
+  --color-text-blue: var(--color-bg-form-btn-blue) !important;
+  --color-text-purple: var(--color-bg-form-btn-purple) !important;
+  --color-text-pink: var(--color-bg-form-btn-pink) !important;
+  --color-text-red: var(--color-bg-form-btn-red) !important;
+}
+
 .notion-root .color-brown { color: var(--color-bg-form-btn-brown) !important; }
 .notion-root .color-orange { color: var(--color-bg-form-btn-orange) !important; }
 .notion-root .color-yellow { color: var(--color-bg-form-btn-yellow) !important; }
@@ -119,6 +140,27 @@ html[data-nova-nav="top"] .super-navbar {
 .notion-root .color-purple { color: var(--color-bg-form-btn-purple) !important; }
 .notion-root .color-pink { color: var(--color-bg-form-btn-pink) !important; }
 .notion-root .color-red { color: var(--color-bg-form-btn-red) !important; }
+
+/* --------------------------------------------------------------------------
+   GRAY TEXT — deliberately NOT remapped
+   Every other hue is a brand accent: the same green works as a fill
+   behind white text and as colored text on the page. Gray isn't. It's
+   a NEUTRAL for muted captions and sub-heads sitting directly on the
+   page background, so its job is readability, and the value that
+   works on white is unusable on black.
+
+   MEASURED (WCAG AA body text needs 4.5:1):
+     Forms gray #A7A39A .... 2.52:1 on white  —  unreadable in light mode
+
+   Super already ships its own per-mode value for this (Themes ›
+   Colors › Notion › Gray, set separately for light and dark), so the
+   fix is to leave it alone rather than add dials here that would
+   shadow those two pickers. Gray text is tuned in Super like every
+   other color.
+
+   Gray FILLS — buttons, callouts, dividers — still come from Forms ›
+   Button › Gray, which is a separate picker and unaffected.
+   -------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
    Colored callouts / full-width sections — background & stroke
