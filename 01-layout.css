@@ -742,3 +742,66 @@ main.super-content {
     margin-top: 0 !important;
   }
 }
+
+
+/* --------------------------------------------------------------------------
+   Divider spacing
+   MEASURED on the homepage: 33px between the last line of a paragraph
+   and the divider under it. That comes from three stacked sources —
+   the text block's own 3px bottom padding, its 12.8px paragraph
+   margin (--nova-body-space-after), and the divider's own 8px top
+   margin — plus the column's padding.
+
+   The divider is NOT a sibling of the text that precedes it (it sits
+   a couple of levels up), so a sibling selector can't reach across to
+   zero that paragraph margin. Pulling the divider up instead is the
+   only lever, which is why the dial below accepts negative values.
+
+   RESULTING GAP = roughly 25px + whatever this is set to.
+     -8px  -> about 17px (the default here)
+      0px  -> about 25px
+     -16px -> about 9px, very tight
+   -------------------------------------------------------------------------- */
+:root {
+  --nova-divider-space-above: -8px;
+  --nova-divider-space-below: 8px;
+}
+
+.notion-divider {
+  margin-top: var(--nova-divider-space-above) !important;
+  margin-bottom: var(--nova-divider-space-below) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   Full-bleed graphic dividers
+   A section divider for places that don't butt against a full-width
+   colored section — it runs the whole window instead of stopping at
+   the 1200px content column.
+
+   HOW TO USE: insert your divider image as normal, then set that
+   image block to FULL WIDTH in Notion. Super renders it as
+   .notion-image.full-width and this rule takes over. Any divider left
+   at page width is untouched, so the two can coexist on one page.
+
+   WHY AN IMAGE AND NOT A NOTION DIVIDER: a Notion divider block has
+   no caption, no width setting and no per-block handle, so there's no
+   way to mark ONE of them for different treatment — a rule would have
+   to hit every divider on the site. An image block has both a width
+   control and a filename, which is already how divider color works.
+
+   The color still comes from the filename (div-green, div-pink, …)
+   via the painting rules in 02-design.css. This only changes width.
+
+   --nova-bleed-width is the same viewport-minus-scrollbar measure the
+   full-width hero uses, so both land exactly on the window edge
+   rather than overflowing by the scrollbar.
+   -------------------------------------------------------------------------- */
+.notion-image.full-width:has(img[src*="div-"]),
+.notion-image.full-width:has(img[src*="DIV-"]) {
+  width: var(--nova-bleed-width) !important;
+  max-width: var(--nova-bleed-width) !important;
+  margin-left: calc((100% - var(--nova-bleed-width)) / 2) !important;
+  margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
+  border-radius: 0 !important;
+}
