@@ -777,11 +777,30 @@ main.super-content {
   --nova-divider-space-above: -8px;        /* after regular content */
   --nova-divider-space-after-heading: 8px; /* after an H1–H4 */
   --nova-divider-space-below: 8px;
+  /* Dividers INSIDE a toggle need a tighter value below — see the
+     block after the rules. */
+  --nova-divider-space-below-toggle: -8px;
 }
 
 .notion-divider {
   margin-top: var(--nova-divider-space-above) !important;
   margin-bottom: var(--nova-divider-space-below) !important;
+}
+
+/* DIVIDERS INSIDE TOGGLES sit closer to the text below them.
+   MEASURED at 420px, ink-to-line, with marB at the top-level value:
+
+     top level (homepage)  22px above / 24px below  — even
+     inside a toggle        9px above /  8px below  — even only with
+                                                      the tighter value
+
+   The distance ABOVE a divider isn't constant: a top-level row's last
+   paragraph contributes its bottom margin, while the same paragraph
+   inside a toggle does not. So one pair of margins cannot centre both
+   contexts, and the toggle case gets its own value for the space
+   below. Both end up visually centred, at different absolute sizes. */
+.notion-toggle__content .notion-divider {
+  margin-bottom: var(--nova-divider-space-below-toggle) !important;
 }
 
 /* A divider immediately after a heading keeps normal spacing. Listed
