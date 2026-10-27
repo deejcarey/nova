@@ -827,3 +827,40 @@ h4 + .notion-divider,
   margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
   border-radius: 0 !important;
 }
+
+
+/* --------------------------------------------------------------------------
+   Stacked columns on mobile — vertical gap
+   MEASURED on the homepage at 420px: 20px between a column heading
+   and the column below it — 8px from the heading's own bottom margin
+   plus 12px of padding-bottom that Super puts on every .notion-column.
+
+   That padding is harmless on desktop, where columns sit side by side
+   and it reads as a little breathing room at the foot of a column. As
+   soon as they stack it becomes vertical space between rows, which is
+   why this is scoped to mobile only.
+
+   THIS SUPERSEDES --nova-stacked-row-gap higher up in this file. That
+   dial sets row-gap on .notion-row, but Super's container is
+   .notion-column-list and the space was never a gap — it was padding
+   on the children. The old rule is inert; it's left in place only so
+   removing it isn't confused with removing this.
+
+   RESULTING GAP = this value + the preceding block's own bottom
+   margin (8px for a heading).
+     4px -> about 12px (the default here)
+     0px -> about 8px, tight
+    12px -> Super's original 20px
+
+   Affects every stacked column row on phones, so raise it if a
+   multi-column group starts to feel crowded.
+   -------------------------------------------------------------------------- */
+@media all and (max-width: 768px) {
+  :root {
+    --nova-mobile-column-gap: 4px;
+  }
+
+  .notion-column-list > .notion-column {
+    padding-bottom: var(--nova-mobile-column-gap) !important;
+  }
+}
