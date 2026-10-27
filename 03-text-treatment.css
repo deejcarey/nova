@@ -40,20 +40,6 @@
   /* Super header — bold H1 only. Independent of --nova-h1-line-height. */
   --nova-h1-bold-line-height: .9;
 
-  /* H2 */
-  --nova-h2-line-height: 1.35;
-  --nova-h2-space-before: 0;
-  --nova-h2-space-after: 0.5rem;
-
-  /* H3 */
-  --nova-h3-line-height: 1.35;
-  --nova-h3-space-before: 0;
-  --nova-h3-space-after: 0.5rem;
-	
-  /* H4 */
-  --nova-h4-line-height: 1.6;
-  --nova-h4-space-before: 0;
-  --nova-h4-space-after: 0.25rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -64,9 +50,15 @@
    headings carry their own more specific rule.
    -------------------------------------------------------------------------- */
 
-/* Body */
+/* Body.
+   :not(.notion-heading) matters: Super puts .notion-semantic-string on
+   HEADINGS as well as paragraphs, so a bare selector here also set the
+   body line-height on every heading. That went unnoticed while H2-H4
+   had their own line-height rules overriding it — releasing those
+   exposed it, and H2 jumped from 31.2px to 38.4px. Headings now keep
+   whatever Super gives them. */
 .notion-text.notion-text__content.notion-semantic-string,
-.notion-semantic-string {
+.notion-semantic-string:not(.notion-heading) {
   line-height: var(--nova-body-line-height) !important;
 }
 
@@ -104,41 +96,28 @@ strong h1.notion-heading {
   line-height: var(--nova-h1-bold-line-height) !important;
 }
 
-/* H2 */
-h2.notion-heading,
-h2.notion-heading * {
-  line-height: var(--nova-h2-line-height) !important;
-}
+/* --------------------------------------------------------------------------
+   H2, H3 and H4 — deliberately NOT styled
+   Super's own heading spacing puts a margin ABOVE each heading (16px
+   on an H2, smaller further down) and little or none below. The rules
+   that used to sit here inverted that: zero above, a fixed value
+   below.
 
-h2.notion-heading,
-h2.notion-heading:not(.toggle) {
-  margin-top: var(--nova-h2-space-before) !important;
-  margin-bottom: var(--nova-h2-space-after) !important;
-}
+   MEASURED on /about, ours vs Super's:
+     H2   marT  0 / marB 8     vs   marT 16 / marB 12
+     H3   marT  0 / marB 8     vs   marT  2 / marB  0
+     H4   marT  0 / marB 4     vs   marT  0 / marB  0
+     H4 line-height 25.6px     vs   20.8px
 
-/* H3 */
-h3.notion-heading,
-h3.notion-heading.notion-semantic-string,
-h3.notion-heading * {
-  line-height: var(--nova-h3-line-height) !important;
-}
+   Zeroing the space above is what made headings sit tight against the
+   block before them. Super's model is the sound one: a heading opens
+   a section, so its space belongs above it.
 
-h3.notion-heading {
-  margin-top: var(--nova-h3-space-before) !important;
-  margin-bottom: var(--nova-h3-space-after) !important;
-}
+   H1 above keeps BOTH its rules — the regular line-height and the
+   separate bold-H1 value the homepage hero relies on.
 
-/* H4 */
-h4.notion-heading,
-h4.notion-heading.notion-semantic-string,
-h4.notion-heading * {
-  line-height: var(--nova-h4-line-height) !important;
-}
-
-h4.notion-heading {
-  margin-top: var(--nova-h4-space-before) !important;
-  margin-bottom: var(--nova-h4-space-after) !important;
-}
+   Change H2-H4 in Super > Typography, not here.
+   -------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
    Exception: an eyebrow label sitting directly above a divider wants
@@ -230,7 +209,6 @@ h4.notion-heading {
 .notion-collection-card .notion-collection-card__property .notion-text__content {
   line-height: var(--nova-card-line-height) !important;
 }
-
 
 /* --------------------------------------------------------------------------
    Text link underlines — offset & color
