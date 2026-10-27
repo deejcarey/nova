@@ -878,7 +878,16 @@ h4 + .notion-divider,
     --nova-mobile-column-gap: 0px;
   }
 
-  .notion-column-list > .notion-column {
+  /* Only the space BETWEEN stacked columns is tightened. The first
+     column keeps its top padding and the last keeps its bottom, so
+     the row as a whole still clears whatever sits above and below it
+     — usually a divider.
+
+     Without the :last-child exemption a column row ends flush with
+     its final line of text, and the divider's negative pull above
+     then lands ON that text. Measured inside the FAQ toggles: -8px,
+     i.e. overlapping. */
+  .notion-column-list > .notion-column:not(:last-child) {
     padding-bottom: var(--nova-mobile-column-gap) !important;
   }
 
