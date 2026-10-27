@@ -1,84 +1,3 @@
-Claude
-/
-Claude Desktop (macOS), Connected
-Knock back the outlined fill and verify hover is unchanged
-Border is at 70% though — you asked for 100%. Fixing that too:
-
-Shared a file, ran 2 commands
-Two dials:
-
-css
---nova-outline-button-bg: 25%;    /* fill; 100% = the old solid slab */
---nova-outline-button-text: 70%;  /* label; border is always 100% */
-It’s genuine transparency rather than a lighter color, so the page, a cover image or a colored section shows through instead of being covered flatly.
-
-I also took the border to 100% as you asked — it had been sitting at 70%, inheriting the same dimming as the label. The label stayed at 70%; set --nova-outline-button-text to 100% if you want it to match the border.
-
-Hover needed no change. Its rule carries a :hover and outranks this one, so the solid colored fill survives untouched.
-
-02 design
-Code
-·CSS
-Oh, I'm fine with 70& if that's what it was before.
-
-That’s what it is — --nova-outline-button-text: 70%, unchanged from before. The file I just sent is right as is.
-
-Only two things actually changed on that tier: the fill went from solid to 25%, and the border went from 70% to 100%.
-
-I also noticed that the buffer beneath the Heading 2 of 1. Embedded, 2. Advisory, and 3. Instructional is pretty big on mobile only. Is there a way to shorten that up?
-
-Ran 2 commands
-Found it. On mobile the columns stack, and the gap is 20px: the heading’s 8px bottom margin plus the column’s own 12px bottom padding — which only matters once columns are stacked vertically.
-
-That’s also the real cause of the stacked-column spacing you flagged weeks ago, where --nova-stacked-row-gap on .notion-row never did anything — wrong element and wrong property.
-
-Shared a file, ran 2 commands
-New dial, mobile only:
-
-css
---nova-mobile-column-gap: 4px;   /* 0px ≈ 8px gap, 12px = Super's original 20px */
-Verified: 20px → 12px at 420px wide, desktop untouched.
-
-Two things worth knowing. It affects every stacked column row on phones, not just these three — so check the Good Vibes testimonials and the What I offer grid before you settle on 4px.
-
-And this is what --nova-stacked-row-gap was trying to do weeks ago and never could: that rule sets row-gap on .notion-row, but Super’s container is .notion-column-list and the space was never a gap — it was padding on the children. The old dial is inert. I left it in place with a note rather than deleting it, so you don’t later remove this one thinking it’s the dead one. Say the word if you’d rather I strip it during the handoff-doc pass.
-
-01 layout
-Code
-·CSS
-1793067144792_image.png
-Better, but it still seems to have a large gap between the header and the sub-head and body on mobile.
-
-Break down every contributor to the mobile gap
-Found the piece I missed. The 24px breaks down as:
-
-h2 margin-bottom      8px
-col1 padding-bottom   4px   ← my dial
-col2 padding-TOP     12px   ← untouched
-subhead padding-top   3px
-I only reduced the bottom padding; the next column’s top padding is the bigger half.
-
-Shared a file, ran 3 commands
-Same dial, now handling both sides and defaulting to 0:
-
-css
---nova-mobile-column-gap: 0px;   /* 4px ≈ 19px gap, 12px = Super's original 35px */
-Measured result: box gap 24px → 8px, visual 33px → 17px.
-
-The first column in each row keeps its 12px top padding. That one isn’t separating two stacked columns — it’s separating the whole row from the divider above it, and zeroing it would have pulled every row up into that line. Verified it held at 12px while the second column went to 0.
-
-Desktop is byte-identical before and after.
-
-My first pass only fixed half the problem because I measured the gap as a single number instead of decomposing it. The breakdown is now written into the file so the next adjustment starts from the arithmetic rather than from guessing.
-
-01 layout
-Code
-·CSS
-Claude is AI and can make mistakes.
-
-
-
-01 layout · CSS
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -90,7 +9,7 @@ Claude is AI and can make mistakes.
    something is in the right place but looks visually wrong (color,
    transparency), the bug is in 02-design.css instead.
    ========================================================================== */
- 
+
 /* --------------------------------------------------------------------------
    Shared token: navbar height
    Reads Super › Navigation › Navbar Height (--navbar-height), so the
@@ -100,25 +19,25 @@ Claude is AI and can make mistakes.
 :root {
   --nova-nav-height: var(--navbar-height);
 }
- 
+
 /* --------------------------------------------------------------------------
    Navbar height
    -------------------------------------------------------------------------- */
 .super-navbar {
   min-height: var(--nova-nav-height) !important;
 }
- 
+
 .super-navbar__menu {
   min-height: var(--nova-nav-height) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Hero cover image — position & size only (not opacity/color/fade)
    -------------------------------------------------------------------------- */
 .notion-header__cover.no-cover {
   display: none !important;
 }
- 
+
 .footer-cover,
 .footer-cover:before,
 .notion-header__cover.has-cover,
@@ -127,7 +46,7 @@ Claude is AI and can make mistakes.
   left: 0 !important;
   width: 100% !important;
 }
- 
+
 .notion-header__cover.has-cover {
   top: calc(-1 * var(--nova-nav-height)) !important;
   margin-top: 0 !important;
@@ -138,7 +57,7 @@ Claude is AI and can make mistakes.
   max-height: calc(var(--header-cover-height) + var(--nova-nav-height)) !important;
   z-index: -2 !important;
 }
- 
+
 /* Direct override for the actual <img> nested inside .notion-header__cover
    (confirmed via inspected page data — a distinct element/class from the
    outer div above). Forces it to fill its container regardless of
@@ -150,7 +69,7 @@ Claude is AI and can make mistakes.
   height: 100% !important;
   object-fit: cover !important;
 }
- 
+
 /* .notion-header likely clips anything extending above its own box by
    default (a common pattern for hero sections) — which would silently
    cut off exactly the portion of the cover pulled up above it, since
@@ -158,7 +77,7 @@ Claude is AI and can make mistakes.
 .notion-header {
   overflow: visible !important;
 }
- 
+
 /* Guarantee consistent top spacing on every page, regardless of
    whether a cover image is set. Without this, no-cover pages (like
    Art, Work) collapse to zero header height while has-cover pages
@@ -173,28 +92,28 @@ Claude is AI and can make mistakes.
 :root {
   /* DESKTOP header space — the gap between the bottom of the navbar
      and the start of page content.
- 
+
      This exists so pages without a cover image don't collapse to zero
      header height while cover pages keep the space the cover reserves.
      It is NOT viewport-relative on purpose: --header-cover-height
      (30vh) is right for a hero image but computes to ~700px on a tall
      screen, which is far too much for reserving label space.
- 
+
      Was 60px. Halved to 30px so content starts higher now that the
      navbar is transparent on load and there's no bar to clear.
- 
+
      --nova-hero-pull below is derived from this, so the full-width hero
      on coverless pages stays in sync automatically. Change this one
      number and both follow.
- 
+
      Mobile has its own value: --nova-mobile-header-min-height. */
   --nova-header-min-height: 30px;
 }
- 
+
 .notion-header {
   min-height: var(--nova-header-min-height) !important;
 }
- 
+
 /* THE HERO / NAVBAR FIX. Confirmed via computed styles: Super sets
    overflow: hidden auto on main.super-content, which starts at the
    bottom of the navbar (y: 92px). Any non-visible overflow turns it
@@ -210,14 +129,14 @@ main.super-content {
   overflow-x: clip !important;
   overflow-y: visible !important;
 }
- 
+
 /* Confirmed via computed styles: Super's own super.css sets overflow:
    hidden directly on .notion-header__cover itself (not just its
    parent), and it was winning. */
 .notion-header__cover {
   overflow: visible !important;
 }
- 
+
 .footer-cover:before,
 .notion-header__cover:after {
   content: "" !important;
@@ -225,7 +144,7 @@ main.super-content {
   bottom: -2px !important;
   height: 100% !important;
 }
- 
+
 .footer-cover {
   z-index: -1 !important;
   min-width: 100% !important;
@@ -235,7 +154,7 @@ main.super-content {
   transform: rotate(180deg) !important;
   border: 0 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Empty collection headers — remove the space they reserve
    CONFIRMED by measuring /work and /art: a Notion collection whose
@@ -243,12 +162,12 @@ main.super-content {
    .notion-collection__header-wrapper. It has no content and no height
    of its own, but it carries an 8px bottom margin and still occupies a
    slot above the gallery — 16px of dead space in total.
- 
+
    This is why Case Studies looked tighter than Older Work, Series and
    Single Pieces: that one collection renders no header wrapper at all,
    so its gallery starts flush under its label while the other three
    sat 16px lower.
- 
+
    :empty matches only a wrapper with nothing inside it — confirmed
    true for all four here — so a collection that DOES show a header
    keeps its spacing untouched.
@@ -256,14 +175,14 @@ main.super-content {
 .notion-collection__header-wrapper:empty {
   display: none !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Gallery cards — shared reset
    -------------------------------------------------------------------------- */
 .notion-collection-gallery .notion-collection-card {
   min-height: 60px !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Gallery cards — cover vs. no-cover content behavior (all sizes)
    CONFIRMED from real HTML: .notion-collection-card__cover is the class
@@ -281,20 +200,20 @@ main.super-content {
   justify-content: flex-end !important;
   padding: 20px 16px 16px !important;
 }
- 
+
 /* CONTENT IS NOTION'S CALL, NOT OURS.
    This used to force every card with a cover image to show its title
    and hide its description and tags — which silently overrode the
    per-view Properties settings in Notion and made all cover galleries
    behave identically.
- 
+
    Now each gallery shows exactly what its own Notion view is set to
    show (none / title / title + tag / title + description + tag), and
    this file only handles how that content sits on the card.
- 
+
    To change what a gallery displays: open that view in Notion, use
    its Properties menu, and toggle the fields on or off there.
- 
+
    To suppress a property on ONE gallery only (rather than in Notion),
    scope a rule to that gallery's block ID in 04-special-features.css
    — see the testimonials fix there for the pattern. */
@@ -303,22 +222,22 @@ main.super-content {
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-pill {
   display: revert !important;
 }
- 
+
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) {
   height: auto !important;
 }
- 
+
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
   position: static !important;
   width: auto !important;
   height: auto !important;
   padding: 16px !important;
 }
- 
+
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
   display: block !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Large — masonry: featured cards, dense-packed
    -------------------------------------------------------------------------- */
@@ -329,7 +248,7 @@ main.super-content {
   grid-auto-rows: auto !important;
   gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
 }
- 
+
 .notion-collection-gallery.large .notion-collection-card:nth-child(26n+2):not(:last-child),
 .notion-collection-gallery.large .notion-collection-card:nth-child(26n+8):not(:last-child),
 .notion-collection-gallery.large .notion-collection-card:nth-child(26n+12):not(:last-child),
@@ -337,25 +256,25 @@ main.super-content {
   grid-column: span 2 !important;
   grid-row: span 2 !important;
 }
- 
+
 .notion-collection-gallery.large .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
 }
- 
+
 @media all and (max-width: 900px) {
   .notion-collection-gallery.large {
     grid-template-columns: 1fr 1fr !important;
   }
 }
- 
+
 @media all and (max-width: 600px) {
   .notion-collection-gallery.large {
     grid-template-columns: 1fr !important;
   }
 }
- 
+
 /* --------------------------------------------------------------------------
    Medium & Small — simple grid: uniform cells, fixed column count
    -------------------------------------------------------------------------- */
@@ -364,62 +283,62 @@ main.super-content {
   display: grid !important;
   gap: var(--collection-card-gap) !important; /* Super › Databases › Card Gap */
 }
- 
+
 .notion-collection-gallery.medium .notion-collection-card,
 .notion-collection-gallery.small .notion-collection-card {
   grid-column: auto !important;
   grid-row: auto !important;
 }
- 
+
 .notion-collection-gallery.medium {
   grid-template-columns: 1fr 1fr 1fr !important;
 }
- 
+
 .notion-collection-gallery.medium .notion-collection-card {
   min-height: 0 !important;
 }
- 
+
 .notion-collection-gallery.small {
   grid-template-columns: 1fr 1fr 1fr 1fr !important;
 }
- 
+
 .notion-collection-gallery.medium .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover,
 .notion-collection-gallery.small .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__cover {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
 }
- 
+
 @media all and (max-width: 900px) {
   .notion-collection-gallery.medium {
     grid-template-columns: 1fr 1fr !important;
   }
 }
- 
+
 @media all and (max-width: 600px) {
   .notion-collection-gallery.medium {
     grid-template-columns: 1fr !important;
   }
 }
- 
+
 @media all and (max-width: 1100px) {
   .notion-collection-gallery.small {
     grid-template-columns: 1fr 1fr 1fr !important;
   }
 }
- 
+
 @media all and (max-width: 800px) {
   .notion-collection-gallery.small {
     grid-template-columns: 1fr 1fr !important;
   }
 }
- 
+
 @media all and (max-width: 500px) {
   .notion-collection-gallery.small {
     grid-template-columns: 1fr !important;
   }
 }
- 
+
 /* --------------------------------------------------------------------------
    Notion button blocks (e.g. "Learn more") — size & shape
    Confirmed via real HTML: <a class="notion-link notion-button__content
@@ -434,16 +353,16 @@ main.super-content {
      size it was before this dial existed. 1.2 makes it 20% larger so
      it reads clearly as the heaviest button on the page, a step above
      a filled text button.
- 
+
      Scales font size AND padding together, so proportions stay
      identical at any value — only the whole thing gets bigger.
- 
+
      MEASURED BASE VALUES: Super renders this button at 1.15em
      (18.4px against the 16px body) with 11px 20px padding. Those are
      the numbers the multiplier is applied to below. */
   --nova-button-scale: 1.2;
 }
- 
+
 .notion-button__content {
   /* Padding only. The FONT SIZE half of this scale lives in
      03-text-treatment.css, which sets .notion-button__content's
@@ -454,14 +373,14 @@ main.super-content {
            calc(20px * var(--nova-button-scale)) !important;
   border-radius: var(--cta-border-radii) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Paragraph spacing — MOVED
    Body and heading spacing now lives in the typography control panel
    at the top of 03-text-treatment.css, alongside their line-heights,
    so all vertical rhythm is tuned in one place.
    -------------------------------------------------------------------------- */
- 
+
 /* --------------------------------------------------------------------------
    Stacked columns (mobile) — vertical gap between them
    Super's Layout › Column gap (46px) is the HORIZONTAL space between
@@ -469,7 +388,7 @@ main.super-content {
    stack on mobile, that same 46px becomes vertical space — and lands
    on top of the paragraph spacing already under an eyebrow label, so
    a two-column "LABEL / content" row opens a big hole on phones.
- 
+
    row-gap only ever applies along the stacking direction, so setting
    it here affects the stacked (mobile) case ONLY. The desktop
    horizontal gap still comes from Super, untouched. Raise or lower
@@ -478,11 +397,11 @@ main.super-content {
 :root {
   --nova-stacked-row-gap: 8px;
 }
- 
+
 .notion-row {
   row-gap: var(--nova-stacked-row-gap) !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Collapsed toggles — contain their contents
    A closed toggle collapses to 1px tall with opacity 0, but keeps
@@ -490,19 +409,19 @@ main.super-content {
    still spills out, invisible but still counted in the page's scroll
    height. On the About page that added ~3,900px of empty space below
    the footer.
- 
+
    Super's overflow: hidden on main.super-content used to clip that
    spill. The hero fix above changed it to clip horizontally only, so
    the bottom spill is no longer contained — hence this rule, which
    fixes the cause rather than re-clipping the whole page.
- 
+
    Scoped to CLOSED toggles only (:not(.open)), so open toggles expand
    and show their contents exactly as before.
    -------------------------------------------------------------------------- */
 .notion-toggle:not(.open) > .notion-toggle__content {
   overflow: hidden !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Page header — icon space normalization
    Super reserves vertical space for a page icon (and tags the header
@@ -510,16 +429,16 @@ main.super-content {
    adding an icon in Notion pushed the page's content down a line or
    two, and pages with icons no longer lined up with pages without
    them — even where the icon itself was hidden.
- 
+
    This zeroes that reserved space so every page starts at the same
    height, with or without an icon. Keep your icons in Notion; they
    no longer affect the layout here.
- 
+
    CONFIRMED via Inspect: the space lives on
    .notion-header__title-wrapper as a 142px top margin — reserved for
    the icon, and kept even when the icon and title are both hidden.
    That element is the actual fix; the rest below is belt and braces.
- 
+
    DIAL: --nova-header-space is the space above page content. Set it
    once and every page type matches. Raise it to push all pages down
    together.
@@ -527,21 +446,21 @@ main.super-content {
 :root {
   --nova-header-space: 0;
 }
- 
+
 .notion-header,
 .notion-header[class*="has-icon"],
 .notion-header.page {
   padding-top: var(--nova-header-space) !important;
   margin-top: var(--nova-header-space) !important;
 }
- 
+
 /* THE ACTUAL CULPRIT: the title wrapper carries a large top margin
    reserved for the icon, whether or not the icon is visible. */
 .notion-header__title-wrapper {
   margin-top: var(--nova-header-space) !important;
   margin-bottom: 0 !important;
 }
- 
+
 /* The icon's own box, neutralized so it contributes no height even
    when Super or a page-level rule hides it. */
 .notion-header__icon-wrapper {
@@ -549,7 +468,7 @@ main.super-content {
   padding: 0 !important;
   min-height: 0 !important;
 }
- 
+
 /* When the icon is hidden on a page, its wrapper shouldn't hold a
    line of space open either. */
 .notion-header__icon-wrapper:empty,
@@ -557,7 +476,7 @@ main.super-content {
   display: none !important;
   height: 0 !important;
 }
- 
+
 /* --------------------------------------------------------------------------
    Mobile — header space & hero cover scale
    Phones get their own values: less space above content, and a much
@@ -571,15 +490,15 @@ main.super-content {
        The desktop value (60px) exists so coverless pages don't collapse
        to nothing. On a phone that 60px just reserved empty space above
        the hero and pushed the headline off the bottom of the screen.
- 
+
        This applies to pages with AND without a cover deliberately. An
        earlier version exempted coverless pages, which left Art and Work
        sitting 60px lower than About, Manifesto and Contact.
- 
+
        Raise this and every page moves together, so the cadence across
        the site holds at any value. */
     --nova-mobile-header-min-height: 0px;
- 
+
     /* hero cover height on phones. 100vh on iOS resolves to the
        LARGE viewport — the height the page would have if Safari's URL
        bar were already collapsed — so on load the cover is sized
@@ -591,7 +510,7 @@ main.super-content {
     --nova-mobile-cover-height: 100svh;
     --nova-mobile-cover-opacity: .75; /* 1 = full strength */
   }
- 
+
   .notion-header,
   .notion-header.page,
   .notion-header[class*="has-icon"],
@@ -600,13 +519,13 @@ main.super-content {
     padding-top: var(--nova-mobile-header-space) !important;
     min-height: var(--nova-mobile-header-min-height) !important;
   }
- 
+
   .notion-header__cover.has-cover {
     height: calc(var(--nova-mobile-cover-height) + var(--nova-nav-height)) !important;
     max-height: calc(var(--nova-mobile-cover-height) + var(--nova-nav-height)) !important;
     opacity: var(--nova-mobile-cover-opacity) !important;
   }
- 
+
   .notion-header__cover-image {
     width: 100% !important;
     height: 100% !important;
@@ -622,7 +541,7 @@ main.super-content {
     top: calc(-1 * var(--nova-nav-height)) !important;
   }
 }
- 
+
 /* --------------------------------------------------------------------------
    Thin graphic dividers — keep a usable height on mobile
    These dividers are very wide and only a few pixels tall (e.g.
@@ -641,44 +560,44 @@ main.super-content {
     object-fit: cover !important;
   }
 }
- 
+
 /* --------------------------------------------------------------------------
    Full-width hero image (coverless pages)
    For a page with NO cover image that opens with a full-width image
    block — e.g. a Stories post. The image becomes the hero: it starts
    right at the bottom of the navbar, runs true edge to edge, and keeps
    its own aspect ratio at every width.
- 
+
    Applies automatically to any page whose FIRST block is a full-width
    image. Nothing to tag.
- 
+
    WHAT THIS FIXES, all confirmed via Inspect on
    /stories/color-grading-tips-for-beginners:
- 
+
    1. THE GAP. A coverless page still renders .notion-header, which
       this file gives a min-height (--nova-header-min-height) so pages
       without covers don't collapse. Plus the image block's own 8px top margin, the image
       started at y=160 while the navbar ends at y=92. The pull below
       removes exactly the header's height.
- 
+
    2. THE EDGE INSET. Two causes. The 1px border and 12px corner
       radius that the content-image rule adds to every image (a hero
       wants neither), and .notion-root's own padding and 1200px
       max-width, which cap how wide any block inside it can get. The
       breakout below escapes both.
- 
+
       WHY NOT JUST 100vw: that unit INCLUDES the scrollbar, so a
       100vw element overflows the page by the scrollbar's width and
       gets clipped — cropping a sliver off each side. CSS can't
       measure a scrollbar, so 05-navbar-scroll.js publishes it as
       --nova-scrollbar and we subtract it. If that script doesn't run,
       the fallback of 0px gives ordinary 100vw behavior.
- 
+
    3. MOBILE SCALING. The image rendered 979x742 where its natural
       ratio (994x661) calls for 979x651 — something was forcing a
       height and cropping. height: auto hands control back to the
       image's own proportions, so it scales down cleanly on phones.
- 
+
    The navbar is untouched: it stays transparent until scroll on every
    page, so the bar sits over the page background and the image begins
    immediately below it.
@@ -695,19 +614,19 @@ main.super-content {
      by 05-navbar-scroll.js; the 0px fallback is plain 100vw. */
   --nova-bleed-width: calc(100vw - var(--nova-scrollbar, 0px));
 }
- 
+
 /* MOBILE PULL — MUST STAY AFTER THE :root BLOCK ABOVE.
    --nova-hero-pull cancels the space .notion-header reserves, so a
    coverless page's first full-width image starts flush under the
    navbar. Desktop reserves 30px; mobile reserves 0.
- 
+
    CONFIRMED by measuring the live page at 420px wide: an override
    placed in the mobile section earlier in this file had NO EFFECT —
    --nova-hero-pull still computed to 30px. A media query adds nothing to
    specificity, so between two :root declarations the one LATER IN THE
    FILE wins at every viewport. The mobile block sits above the :root
    block that defines the desktop value, so it was being overwritten.
- 
+
    Declared here, after it, this one wins on phones. Keep it last.
    Without it there are 30px of pull against 0px of reserved space and
    the image rides up into the navbar, level with the logo. */
@@ -716,7 +635,7 @@ main.super-content {
     --nova-hero-pull: var(--nova-mobile-header-min-height);
   }
 }
- 
+
 .notion-root > .notion-image.full-width:first-child {
   margin-top: calc(-1 * var(--nova-hero-pull)) !important;
   margin-bottom: 0 !important;
@@ -729,7 +648,7 @@ main.super-content {
   margin-left: calc((100% - var(--nova-bleed-width)) / 2) !important;
   margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
 }
- 
+
 .notion-root > .notion-image.full-width:first-child img {
   display: block !important;
   width: 100% !important;
@@ -743,27 +662,27 @@ main.super-content {
   border: none !important;
   border-radius: 0 !important;
 }
- 
- 
+
+
 /* --------------------------------------------------------------------------
    Hero rows on mobile — avatar sizing & spacing
    TOP-LEVEL MEDIA QUERY. Do not move this inside another @media block:
    nesting one breaks Super's parser and silently drops every rule that
    follows it in this file.
- 
+
    On a phone the hero's two columns stack, so the image column renders
    full width ABOVE the text. Left alone it ate ~473px before the
    headline started, putting the H1 below the fold.
- 
+
    Sized by WIDTH, not height: constraining height makes the image take
    whatever width its proportions give it, which shrank the avatar and
    left it hugging the left edge.
- 
+
    SCOPE: :has(h1.notion-heading) matches only a column row that
    CONTAINS a top-level heading — true of the hero rows on the homepage
    and About, false for the Approach and Process rows, whose graphics
    keep their full size.
- 
+
    DIALS:
      img-width    — how much of the column width the avatar fills.
                     100% is edge to edge. Lower it to pull the headline
@@ -776,7 +695,7 @@ main.super-content {
     --nova-mobile-hero-space-above: 0px;
     --nova-mobile-hero-space-below: .5rem;
   }
- 
+
   /* Collapse the three stacked sources of padding Super puts here:
      the column's own 12px, the image block's margin, and the row gap. */
   .notion-column-list:has(h1.notion-heading) {
@@ -784,12 +703,12 @@ main.super-content {
     padding-top: 0 !important;
     row-gap: var(--nova-mobile-hero-space-below) !important;
   }
- 
+
   .notion-column-list:has(h1.notion-heading) .notion-column {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
- 
+
   .notion-column-list:has(h1.notion-heading) .notion-image {
     display: flex !important;
     justify-content: center !important;
@@ -797,13 +716,13 @@ main.super-content {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
   }
- 
+
   /* Lift Super's mobile height cap on hero images — and nothing else.
      Super caps image height on phones. A tall image hitting that cap
      is scaled down to fit it, which also shrinks its width, so the
      avatar rendered small and sat left in its column. Removing the cap
      is the whole fix.
- 
+
      Width, max-width and alignment are deliberately NOT set here, so
      the size you give an image in Notion is the size it renders. That
      also means no exclusions are needed for other images on the page
@@ -812,19 +731,19 @@ main.super-content {
     max-height: none !important;
     height: auto !important;
   }
- 
+
   /* The column shrinks with the image instead of holding open space. */
   .notion-column-list:has(h1.notion-heading) .notion-column:has(.notion-image) {
     min-height: 0 !important;
   }
- 
+
   /* No top margin on the headline on top of the row gap above it. */
   .notion-column-list:has(h1.notion-heading) h1.notion-heading {
     margin-top: 0 !important;
   }
 }
- 
- 
+
+
 /* --------------------------------------------------------------------------
    Divider spacing
    MEASURED on the homepage: 33px between the last line of a paragraph
@@ -832,17 +751,17 @@ main.super-content {
    the text block's own 3px bottom padding, its 12.8px paragraph
    margin (--nova-body-space-after), and the divider's own 8px top
    margin — plus the column's padding.
- 
+
    The divider is NOT a sibling of the text that precedes it (it sits
    a couple of levels up), so a sibling selector can't reach across to
    zero that paragraph margin. Pulling the divider up instead is the
    only lever, which is why the dial below accepts negative values.
- 
+
    RESULTING GAP = roughly 25px + whatever this is set to.
      -8px  -> about 17px (the default here)
       0px  -> about 25px
      -16px -> about 9px, very tight
- 
+
    HEADINGS ARE EXEMPT. A heading carries its own bottom margin, which
    is doing real typographic work — pulling the divider up into it
    leaves the two touching. Confirmed on the homepage: every divider
@@ -850,7 +769,7 @@ main.super-content {
    has an actual <h2> as its previous sibling while the others follow
    a .notion-column-list. That makes the two cases cleanly separable
    with a sibling selector, so each gets its own dial.
- 
+
    The heading value restores Super's original 8px, which is what the
    spacing was before any of this.
    -------------------------------------------------------------------------- */
@@ -859,12 +778,12 @@ main.super-content {
   --nova-divider-space-after-heading: 8px; /* after an H1–H4 */
   --nova-divider-space-below: 8px;
 }
- 
+
 .notion-divider {
   margin-top: var(--nova-divider-space-above) !important;
   margin-bottom: var(--nova-divider-space-below) !important;
 }
- 
+
 /* A divider immediately after a heading keeps normal spacing. Listed
    after the rule above, and more specific, so it wins. */
 h1 + .notion-divider,
@@ -874,28 +793,28 @@ h4 + .notion-divider,
 .notion-heading + .notion-divider {
   margin-top: var(--nova-divider-space-after-heading) !important;
 }
- 
- 
+
+
 /* --------------------------------------------------------------------------
    Full-bleed graphic dividers
    A section divider for places that don't butt against a full-width
    colored section — it runs the whole window instead of stopping at
    the 1200px content column.
- 
+
    HOW TO USE: insert your divider image as normal, then set that
    image block to FULL WIDTH in Notion. Super renders it as
    .notion-image.full-width and this rule takes over. Any divider left
    at page width is untouched, so the two can coexist on one page.
- 
+
    WHY AN IMAGE AND NOT A NOTION DIVIDER: a Notion divider block has
    no caption, no width setting and no per-block handle, so there's no
    way to mark ONE of them for different treatment — a rule would have
    to hit every divider on the site. An image block has both a width
    control and a filename, which is already how divider color works.
- 
+
    The color still comes from the filename (div-green, div-pink, …)
    via the painting rules in 02-design.css. This only changes width.
- 
+
    --nova-bleed-width is the same viewport-minus-scrollbar measure the
    full-width hero uses, so both land exactly on the window edge
    rather than overflowing by the scrollbar.
@@ -908,49 +827,49 @@ h4 + .notion-divider,
   margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
   border-radius: 0 !important;
 }
- 
- 
+
+
 /* --------------------------------------------------------------------------
    Stacked columns on mobile — vertical gap
    MEASURED on the homepage at 420px: 20px between a column heading
    and the column below it — 8px from the heading's own bottom margin
    plus 12px of padding-bottom that Super puts on every .notion-column.
- 
+
    That padding is harmless on desktop, where columns sit side by side
    and it reads as a little breathing room at the foot of a column. As
    soon as they stack it becomes vertical space between rows, which is
    why this is scoped to mobile only.
- 
+
    THIS SUPERSEDES --nova-stacked-row-gap higher up in this file. That
    dial sets row-gap on .notion-row, but Super's container is
    .notion-column-list and the space was never a gap — it was padding
    on the children. The old rule is inert; it's left in place only so
    removing it isn't confused with removing this.
- 
+
    BOTH SIDES, because the space between two stacked columns is the
    first one's padding-bottom PLUS the second one's padding-top —
    12px each by default. Measured on the homepage, the full gap
    between a column heading and the sub-head below it was:
- 
+
      h2 margin-bottom ...... 8px
      column padding-bottom . 12px
      column padding-top .... 12px   <- the larger half
      paragraph padding-top .. 3px
                               ----
                               35px
- 
+
    THE FIRST COLUMN KEEPS ITS TOP PADDING. That one isn't separating
    two stacked columns — it's separating the whole row from whatever
    sits above it, usually a divider. Zeroing it there would pull every
    row up into the thing before it, so :not(:first-child) leaves it
    alone.
- 
+
    RESULTING GAP under a heading = this value x2, plus 11px of margin
    and padding that belong to the text blocks themselves.
      0px -> about 11px (the default here)
      4px -> about 19px
     12px -> Super's original 35px
- 
+
    Affects every stacked column row on phones, so raise it if a
    multi-column group starts to feel crowded.
    -------------------------------------------------------------------------- */
@@ -958,14 +877,12 @@ h4 + .notion-divider,
   :root {
     --nova-mobile-column-gap: 0px;
   }
- 
+
   .notion-column-list > .notion-column {
     padding-bottom: var(--nova-mobile-column-gap) !important;
   }
- 
+
   .notion-column-list > .notion-column:not(:first-child) {
     padding-top: var(--nova-mobile-column-gap) !important;
   }
 }
- 
-Claude finished the response
