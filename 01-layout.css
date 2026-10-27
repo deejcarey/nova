@@ -663,7 +663,6 @@ main.super-content {
   border-radius: 0 !important;
 }
 
-
 /* --------------------------------------------------------------------------
    Hero rows on mobile — avatar sizing & spacing
    TOP-LEVEL MEDIA QUERY. Do not move this inside another @media block:
@@ -743,76 +742,23 @@ main.super-content {
   }
 }
 
-
 /* --------------------------------------------------------------------------
-   Divider spacing
-   MEASURED on the homepage: 33px between the last line of a paragraph
-   and the divider under it. That comes from three stacked sources —
-   the text block's own 3px bottom padding, its 12.8px paragraph
-   margin (--nova-body-space-after), and the divider's own 8px top
-   margin — plus the column's padding.
+   Divider spacing — deliberately NOT styled
+   Super's own spacing is margin: 8px above and below, which measures
+   24px under the line and 25–38px above it depending on what precedes.
+   That variance is correct: the space above a divider should answer to
+   the block above it, which is sometimes a paragraph with a trailing
+   margin and sometimes a column row without one.
 
-   The divider is NOT a sibling of the text that precedes it (it sits
-   a couple of levels up), so a sibling selector can't reach across to
-   zero that paragraph margin. Pulling the divider up instead is the
-   only lever, which is why the dial below accepts negative values.
+   Earlier versions here tried to force a single fixed gap on both
+   sides. Every attempt needed another exception — one value for
+   toggles, another after headings, another once columns stacked — and
+   each exception broke a case the previous one had fixed. The rules
+   are gone and Super handles it.
 
-   RESULTING GAP = roughly 25px + whatever this is set to.
-     -8px  -> about 17px (the default here)
-      0px  -> about 25px
-     -16px -> about 9px, very tight
-
-   HEADINGS ARE EXEMPT. A heading carries its own bottom margin, which
-   is doing real typographic work — pulling the divider up into it
-   leaves the two touching. Confirmed on the homepage: every divider
-   is a direct child of .notion-root, and the one under "What I offer"
-   has an actual <h2> as its previous sibling while the others follow
-   a .notion-column-list. That makes the two cases cleanly separable
-   with a sibling selector, so each gets its own dial.
-
-   The heading value restores Super's original 8px, which is what the
-   spacing was before any of this.
+   If a divider ever does need adjusting, do it in Notion by changing
+   what sits around it, not here.
    -------------------------------------------------------------------------- */
-:root {
-  --nova-divider-space-above: -8px;        /* after regular content */
-  --nova-divider-space-after-heading: 8px; /* after an H1–H4 */
-  --nova-divider-space-below: 8px;
-  /* Dividers INSIDE a toggle need a tighter value below — see the
-     block after the rules. */
-  --nova-divider-space-below-toggle: -8px;
-}
-
-.notion-divider {
-  margin-top: var(--nova-divider-space-above) !important;
-  margin-bottom: var(--nova-divider-space-below) !important;
-}
-
-/* DIVIDERS INSIDE TOGGLES sit closer to the text below them.
-   MEASURED at 420px, ink-to-line, with marB at the top-level value:
-
-     top level (homepage)  22px above / 24px below  — even
-     inside a toggle        9px above /  8px below  — even only with
-                                                      the tighter value
-
-   The distance ABOVE a divider isn't constant: a top-level row's last
-   paragraph contributes its bottom margin, while the same paragraph
-   inside a toggle does not. So one pair of margins cannot centre both
-   contexts, and the toggle case gets its own value for the space
-   below. Both end up visually centred, at different absolute sizes. */
-.notion-toggle__content .notion-divider {
-  margin-bottom: var(--nova-divider-space-below-toggle) !important;
-}
-
-/* A divider immediately after a heading keeps normal spacing. Listed
-   after the rule above, and more specific, so it wins. */
-h1 + .notion-divider,
-h2 + .notion-divider,
-h3 + .notion-divider,
-h4 + .notion-divider,
-.notion-heading + .notion-divider {
-  margin-top: var(--nova-divider-space-after-heading) !important;
-}
-
 
 /* --------------------------------------------------------------------------
    Full-bleed graphic dividers
@@ -846,7 +792,6 @@ h4 + .notion-divider,
   margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
   border-radius: 0 !important;
 }
-
 
 /* --------------------------------------------------------------------------
    Stacked columns on mobile — vertical gap
@@ -892,9 +837,45 @@ h4 + .notion-divider,
    Affects every stacked column row on phones, so raise it if a
    multi-column group starts to feel crowded.
    -------------------------------------------------------------------------- */
-@media all and (max-width: 768px) {
+@media all and (max-width: 900px) {
   :root {
     --nova-mobile-column-gap: 0px;
+  }
+
+  /* FORCE THE STACK EARLIER.
+     MEASURED on the About FAQ: Super keeps columns side by side until
+     about 640px, long after they stop being usable. A two-column row
+     at 700px gives the left column 131px, and a heading there wraps
+     to SIX lines:
+
+       1000px -> 225px wide, 3 lines
+        900px -> 194px wide, 4 lines
+        800px -> 163px wide, 5 lines
+        700px -> 131px wide, 6 lines
+        640px -> stacks, 2 lines
+
+     900px is where the fourth line appears, so that's the threshold.
+     Below it every column row stacks and each column gets the full
+     width.
+
+     This media query is also where the stacked-column spacing lives,
+     so the two always agree: columns stack and get their tightened
+     gap at exactly the same width. If you move one, move the other —
+     they're the same number on purpose. */
+  /* SCOPED TO ROWS THAT CONTAIN A HEADING. A column row holding only
+     images — the client logo strip — must NOT stack: four logos one
+     per row is worse at every width than four across. Confirmed by
+     stacking them at 900px and watching the strip turn into a
+     vertical list.
+
+     A heading is the reliable marker for "this column holds prose
+     that needs width to read", which is exactly the case that breaks.
+     Image grids keep whatever Super and 04-special-features.css give
+     them. */
+  .notion-column-list:has(h1, h2, h3, h4) > .notion-column {
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
 
   /* Only the space BETWEEN stacked columns is tightened. The first
