@@ -414,7 +414,22 @@ html.theme-dark {
    removed.
    -------------------------------------------------------------------------- */
 :root {
-  --nova-navbar-item-dim: 80%;
+  /* 100% = no dimming. Was 80%, then 60% before that.
+
+     The dimming existed to show which page you were on, back when
+     text weight was the ONLY signal. The active pill does that job
+     now — wash, edge and full-strength text — so dimming the rest is
+     redundant, and it costs legibility exactly where it hurts most:
+     at the top of a page, where the navbar is transparent and these
+     links sit on a hero photo rather than the page background.
+
+     MEASURED against the page background, 80% was never a contrast
+     failure (13.0:1 dark, 12.6:1 light). The softness is relative —
+     everything looks dim next to a pill.
+
+     Lower this if you want a whisper of hierarchy back; the pill
+     keeps working either way. */
+  --nova-navbar-item-dim: 100%;
 }
 
 .super-navbar__item-list .super-navbar__item {
