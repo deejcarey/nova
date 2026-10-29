@@ -29,16 +29,40 @@
    ========================================================================== */
 :root {
   /* Body copy */
-  --nova-body-line-height: 1.6;
+  /* Leading only — block spacing is handled by the space-before /
+     space-after dials and is deliberately left alone here.
+     1.6 -> 1.7 for more air between lines of body copy. */
+  --nova-body-line-height: 1.7;
   --nova-body-space-before: 0;
   --nova-body-space-after: .8rem;
 
   /* H1 — applies to plain, bold, and mixed H1s alike */
-  --nova-h1-line-height: 1.25;
+  /* 1.25 -> 1.3. Headlines need less leading than body copy, so this
+     moves less than the body value. The bold-H1 value below is
+     separate and unaffected. */
+  --nova-h1-line-height: 1.3;
   --nova-h1-space-before: 0;
   --nova-h1-space-after: 0.5rem;
   /* Super header — bold H1 only. Independent of --nova-h1-line-height. */
   --nova-h1-bold-line-height: .9;
+
+  /* H2-H4 leading. MARGINS for these levels stay Super's — only the
+     leading is ours. See the note further down.
+
+     The scale loosens as type shrinks, which is how leading works:
+     large display type needs proportionally less than body copy.
+       H1  1.3  -> 39.0px at 30px
+       H2  1.4  -> 33.6px at 24px
+       H3  1.5  -> 30.0px at 20px
+       H4  1.7  -> 27.2px at 16px
+       body 1.7 -> 27.2px at 16px
+
+     H4 and body deliberately MATCH. Both render at 16px, so giving
+     them different leading makes the same-sized text look inconsistent
+     wherever they sit near each other. */
+  --nova-h2-line-height: 1.4;
+  --nova-h3-line-height: 1.5;
+  --nova-h4-line-height: 1.7;
 
 }
 
@@ -116,8 +140,29 @@ strong h1.notion-heading {
    H1 above keeps BOTH its rules — the regular line-height and the
    separate bold-H1 value the homepage hero relies on.
 
-   Change H2-H4 in Super > Typography, not here.
+   AMENDED: leading for H2-H4 has since been brought back, and only
+   leading. Super's margins were the problem — zeroing the space above
+   a heading is what forced an exception everywhere else. line-height
+   has none of that interaction: it is one property per level with no
+   collapsing and no cascade surprises. Margins stay Super's.
    -------------------------------------------------------------------------- */
+
+h2.notion-heading,
+h2.notion-heading * {
+  line-height: var(--nova-h2-line-height) !important;
+}
+
+h3.notion-heading,
+h3.notion-heading.notion-semantic-string,
+h3.notion-heading * {
+  line-height: var(--nova-h3-line-height) !important;
+}
+
+h4.notion-heading,
+h4.notion-heading.notion-semantic-string,
+h4.notion-heading * {
+  line-height: var(--nova-h4-line-height) !important;
+}
 
 /* --------------------------------------------------------------------------
    Exception: an eyebrow label sitting directly above a divider wants
