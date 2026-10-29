@@ -895,3 +895,26 @@ main.super-content {
     padding-top: var(--nova-mobile-column-gap) !important;
   }
 }
+
+
+/* --------------------------------------------------------------------------
+   Name-only database tables — hide the redundant header row
+   A table showing nothing but the title property repeats the word
+   "Name" above every list, which says nothing the content doesn't.
+
+   SCOPED BY SHAPE, NOT BY BLOCK ID: :has(thead th:only-child) matches
+   a table with exactly ONE column, which is the whole point — the
+   header is redundant precisely because there's a single unlabeled
+   column. A table with two or more properties keeps its header, since
+   there the labels do real work.
+
+   Self-maintaining: add a second property to one of these views in
+   Notion and its header comes back on its own. No list of IDs to keep
+   in sync — confirmed against 12 single-column tables on /about and
+   the multi-column tables on /staging/blocks.
+
+   Only the header is hidden; rows, sorting and layout are untouched.
+   -------------------------------------------------------------------------- */
+.notion-collection-table:has(thead th:only-child) thead {
+  display: none !important;
+}
