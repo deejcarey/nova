@@ -1179,7 +1179,17 @@ html:has(.super-navbar__menu) .super-navbar {
    THE DIAL: 100% is the old solid fill, 0% is fully see-through.
    -------------------------------------------------------------------------- */
 :root {
-  --nova-outline-button-bg: 25%;   /* fill strength; 100% = the old solid */
+  /* Fill strength; 100% = a solid page-background slab.
+     Raised 25% -> 55%. MEASURED over a mid-tone photo in dark mode,
+     the label sat at 3.64:1 against its own surface at 25% — below
+     the 4.5:1 AA threshold. 55% brings it to 5.80:1 while the button
+     still reads as translucent.
+
+     Costs nothing on an ordinary page: the wash is the PAGE
+     background, so over the page itself it is invisible at any value.
+     It only does work over imagery and colored sections, which is
+     where the legibility problem was. */
+  --nova-outline-button-bg: 55%;
   --nova-outline-button-text: 70%; /* label strength; border is always 100% */
 }
 
