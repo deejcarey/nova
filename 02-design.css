@@ -414,23 +414,35 @@ html.theme-dark {
    removed.
    -------------------------------------------------------------------------- */
 :root {
-  /* 100% = no dimming. Was 80%, then 60% before that.
+/* Per theme, because the two don't behave the same: white on a dark
+     page reads cleanly at full strength, while pure black on white is
+     harsher than it needs to be. 95% takes the edge off light mode
+     without making the links look dimmed.
 
-     The dimming existed to show which page you were on, back when
-     text weight was the ONLY signal. The active pill does that job
-     now — wash, edge and full-strength text — so dimming the rest is
-     redundant, and it costs legibility exactly where it hurts most:
-     at the top of a page, where the navbar is transparent and these
-     links sit on a hero photo rather than the page background.
+       light  95% of #000000 over #ffffff  ->  rgb(13, 13, 13)
+       dark  100% of #ffffff over #010101  ->  rgb(255, 255, 255)
 
-     MEASURED against the page background, 80% was never a contrast
-     failure (13.0:1 dark, 12.6:1 light). The softness is relative —
-     everything looks dim next to a pill.
+     Dimming used to be the "you are here" signal, before the active
+     pill existed. The pill does that now, so these values are about
+     legibility only — the selected item still reads as selected at
+     any value here.
 
-     Lower this if you want a whisper of hierarchy back; the pill
-     keeps working either way. */
-  --nova-navbar-item-dim: 100%;
+     MEASURED: 80% was never a contrast failure against the page
+     (13.0:1 dark, 12.6:1 light). The softness was relative to the
+     pill beside it. */
+  --nova-navbar-item-dim-light: 95%;
+  --nova-navbar-item-dim-dark: 100%;
+
+  /* Fallback for when neither theme class is on <html>. Declared here,
+     BEFORE the wiring below, on purpose: html.theme-* out-specifies
+     :root so order doesn't strictly matter, but a later :root that
+     looks like it should win and doesn't is the exact trap that cost
+     us an afternoon on --nova-hero-pull. Base first, wiring after. */
+  --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark);
 }
+
+html.theme-light { --nova-navbar-item-dim: var(--nova-navbar-item-dim-light); }
+html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
 
 .super-navbar__item-list .super-navbar__item {
   color: color-mix(in srgb, var(--navbar-text-color) var(--nova-navbar-item-dim), transparent) !important;
