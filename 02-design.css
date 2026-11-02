@@ -1205,7 +1205,25 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-outline-button-text: 70%; /* label strength; border is always 100% */
 }
 
+/* ICON BUTTONS COME FREE FROM A MINIMUM WIDTH.
+   An outlined button with one character was 43px wide and 48px tall —
+   an oval. Giving it a minimum width equal to its own height makes a
+   single character square, and the pill radius then renders it as a
+   circle.
+
+   Nothing else changes: a button whose text is already wider than its
+   height never reaches the minimum, so every existing text button is
+   untouched. No marker, no flag, no list of IDs.
+
+   1lh is the element's own line-height, so the minimum tracks the
+   font size automatically — the circle stays round if this button
+   ever sits in larger or smaller type. The added 16px is the 8px top
+   and bottom padding, the 2px the two borders. Together they equal
+   the rendered height. */
 .notion-root .notion-text em strong > .notion-link {
+  min-width: calc(1lh + 16px + 2px) !important;
+  box-sizing: border-box !important;
+  justify-content: center !important;
   /* color: inherit cancels the 70% rest-state dimming applied earlier
      in this file, so currentColor below is the FULL-strength color.
      That gets the border to 100% as intended. */
