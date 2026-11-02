@@ -636,8 +636,32 @@ main.super-content {
   }
 }
 
+/* BLEED BEHIND THE NAVBAR.
+   A cover image already does this — it's absolutely positioned at
+   top: -350px with z-index -2, so it runs from y=-258 and the
+   transparent navbar sits over it, picking up its color.
+
+   A header image is an ordinary block in the flow, so it started at
+   y=92, exactly where the navbar ends, and the bar had nothing behind
+   it but the page background. Pulling it the extra navbar height puts
+   the two treatments on equal footing.
+
+   THE DIAL: set --nova-hero-bleed-top to 0 to go back to a header
+   image that starts below the navbar.
+
+   The navbar stays on top: it is sticky with z-index 40, while this
+   image is position: relative with z-index auto, so the bar paints
+   above it regardless of source order.
+
+   Everything after the image shifts up by the same amount, which is
+   the point — the image gives its top band to the navbar instead of
+   adding height to the page. */
+:root {
+  --nova-hero-bleed-top: var(--nova-nav-height);
+}
+
 .notion-root > .notion-image.full-width:first-child {
-  margin-top: calc(-1 * var(--nova-hero-pull)) !important;
+  margin-top: calc(-1 * (var(--nova-hero-pull) + var(--nova-hero-bleed-top))) !important;
   margin-bottom: 0 !important;
   /* Escape .notion-root's padding and max-width. The left margin is
      half the difference between the full bleed width and this
