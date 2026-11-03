@@ -1064,6 +1064,23 @@ main.super-content {
   align-items: center !important;
 }
 
+/* A second <em> is a space typed while italic was still on (Notion emits
+   <em> </em>). It auto-places into a third row and makes the block 72px
+   instead of 50. The circle is the ONLY em a breadcrumb should contain. */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:not(:first-child) {
+  display: none !important;
+}
+
+/* An EMPTY leading paragraph pushes the whole page down ~32px. Pages that
+   open with a hero image are unaffected: the image is :first-child, so their
+   blank paragraph (the gap under the hero) is left alone. Index pages open
+   with .notion-heading__anchor, not .notion-text, so they are untouched too.
+   NOTE: do NOT try to also test "the next block is a breadcrumb" -- nested
+   :has() is invalid CSS and silently drops the whole rule. */
+.notion-root > .notion-text:first-child:empty {
+  display: none !important;
+}
+
 /* gray + bold = spacer -> drop */
 .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span.color-gray:has(> strong) {
   display: none !important;
