@@ -658,6 +658,52 @@ main.super-content {
    adding height to the page. */
 :root {
   --nova-hero-bleed-top: var(--nova-nav-height);
+
+  /* HERO ASPECT RATIO — the fix for navbar collision.
+     The navbar is a FIXED 92px tall while the image scales with the
+     viewport, so the share of the image it covers grows as the screen
+     narrows. MEASURED on the Firewood case study with a 16:9 source:
+
+       1440px wide -> image 810px tall -> navbar covers 11%
+       1024px      -> 576px            -> 16%
+        768px      -> 432px            -> 21%
+        430px      -> 242px            -> 38%
+        390px      -> 219px            -> 42%
+
+     One ratio cannot serve both ends. A taller crop on phones keeps
+     the navbar's share roughly constant, so a subject placed safely
+     on desktop stays safe on mobile.
+
+       desktop 16:9  -> navbar covers ~11%
+       mobile   4:5  -> navbar covers ~19%
+
+     object-fit: cover means ONE source file works everywhere — the
+     browser crops it to each ratio rather than squashing it. Design
+     at the desktop ratio and keep the subject centred.
+
+     DESIGN TEMPLATE: keep critical content out of the top 20% and
+     out of the left and right 12%. The top 20% covers the navbar at
+     every breakpoint; the side margins cover the mobile crop, which
+     takes width off a 16:9 source to reach 4:5. */
+  --nova-hero-ratio: 16 / 9;
+
+  /* CEILING ON HERO HEIGHT.
+     A 16:9 image on a 16:9 monitor fills the window exactly, leaving
+     nothing below it and no hint that the page continues. MEASURED
+     with the ratio alone:
+
+       2560x1440  -> image 1440 tall -> 100% of screen, 0px below
+       1920x1080  -> image 1080 tall -> 100% of screen, 0px below
+       1728x1117  ->  972           ->  87%, 145px below
+       1440x900   ->  810           ->  90%,  90px below
+
+     85vh always leaves roughly a sixth of the screen showing, so the
+     eye catches that there's more. The image keeps its ratio and
+     crops via object-fit rather than squashing.
+
+     Raise toward 100vh for a more immersive opening; lower it to show
+     more of the page on load. */
+  --nova-hero-max-height: 85vh;
 }
 
 .notion-root > .notion-image.full-width:first-child {
@@ -677,8 +723,14 @@ main.super-content {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
+  /* aspect-ratio drives the height; --nova-hero-height stays as the
+     escape hatch if a fixed pixel height is ever wanted. */
+  aspect-ratio: var(--nova-hero-ratio) !important;
   height: var(--nova-hero-height) !important;
-  max-height: none !important;
+  /* The old `max-height: none` lived here, from when this rule only
+     had to stop Super capping the image. It silently cancelled the
+     ceiling below, so it's gone. */
+  max-height: var(--nova-hero-max-height) !important;
   /* Only meaningful when --nova-hero-height is NOT auto; ignored otherwise. */
   object-fit: cover !important;
   object-position: center !important;
@@ -815,6 +867,16 @@ main.super-content {
   margin-left: calc((100% - var(--nova-bleed-width)) / 2) !important;
   margin-right: calc((100% - var(--nova-bleed-width)) / 2) !important;
   border-radius: 0 !important;
+}
+
+/* MOBILE HERO RATIO — MUST STAY AFTER THE :root THAT SETS THE
+   DESKTOP ONE. A media query adds nothing to specificity, so between
+   two :root declarations the later one wins at every viewport. This
+   file has been bitten by that once already (--nova-hero-pull). */
+@media all and (max-width: 768px) {
+  :root {
+    --nova-hero-ratio: 4 / 5;
+  }
 }
 
 /* --------------------------------------------------------------------------
