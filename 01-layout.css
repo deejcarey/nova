@@ -875,7 +875,13 @@ main.super-content {
    file has been bitten by that once already (--nova-hero-pull). */
 @media all and (max-width: 768px) {
   :root {
-    --nova-hero-ratio: 4 / 5;
+    /* Measured on djcarey.com/work/firewood-brand @ 390x844:
+       16/9 -> navbar covers 42% of image (subject collides)
+       4/3  -> 31% (clips)
+       1/1  -> 24% (clears) | keeps 56% of source width | 46% of screen
+       4/5  -> 19% but keeps only 45% of width -- not worth the frame.
+       Source master is 16:9; this crops the SIDES, full height shown. */
+    --nova-hero-ratio: 1 / 1;
   }
 }
 
@@ -1003,4 +1009,78 @@ main.super-content {
    -------------------------------------------------------------------------- */
 .notion-collection-table:has(thead th:only-child) thead {
   display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   BREADCRUMB  —  back button + stacked page label  (mobile only)
+
+   Shape, not instance: a paragraph whose FIRST child is a bold+italic link
+   (the circle icon button) and which has at least three children.
+
+   Notion authoring convention this reads:
+     separators / spacers  = gray + BOLD    -> hidden on mobile
+     descriptor            = any non-gray   -> row 1
+     page name             = gray, NOT bold -> row 2
+
+   Measured on /work/firewood-brand @390px: circle is 48x48, so two 22px
+   rows = 44px, just under it. Desktop is untouched (stays one line).
+--------------------------------------------------------------------------- */
+:root {
+  --nova-crumb-gap: 18px;    /* buffer between circle and text (circle overflows its box by 2px each side, so visual gap = this - 2) */
+  --nova-crumb-row: 22px;     /* each stacked row; 2 rows must stay < 48px */
+}
+
+@media all and (max-width: 768px) {
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    /* rows must be EXPLICIT: `grid-row: 1 / -1` resolves against the
+       explicit grid, and with implicit rows only it parked the button
+       in a phantom row above the text. */
+    grid-template-rows: var(--nova-crumb-row) var(--nova-crumb-row) !important;
+    grid-auto-rows: var(--nova-crumb-row) !important;
+    column-gap: var(--nova-crumb-gap) !important;
+    row-gap: 0 !important;
+    align-items: center !important;
+  }
+
+  /* circle button: column 1, centred across both rows.
+     Keep body leading here — the button's min-width is sized in 1lh. */
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child,
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child * {
+    line-height: var(--nova-body-line-height) !important;
+  }
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 / 3 !important;
+    align-self: center !important;
+    /* flex, so the circle centres on the row block instead of on an
+       inline line box (which hung it 10px above the paragraph). */
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* gray + bold = spacer or pipe -> drop */
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span.color-gray:has(> strong) {
+    display: none !important;
+  }
+
+  /* everything else stacks in column 2, in source order */
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span:not(.color-gray),
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span.color-gray:not(:has(> strong)) {
+    grid-column: 2 !important;
+    line-height: var(--nova-crumb-row) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* Desktop keeps the single line, but the circle needs the same buffer.
+   (The `ㅤ` filler char in Notion measures 0px wide — it never worked.
+   Safe to delete it from the Notion pages.) */
+@media all and (min-width: 769px) {
+  .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child strong > .notion-link {
+    margin-right: var(--nova-crumb-gap) !important;
+  }
 }
