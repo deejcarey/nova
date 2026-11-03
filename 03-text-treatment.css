@@ -289,3 +289,33 @@ h4.notion-heading * {
   text-underline-offset: var(--nova-link-underline-offset) !important;
   text-decoration-color: currentColor !important;
 }
+
+/* ---------------------------------------------------------------------------
+   TRACKING  —  make negative letter-spacing scale with the type
+
+   00-base-theme.css sets tracking in fixed px on headings whose font-size
+   is a clamp(). The size scales with the viewport; the px tracking does not,
+   so the type gets proportionally tighter as it shrinks.
+
+   Measured on /work/technomarine:
+     h1 bold        desktop 80px / -4px   = -5.0%
+                    mobile  41.6px / -4px = -9.6%   <- 1.9x tighter
+     header title   desktop 48px / -1.6px = -3.3%
+                    mobile  36.8px / -1.6px = -4.3% <- 1.3x tighter
+
+   Expressed in em, the ratio holds at every size. Values are anchored to the
+   DESKTOP appearance, so large screens are unchanged and only mobile loosens.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-h1-tracking: -0.05em;             /* was -4px at 80px */
+  --nova-header-title-tracking: -0.0333em; /* was -1.6px at 48px */
+}
+
+.notion-root h1.notion-heading strong,
+.notion-root strong h1.notion-heading {
+  letter-spacing: var(--nova-h1-tracking) !important;
+}
+
+html .notion-header__title {
+  letter-spacing: var(--nova-header-title-tracking) !important;
+}
