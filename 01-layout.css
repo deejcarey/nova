@@ -1012,83 +1012,109 @@ main.super-content {
 }
 
 /* ---------------------------------------------------------------------------
-   BREADCRUMB  —  back button + stacked page label  (ALL breakpoints)
+   BREADCRUMB  —  back button + page label  (ALL breakpoints)
 
    Shape, not instance: a paragraph whose FIRST child is a bold+italic link
-   (the circle icon button) with at least three children.
+   (the circle icon button), followed by one or two text runs.
 
-   Rows are placed by SOURCE ORDER, not by colour or weight, so it works
-   whichever way round the descriptor and title are styled:
-     child 1  = circle button        -> column 1, centred across both rows
-     gray + BOLD spans               -> hidden (the `ㅤ` filler chars)
-     first remaining span            -> row 1   (descriptor)
-     next remaining span             -> row 2   (page title)
+     TWO runs  -> descriptor on row 1, title on row 2, circle centred across
+     ONE run   -> single row, descriptor centred against the circle
+                  (Art pages: the title is the page's own big H1 instead)
 
-   The " | " separator lives INSIDE the text span, so CSS cannot remove it.
-   Delete it in Notion.
+   Rows are placed by SOURCE ORDER, not by colour or weight, so the styling
+   of each run is yours to change freely.
 
-   Measured on /work/firewood-brand: circle is 48x48, two 22px rows = 44px,
-   centred against it.
+   The two cases are told apart by `:has(> span ~ span)` — "is there a span
+   preceded by another span". Do NOT use :nth-child() here: a space typed
+   while italic was still on emits a stray <em>, which shifts every child
+   position and silently flips a one-run page into the two-run branch.
+
+   Standalone icon buttons elsewhere ("More about me ↗︎") are <em> with no
+   span at all, so `:has(> span)` leaves them alone.
+
+   Measured on /work/firewood-brand: circle is 48x48; both variants render
+   the block at 50px so single- and double-line pages sit identically.
 --------------------------------------------------------------------------- */
 :root {
   --nova-crumb-gap: 18px;   /* circle-to-text buffer; circle overflows its box
                                by 2px each side, so the visual gap is this - 2 */
   --nova-crumb-row: 22px;   /* row height; two rows must stay under 48px */
+  --nova-crumb-descriptor-scale: 1.5;  /* one-run pages only (see below) */
 }
 
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) {
+/* ---- shared: grid shell ---- */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) {
   display: grid !important;
   grid-template-columns: auto minmax(0, 1fr) !important;
-  /* rows must be EXPLICIT: `grid-row: 1 / 3` resolves against the explicit
-     grid; with implicit rows only, the button parked in a phantom row. */
-  grid-template-rows: var(--nova-crumb-row) var(--nova-crumb-row) !important;
-  grid-auto-rows: var(--nova-crumb-row) !important;
   column-gap: var(--nova-crumb-gap) !important;
   row-gap: 0 !important;
   align-items: center !important;
 }
 
-/* circle button: column 1, centred across both rows.
-   Keep body leading here — the circle's min-width is sized in 1lh. */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child,
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child * {
-  line-height: var(--nova-body-line-height) !important;
+/* two runs: two explicit rows */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) {
+  grid-template-rows: var(--nova-crumb-row) var(--nova-crumb-row) !important;
+  grid-auto-rows: var(--nova-crumb-row) !important;
 }
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:first-child {
-  grid-column: 1 !important;
+
+/* one run: a single row of the same total height, so a title-less page
+   lines up with a titled one and the descriptor centres on the circle. */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) {
+  grid-template-rows: calc(var(--nova-crumb-row) * 2) !important;
+  grid-auto-rows: calc(var(--nova-crumb-row) * 2) !important;
+}
+
+/* ---- circle button: column 1, centred ---- */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child *,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child * {
+  line-height: var(--nova-body-line-height) !important;  /* min-width is 1lh */
+}
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child {
   grid-row: 1 / 3 !important;
+}
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child {
+  grid-row: 1 !important;
+}
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child {
+  grid-column: 1 !important;
   align-self: center !important;
-  /* flex, so the circle centres on the row block instead of on an inline
+  /* flex, so the circle centres on the row block rather than on an inline
      line box (which otherwise hung it 10px above the paragraph). */
   display: flex !important;
   align-items: center !important;
 }
 
-/* A second <em> is a space typed while italic was still on (Notion emits
-   <em> </em>). It auto-places into a third row and makes the block 72px
-   instead of 50. The circle is the ONLY em a breadcrumb should contain. */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > em:not(:first-child) {
+/* ---- a second <em> is a space typed while italic was still on ---- */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:not(:first-child),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:not(:first-child) {
   display: none !important;
 }
 
-/* An EMPTY leading paragraph pushes the whole page down ~32px. Pages that
-   open with a hero image are unaffected: the image is :first-child, so their
-   blank paragraph (the gap under the hero) is left alone. Index pages open
-   with .notion-heading__anchor, not .notion-text, so they are untouched too.
-   NOTE: do NOT try to also test "the next block is a breadcrumb" -- nested
-   :has() is invalid CSS and silently drops the whole rule. */
-.notion-root > .notion-text:first-child:empty {
+/* ---- gray + bold = spacer -> drop ---- */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span.color-gray:has(> strong),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span.color-gray:has(> strong) {
   display: none !important;
 }
 
-/* gray + bold = spacer -> drop */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span.color-gray:has(> strong) {
-  display: none !important;
+/* ---- descriptor size ----
+   The lone descriptor on a one-run page sits next to a 48px circle with a
+   whole 44px row to itself, so it can grow for free. On a two-run page the
+   two rows must total under 48px to keep the circle the tallest element,
+   so there is no headroom there and the descriptor stays at body size. */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span:first-of-type {
+  font-size: calc(1em * var(--nova-crumb-descriptor-scale)) !important;
+  line-height: calc(var(--nova-crumb-row) * 2) !important;
 }
 
-/* everything else stacks in column 2, in source order */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span:not(.color-gray),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:nth-child(3)) > span.color-gray:not(:has(> strong)) {
+/* ---- text runs: column 2, stacked in source order ---- */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span:not(.color-gray),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span.color-gray:not(:has(> strong)),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span:not(.color-gray),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span.color-gray:not(:has(> strong)) {
   grid-column: 2 !important;
   line-height: var(--nova-crumb-row) !important;
   white-space: nowrap !important;
