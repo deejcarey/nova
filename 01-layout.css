@@ -1024,10 +1024,15 @@ main.super-content {
    Rows are placed by SOURCE ORDER, not by colour or weight, so the styling
    of each run is yours to change freely.
 
-   The two cases are told apart by `:has(> span ~ span)` — "is there a span
-   preceded by another span". Do NOT use :nth-child() here: a space typed
-   while italic was still on emits a stray <em>, which shifts every child
-   position and silently flips a one-run page into the two-run branch.
+   The two cases are told apart by `:has(> span:not(.color-gray))` — "is
+   there a WHITE run", i.e. a title. This is the only test that survives the
+   real markup. Do NOT count spans (`span ~ span`) and do NOT use
+   :nth-child(): pages carry a leftover bold-gray space span after the arrow,
+   so a title-less page still has two spans and would be read as two-run.
+   A stray <em> from a space typed while italic was on also shifts positions.
+
+   CONTRACT: the title must be a non-gray (white/default) run. The descriptor
+   stays gray. That is what distinguishes the two layouts.
 
    Standalone icon buttons elsewhere ("More about me ↗︎") are <em> with no
    span at all, so `:has(> span)` leaves them alone.
@@ -1043,8 +1048,8 @@ main.super-content {
 }
 
 /* ---- shared: grid shell ---- */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) {
   display: grid !important;
   grid-template-columns: auto minmax(0, 1fr) !important;
   column-gap: var(--nova-crumb-gap) !important;
@@ -1053,33 +1058,33 @@ main.super-content {
 }
 
 /* two runs: two explicit rows */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) {
   grid-template-rows: var(--nova-crumb-row) var(--nova-crumb-row) !important;
   grid-auto-rows: var(--nova-crumb-row) !important;
 }
 
 /* one run: a single row of the same total height, so a title-less page
    lines up with a titled one and the descriptor centres on the circle. */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) {
   grid-template-rows: calc(var(--nova-crumb-row) * 2) !important;
   grid-auto-rows: calc(var(--nova-crumb-row) * 2) !important;
 }
 
 /* ---- circle button: column 1, centred ---- */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child,
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child *,
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child,
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child * {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > em:first-child *,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > em:first-child * {
   line-height: var(--nova-body-line-height) !important;  /* min-width is 1lh */
 }
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > em:first-child {
   grid-row: 1 / 3 !important;
 }
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > em:first-child {
   grid-row: 1 !important;
 }
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:first-child,
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:first-child {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > em:first-child,
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > em:first-child {
   grid-column: 1 !important;
   align-self: center !important;
   /* flex, so the circle centres on the row block rather than on an inline
@@ -1089,14 +1094,14 @@ main.super-content {
 }
 
 /* ---- a second <em> is a space typed while italic was still on ---- */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > em:not(:first-child),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > em:not(:first-child) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > em:not(:first-child),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > em:not(:first-child) {
   display: none !important;
 }
 
 /* ---- gray + bold = spacer -> drop ---- */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span.color-gray:has(> strong),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span.color-gray:has(> strong) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > span.color-gray:has(> strong),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > span.color-gray:has(> strong) {
   display: none !important;
 }
 
@@ -1104,17 +1109,21 @@ main.super-content {
    The lone descriptor on a one-run page sits next to a 48px circle with a
    whole 44px row to itself, so it can grow for free. On a two-run page the
    two rows must total under 48px to keep the circle the tallest element,
-   so there is no headroom there and the descriptor stays at body size. */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span:first-of-type {
+   so there is no headroom there and the descriptor stays at body size.
+
+   Target the TEXT RUN, not :first-of-type — the first span is the leftover
+   bold-gray space after the arrow, which is hidden but still first. */
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > span.color-gray:not(:has(> strong)),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > span:not(.color-gray) {
   font-size: calc(1em * var(--nova-crumb-descriptor-scale)) !important;
   line-height: calc(var(--nova-crumb-row) * 2) !important;
 }
 
 /* ---- text runs: column 2, stacked in source order ---- */
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span:not(.color-gray),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span ~ span) > span.color-gray:not(:has(> strong)),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span:not(.color-gray),
-.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span ~ span)) > span.color-gray:not(:has(> strong)) {
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > span:not(.color-gray),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span:not(.color-gray)) > span.color-gray:not(:has(> strong)),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > span:not(.color-gray),
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span):not(:has(> span:not(.color-gray))) > span.color-gray:not(:has(> strong)) {
   grid-column: 2 !important;
   line-height: var(--nova-crumb-row) !important;
   white-space: nowrap !important;
