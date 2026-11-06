@@ -1,3 +1,117 @@
+Claude
+/
+DJ’s MacBook Pro M3 Max, Connected
+Inspect the About page callouts and images
+Dividers aren’t being recolored by CSS — filter=none, and the filename itself says div-green-medium. But Super proxies every image through /w=1920,quality=90,fit=scale-down, which re-encodes it. That’s the likely culprit, and it’s testable.
+
+First, let me find your 9 callouts — only one turned up on /about:
+
+Find callout classes and headings on the About page
+Those are toggles, not callouts — notion-toggle__trigger_icon, nine of them, each with an H3. Worth knowing because the fix targets different markup. Let me measure the misalignment and look at the icon markup:
+
+Measure toggle icon vs heading alignment
+The icon I need is clear, but those nine toggles are display:none (collapsed FAQ). Your WHAT topics are the H3s like “Big-ass vision.” — let me find their actual structure:
+
+Ran 2 commands
+Still one. Those 9 callouts aren’t on the published /about yet — so I can’t measure the alignment bug until you publish. But I can settle the two color questions right now, and both have real answers.
+
+Download the divider variants and test Notion icon colors
+Confirmed — and I found the mechanism. Super’s proxy converts your PNG divider to JPEG at quality 90. A 1600×4 solid color bar is exactly the worst case for JPEG chroma subsampling. Let me measure the actual shift:
+
+Measure the divider color shift
+My JPEG hypothesis was wrong — I should correct it. The conversion shifts the color by 1/255 at most, which is invisible:
+
+rendered color
+proxied JPEG (what your site serves)	#529E72
+lossless PNG from the same source	#529E72
+So Super is not recoloring your dividers. Let me check whether a color profile is being dropped instead — that’s the other candidate, and it’s the one that bit us on 
+#EA3366 → 
+#D74568:
+
+Check for color profiles and compute P3 to sRGB conversions
+That’s the real cause: the proxy strips the ICC profile entirely — no profile in either version. So if you export those dividers from Photoshop in Display P3, the browser gets the raw numbers with no profile and renders them as sRGB. Same bug that gave you 
+#EA3366 → 
+#D74568.
+
+Fix is at export: Convert to Profile → sRGB before saving. Then what you pick is what ships.
+
+Now your icon question — the answer is yes. Let me prove it on your live page:
+
+Get the page green and survey the icon images
+Your page green is #00cc66. Notion’s own green variant is 
+#448361 — nowhere close, so swapping _gray for _green in the URL won’t get you there. It needs a real recolor.
+
+Good news: only 3 unique icons across all 96. Let me test a pure-CSS recolor and measure whether it lands exactly on your green:
+
+Shared 2 files, read 4 files, ran 13 commands
+Answering all three.
+
+1. The dividers — confirmed, but not the way you think. Super is not recoloring them. Your green divider renders at exactly #529E72, and I compared the JPEG your site serves against a lossless PNG from the same source: they differ by 1/255. Invisible.
+
+What Super does do is strip the ICC profile — neither version has one. So if you export from Photoshop in Display P3, the browser receives the raw numbers with no profile and renders them as sRGB. Same bug as 
+#EA3366 → 
+#D74568.
+
+Fix at export: Convert to Profile → sRGB before saving. If 
+#529E72 isn’t what you picked, that’s why. Tell me what you authored and I’ll confirm the math.
+
+2. The icon alignment — I can’t do it yet. Those 9 topics aren’t on the published /about. There’s one callout in the DOM (the FAQ toggle) and your WHAT headings sit as plain H3s directly in the page body. Publish them and I’ll measure the offset and write a rule that centers the icon against any heading H1–H4.
+
+3. Recoloring icons — yes, and it’s done. Your icons are <img src="app.notion.com/icons/NAME_gray.svg"> — flat single-color SVGs. Two things I ruled out: swapping to Notion’s _green variant gives 
+#448361, nowhere near your 
+#00cc66; and mask-image is CORS-blocked cross-origin, and inlining the SVG as a data-URI mask renders nothing on an <img>.
+
+A CSS filter chain works. I solved one numerically per palette color and verified by sampling rendered pixels — eight of nine land within 1.4/255:
+
+target	rendered
+green	
+#00CC66	
+#00CD67
+blue	
+#007DFB	
+#007EFA
+orange	
+#FF4000	
+#FF4100
+pink	
+#FF0064	
+#FF0065
+Only gray is off (Δ9.4) — near-neutral targets resist hue-rotate. It’s the default anyway.
+
+Append icon-recolor.css to 02-design.css. To color a page it’s one line:
+
+css
+.page__about { --nova-icon-recolor: var(--nova-icon-green); }
+All nine chains ship as named variables, so you never touch a filter string. Verified live on /about — that’s your real markup in the screenshot, not a mockup.
+
+live-icons.png
+Icon recolor
+Code
+·CSS
+Instead of adding one more CSS file to the mix, I'd like you add it into an existing one. 02-design.css makes the most sense. Please don't overcomplicate things.
+
+Shared a file, ran a command
+Merged into 02-design.css — no new file. Deleted the standalone one.
+
+Verified on the live About page: braces balanced, filter applied, rest of the sheet still parsing normally.
+
+To color another page, one line:
+
+css
+.page__work { --nova-icon-recolor: var(--nova-icon-pink); }
+All nine chains are named variables at the top of the block, so you never touch a filter string.
+
+Push 02-design.css. Ping me when the 9 WHAT topics are published and I’ll fix the icon/heading alignment.
+
+02 design
+Code
+·CSS
+Claude is AI and can make mistakes.
+
+
+
+02 design · CSS
+Copied
 /* ==========================================================================
    02-design.css — color, transparency & visual surface treatment only
    No positioning or sizing here — that's 01-layout.css. Load this
@@ -5,7 +119,7 @@
    below (the cover fade, the callout background) only make visual
    sense once things are correctly positioned and sized.
    ========================================================================== */
-
+ 
 /* --------------------------------------------------------------------------
    Hero cover image — opacity & fade only (not position/size)
    -------------------------------------------------------------------------- */
@@ -14,36 +128,86 @@
   --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--color-bg-default) 98%); /* FULL GRADIENT */
   /* --cover-fade-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, var(--color-bg-default) 100%); DELAYED GRADIENT*/
 }
-
+ 
 .notion-header__cover.has-cover {
   opacity: var(--cover-opacity) !important;
 }
-
+ 
 .footer-cover:before,
 .notion-header__cover:after {
   background-image: var(--cover-fade-gradient) !important;
 }
-
+ 
 .footer-cover {
   background: var(--footerCover) !important;
   background-color: var(--color-bg-default) !important;
   background-size: cover !important;
   opacity: var(--cover-opacity) !important;
 }
-
+ 
+/* --------------------------------------------------------------------------
+   Hero image — top scrim, so the navbar blends into it
+   A full-bleed header image now runs to y=0 behind a transparent
+   navbar (see --nova-hero-bleed-top in 01-layout.css). That looks
+   right over a calm image and fails over a busy one: white nav links
+   on a bright photo have no guaranteed contrast.
+ 
+   This lays a short gradient over the top of the hero, strongest at
+   the very top and gone by the time the navbar ends. It reads as the
+   image fading up into the bar rather than as a band.
+ 
+   Built from --color-bg-default, so it DARKENS in dark mode and
+   LIGHTENS in light mode — always moving toward the page color, which
+   is the color the nav links are designed to contrast against. No
+   per-theme values needed.
+ 
+   Cover images don't need this: they already run at 70% opacity
+   under a fade. This is only for header images, which render at full
+   strength.
+ 
+   DIALS:
+     strength — opacity at the very top. 0 turns the scrim off.
+     depth    — how far down it reaches before vanishing. Tied to the
+                navbar height by default so it covers exactly the band
+                the bar occupies, plus a little past it.
+   -------------------------------------------------------------------------- */
+:root {
+  --nova-hero-scrim: 55%;
+  --nova-hero-scrim-depth: calc(var(--nova-nav-height) * 1.6);
+}
+ 
+.notion-root > .notion-image.full-width:first-child {
+  position: relative !important;
+}
+ 
+.notion-root > .notion-image.full-width:first-child::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: var(--nova-hero-scrim-depth) !important;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bg-default) var(--nova-hero-scrim), transparent) 0%,
+    transparent 100%
+  ) !important;
+  pointer-events: none !important;
+}
+ 
 /* --------------------------------------------------------------------------
    Navbar — background, blur & scroll behavior
    The tint (color AND transparency) comes from Super › Colors ›
    Navbar › Background, as an 8-digit hex (e.g. #11111126). This file
    adds the blur, and the "invisible at the top" behavior.
-
+ 
    Scroll: 05-navbar-scroll.js labels the page data-nova-nav="top" or
    "scrolled". At the top, the navbar goes fully invisible (no tint,
    no blur); once scrolled, Super's tint + the blur fade in, and fade
    back out on return to the top. If the script fails to load, the
    label is never set and the navbar stays tinted + blurred — a safe
    fallback rather than a broken one.
-
+ 
    Tried and shelved: a top-to-bottom gradient falloff via a masked
    ::before layer. Didn't render on Super across browsers; reverted to
    this known-good version. Worth revisiting later if wanted.
@@ -52,7 +216,7 @@
   --nova-navbar-blur: 48px;
   --nova-navbar-fade: .35s;   /* how long the fade in/out takes */
 }
-
+ 
 .super-navbar {
   background: var(--navbar-background-color) !important;
   backdrop-filter: blur(var(--nova-navbar-blur)) !important;
@@ -60,17 +224,17 @@
   border: none !important;
   box-shadow: none !important;
 }
-
+ 
 /* The mobile menu is handled in its own section further down — it
    needs an opaque background of its own, not the navbar's tint. */
-
+ 
 .super-navbar {
   transition:
     background var(--nova-navbar-fade) ease,
     backdrop-filter var(--nova-navbar-fade) ease,
     -webkit-backdrop-filter var(--nova-navbar-fade) ease !important;
 }
-
+ 
 /* At the top of the page: fully invisible. Only the bar itself — the
    mobile dropdown menu keeps its tint + blur so its links stay
    readable over the hero. */
@@ -79,12 +243,12 @@ html[data-nova-nav="top"] .super-navbar {
   backdrop-filter: blur(0px) !important;
   -webkit-backdrop-filter: blur(0px) !important;
 }
-
+ 
 .super-navbar__content {
   border: none !important;
   box-shadow: none !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    ONE PALETTE — Notion's text colors remapped to your chosen colors
    Super ships TWO unrelated color sets: the Notion text palette
@@ -92,31 +256,31 @@ html[data-nova-nav="top"] .super-navbar {
    keeps them in step, and every hue differed — green was
    rgb(0,255,128) as text but rgb(0,204,102) as a button, pink
    rgb(255,0,102) against rgb(227,0,170).
-
+ 
    That split showed up anywhere the two met: a pink text button next
    to a pink heading read as two different pinks.
-
+ 
    This points Notion's text colors at the Forms pickers, making ONE
    picker per hue the source of truth for everything — colored text,
    headings, filled text buttons, callout fills and strokes, dividers
    and Notion button blocks. Change a hue in Super › Colors › Forms ›
    Button and every use of it moves together.
-
+ 
    CONSEQUENCE WORTH KNOWING: Super › Colors › Notion is now inert for
    these nine hues. Setting a color there will appear to do nothing.
    Tune hues in Forms › Button instead.
-
+ 
    TWO PATHS, BOTH REMAPPED. Super exposes its Notion palette in two
    independent ways and they do NOT feed each other — confirmed by
    forcing --color-text-green and watching .color-green ignore it:
-
+ 
      .color-{hue} classes .... colored text, headings, links
      --color-text-{hue} vars .. Prism syntax tokens in code blocks
-
+ 
    Remapping only the classes left code blocks on the old palette, so
    a green in a code sample didn't match a green anywhere else. Both
    are pointed at the Forms pickers below.
-
+ 
    Declared BEFORE the rules that consume these colors so anything
    below can still override a specific case. color-default is
    untouched — it follows the theme's own text color as it should.
@@ -131,7 +295,7 @@ html[data-nova-nav="top"] .super-navbar {
   --color-text-pink: var(--color-bg-form-btn-pink) !important;
   --color-text-red: var(--color-bg-form-btn-red) !important;
 }
-
+ 
 .notion-root .color-brown { color: var(--color-bg-form-btn-brown) !important; }
 .notion-root .color-orange { color: var(--color-bg-form-btn-orange) !important; }
 .notion-root .color-yellow { color: var(--color-bg-form-btn-yellow) !important; }
@@ -140,7 +304,7 @@ html[data-nova-nav="top"] .super-navbar {
 .notion-root .color-purple { color: var(--color-bg-form-btn-purple) !important; }
 .notion-root .color-pink { color: var(--color-bg-form-btn-pink) !important; }
 .notion-root .color-red { color: var(--color-bg-form-btn-red) !important; }
-
+ 
 /* --------------------------------------------------------------------------
    GRAY TEXT — deliberately NOT remapped
    Every other hue is a brand accent: the same green works as a fill
@@ -148,20 +312,20 @@ html[data-nova-nav="top"] .super-navbar {
    a NEUTRAL for muted captions and sub-heads sitting directly on the
    page background, so its job is readability, and the value that
    works on white is unusable on black.
-
+ 
    MEASURED (WCAG AA body text needs 4.5:1):
      Forms gray #A7A39A .... 2.52:1 on white  —  unreadable in light mode
-
+ 
    Super already ships its own per-mode value for this (Themes ›
    Colors › Notion › Gray, set separately for light and dark), so the
    fix is to leave it alone rather than add dials here that would
    shadow those two pickers. Gray text is tuned in Super like every
    other color.
-
+ 
    Gray FILLS — buttons, callouts, dividers — still come from Forms ›
    Button › Gray, which is a separate picker and unaffected.
    -------------------------------------------------------------------------- */
-
+ 
 /* --------------------------------------------------------------------------
    Colored callouts / full-width sections — background & stroke
    Super builds callout backgrounds by formula with the lightness
@@ -170,7 +334,7 @@ html[data-nova-nav="top"] .super-navbar {
    button (Forms › Button {color}), mixed into the page background.
    One picker per hue drives both: full strength on buttons, a subdued
    wash on sections.
-
+ 
    THE FOUR DIALS BELOW ARE THE ONLY NUMBERS TO TOUCH:
      FILL   — how rich the background is, per mode.
      STROKE — how strong the outline is, per mode. Previously every
@@ -179,7 +343,7 @@ html[data-nova-nav="top"] .super-navbar {
               (orange, yellow). Now each stroke is built from that
               callout's own color, so they're consistent across hues.
               Set a stroke to 0% to make outlines disappear entirely.
-
+ 
    Brown is deliberately excluded (it's a utility trigger — see the
    centering snippet in Super's CSS box). Gray keeps a neutral
    treatment, tuned separately at the bottom of this section.
@@ -190,64 +354,64 @@ html[data-nova-nav="top"] .super-navbar {
   --nova-section-stroke-light: 45%;  /* light mode outline strength */
   --nova-section-stroke-dark: 45%;   /* dark mode outline strength */
 }
-
+ 
 /* Wiring — picks the right pair for the active mode. No numbers here. */
 html.theme-light {
   --nova-section-strength: var(--nova-section-fill-light);
   --nova-section-stroke-strength: var(--nova-section-stroke-light);
 }
-
+ 
 html.theme-dark {
   --nova-section-strength: var(--nova-section-fill-dark);
   --nova-section-stroke-strength: var(--nova-section-stroke-dark);
 }
-
+ 
 .notion-callout[class*="bg-orange"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-orange) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-yellow"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-yellow) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-green"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-green) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-blue"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-blue) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-purple"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-purple) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-pink"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-pink) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-red"] {
   background-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--nova-section-strength), var(--color-bg-default)) !important;
   border-color: color-mix(in srgb, var(--color-bg-form-btn-red) var(--nova-section-stroke-strength), var(--color-bg-default)) !important;
 }
-
+ 
 /* Gray — neutral, built from Super's Text color rather than a hue, so
    it stays a true gray in both modes. Dark mode fill only (light mode
    keeps Super's own gray); stroke follows the same dial as the rest. */
 .theme-dark .notion-callout[class*="bg-gray"] {
   background-color: color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default)) !important;
 }
-
+ 
 .notion-callout[class*="bg-gray"] {
   border-color: color-mix(in srgb, var(--color-text-default) calc(var(--nova-section-stroke-strength) / 3), var(--color-bg-default)) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Gallery cards — cover overlay gradient & no-cover text color
    Structure/positioning for these same has-cover / no-cover cards
@@ -256,16 +420,16 @@ html.theme-dark {
 .notion-collection-gallery .notion-collection-card:has(.notion-collection-card__cover) .notion-collection-card__content {
   background: linear-gradient(to top, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 100%) !important;
 }
-
+ 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__content {
   background: none !important;
   background-image: none !important;
 }
-
+ 
 .notion-collection-gallery .notion-collection-card:not(:has(.notion-collection-card__cover)) .notion-collection-card__property {
   color: var(--color-text-default) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Gallery group headers — hide the divider, color the title
    The divider is a border (or box-shadow) directly on the header,
@@ -276,11 +440,11 @@ html.theme-dark {
   border-color: transparent !important;
   box-shadow: none !important;
 }
-
+ 
 .notion-collection-group__section-header .notion-property__title {
   color: #7D7D7D !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Inline pill buttons (e.g. "Learn more") — rest-state text opacity
    70% of whatever color the pill inherits (currentColor) — the
@@ -296,7 +460,7 @@ html.theme-dark {
 .notion-root .notion-text strong .notion-link {
   color: color-mix(in srgb, currentColor 70%, transparent) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Native Notion button — background/text color
    Notion tags a colored button with a "bg-{color}-light" class. Super
@@ -305,30 +469,30 @@ html.theme-dark {
    no matter what you picked. So colored buttons now read Super's
    dedicated Forms › Button ({color}) pickers instead
    (--color-bg-form-btn-{color}), set per theme in Super.
-
+ 
    NOTE: Notion button blocks use bg- classes (a background-color
    family), NOT the color- classes text uses. See handoff gotcha #4.
    -------------------------------------------------------------------------- */
-
+ 
 /* Default button (no color assigned): FILLED in page colors — solid
    white in dark mode, solid black in light — so it reads as the same
    weight of button as a colored one rather than dropping to an
    outline. Matches an uncolored bold text link exactly; the two are
    the same button at two sizes.
-
+ 
    Its hover is further down, with the other uncolored-button hovers. */
 .notion-button__content:not([class*="bg-"]) {
   background: var(--color-text-default) !important;
   border-color: transparent !important;
   -webkit-text-fill-color: var(--color-bg-default) !important;
 }
-
+ 
 /* Colored buttons: fill from Super's Forms pickers. */
 .notion-button__content[class*="bg-"] {
   border: none !important;
   -webkit-text-fill-color: var(--nova-on-color-text) !important;
 }
-
+ 
 .notion-button__content[class*="bg-gray"]   { background: var(--color-bg-form-btn-gray) !important; }
 .notion-button__content[class*="bg-brown"]  { background: var(--color-bg-form-btn-brown) !important; }
 .notion-button__content[class*="bg-orange"] { background: var(--color-bg-form-btn-orange) !important; }
@@ -338,7 +502,7 @@ html.theme-dark {
 .notion-button__content[class*="bg-purple"] { background: var(--color-bg-form-btn-purple) !important; }
 .notion-button__content[class*="bg-pink"]   { background: var(--color-bg-form-btn-pink) !important; }
 .notion-button__content[class*="bg-red"]    { background: var(--color-bg-form-btn-red) !important; }
-
+ 
 /* Hover, COLORED buttons: fully inverted page colors (white-on-black
    in dark mode, black-on-white in light). Listed after the color
    rules and with :hover, so it wins over them. */
@@ -347,11 +511,11 @@ html.theme-dark {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
 }
-
+ 
 /* Hover, UNCOLORED buttons: the navbar CTA treatment — outlined with
    a semi-transparent wash — through the same --nova-cta-hover-bg dial
    used by the CTA and by uncolored bold text links.
-
+ 
    Needed because an uncolored button is already white in dark mode,
    so the inverted hover above would leave it looking unchanged and
    give no feedback. The :not() carries the extra specificity that
@@ -361,7 +525,7 @@ html.theme-dark {
   border: 1px solid var(--color-text-default) !important;
   -webkit-text-fill-color: var(--color-text-default) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Code blocks — remove the per-line background band
    Super's syntax-highlighting theme ("One Dark") paints its own
@@ -379,7 +543,7 @@ html.theme-dark {
   background: transparent !important;
   text-shadow: none !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Database list items — hover background
    Super's own hover is a solid gray (Super's card/hover background),
@@ -392,22 +556,22 @@ html.theme-dark {
 .notion-collection-list__item:hover {
   background: var(--nova-toggle-hover-bg) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Navbar links — dim the unselected ones
    Super's Navbar › Text color is now pure white (dark) / black (light).
    Rather than leaving Super's own dimming in place, every link is set
    to a fraction of that color, and the CURRENT page's link gets full
    strength.
-
+ 
    Uses color-mix rather than opacity so only the text dims, not any
    background or border a link might carry. Hover brings a link to
    full strength too, as a hint that it's clickable.
-
+ 
    Was 60%, which disappeared over full-bleed background imagery.
    Raised to 80% — roughly halfway to full — so unselected links stay
    legible over a photo while the selected one still reads as selected.
-
+ 
    CONFIRMED via Inspect: Super marks the current page with .active on
    .super-navbar__item. The earlier speculative selectors (.selected,
    [aria-current], [data-active]) never matched anything and have been
@@ -418,21 +582,21 @@ html.theme-dark {
      page reads cleanly at full strength, while pure black on white is
      harsher than it needs to be. 95% takes the edge off light mode
      without making the links look dimmed.
-
+ 
        light  95% of #000000 over #ffffff  ->  rgb(13, 13, 13)
        dark  100% of #ffffff over #010101  ->  rgb(255, 255, 255)
-
+ 
      Dimming used to be the "you are here" signal, before the active
      pill existed. The pill does that now, so these values are about
      legibility only — the selected item still reads as selected at
      any value here.
-
+ 
      MEASURED: 80% was never a contrast failure against the page
      (13.0:1 dark, 12.6:1 light). The softness was relative to the
      pill beside it. */
   --nova-navbar-item-dim-light: 95%;
   --nova-navbar-item-dim-dark: 100%;
-
+ 
   /* Fallback for when neither theme class is on <html>. Declared here,
      BEFORE the wiring below, on purpose: html.theme-* out-specifies
      :root so order doesn't strictly matter, but a later :root that
@@ -440,36 +604,36 @@ html.theme-dark {
      us an afternoon on --nova-hero-pull. Base first, wiring after. */
   --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark);
 }
-
+ 
 html.theme-light { --nova-navbar-item-dim: var(--nova-navbar-item-dim-light); }
 html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
-
+ 
 .super-navbar__item-list .super-navbar__item {
   color: color-mix(in srgb, var(--navbar-text-color) var(--nova-navbar-item-dim), transparent) !important;
 }
-
+ 
 .super-navbar__item-list .super-navbar__item:hover,
 .super-navbar__item-list .super-navbar__item:focus-visible,
 .super-navbar__item-list .super-navbar__item.active {
   color: var(--navbar-text-color) !important;
 }
-
-
+ 
+ 
 /* --------------------------------------------------------------------------
    Mobile menu — background, item size, hover & fullscreen
    Three things Super gets wrong here, all fixed with the dials below:
-
+ 
    1. BACKGROUND. Super sets --navbar-menu-background-color to the
       SAME value as the navbar itself, which is deliberately ~15%
       transparent — so the open menu let the page show through and the
       links were hard to read. It now gets its own near-opaque
       background built from Super's Page background color.
-
+ 
    2. HOVER / ACTIVE. Super's --navbar-background-color-hover is
       #ff280f (bright red) and has no picker in Super's UI, which is
       why it survived. Replaced with a neutral wash of your Text
       color, matching toggles and list rows.
-
+ 
    3. SIZE & FULLSCREEN. Link size is now a dial, and the menu fills
       the whole screen instead of dropping partway down.
    -------------------------------------------------------------------------- */
@@ -486,14 +650,14 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   --nova-mobile-menu-panel-top: var(--navbar-height);
   --nova-mobile-menu-hover: color-mix(in srgb, var(--color-text-default) 8%, transparent);
 }
-
+ 
 .super-navbar__menu {
   background: color-mix(in srgb, var(--color-bg-default) var(--nova-mobile-menu-opacity), transparent) !important;
   backdrop-filter: blur(var(--nova-navbar-blur)) !important;
   -webkit-backdrop-filter: blur(var(--nova-navbar-blur)) !important;
   border: none !important;
   box-shadow: none !important;
-
+ 
   /* Fullscreen: fills the viewport instead of dropping partway down.
      100dvh (not 100vh) accounts for mobile browser chrome. Delete
      this block to go back to the stock drop-down panel. */
@@ -504,7 +668,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   padding-top: var(--nova-mobile-menu-panel-top) !important;
   overflow-y: auto !important;
 }
-
+ 
 /* Confirmed via Inspect: the mobile menu uses a DIFFERENT class
    family from the desktop navbar — super-navigation-menu__*, not
    super-navbar__*. The text size sits on the item's inner <p> title,
@@ -525,7 +689,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
-
+ 
 .super-navigation-menu__items {
   margin-top: var(--nova-mobile-menu-top-offset) !important;
   padding-top: 0 !important;
@@ -534,12 +698,12 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   flex-direction: column !important;
   gap: var(--nova-mobile-menu-item-gap) !important;
 }
-
+ 
 .super-navigation-menu__item,
 .super-navigation-menu__item-content {
   padding: var(--nova-mobile-menu-item-padding) !important;
 }
-
+ 
 /* Super's stylesheet gives the menu its own font family, so Inter is
    set explicitly here. --primary-font is Super › Typography ›
    Primary Font, so changing it there still carries through. */
@@ -549,7 +713,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
 .super-navbar__menu .super-navbar__item {
   font-family: var(--primary-font) !important;
 }
-
+ 
 .super-navigation-menu__item-title,
 .super-navigation-menu__item .notion-link,
 .super-navbar__menu .super-navbar__item {
@@ -557,7 +721,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   font-weight: var(--nova-mobile-menu-item-weight) !important;
   line-height: 1.2 !important;
 }
-
+ 
 /* Hover / active — replaces Super's red. */
 .super-navigation-menu__item:hover,
 .super-navigation-menu__item:focus-visible,
@@ -565,7 +729,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
 .super-navbar__menu .super-navbar__item:hover {
   background: var(--nova-mobile-menu-hover) !important;
 }
-
+ 
 /* Belt and braces: kills the red at the source, in case Super uses it
    anywhere else in the menu. */
 .super-navbar,
@@ -574,18 +738,18 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   --navbar-background-color-hover: var(--nova-mobile-menu-hover) !important;
   --navbar-list-item-hover: var(--nova-mobile-menu-hover) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Notion form (contact page) — panel & field backgrounds
    Confirmed via Inspect: Super renders the form natively (no iframe),
    so every part is styleable. Stock leaves the whole thing
    transparent — panel, inputs and all — which disappears over
    full-bleed background imagery.
-
+ 
    The panel is built from Super's Page background color, so it
    follows light/dark automatically. Fields get the same translucent
    wash used by toggles and code blocks, so they read as inset.
-
+ 
    DIALS:
      panel-opacity  — 100% = fully solid, lower = lets imagery through
      panel-padding  — space inside the panel
@@ -596,20 +760,20 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   --nova-form-panel-padding: 2rem;
   --nova-form-field-strength: 6%;
 }
-
+ 
 .notion-form__wrapper {
   background: color-mix(in srgb, var(--color-bg-default) var(--nova-form-panel-opacity), transparent) !important;
   border: 1px solid var(--color-border-default) !important;
   border-radius: var(--border-radii-layout) !important;
   padding: var(--nova-form-panel-padding) !important;
 }
-
+ 
 .notion-form__input-field {
   background: color-mix(in srgb, var(--color-text-default) var(--nova-form-field-strength), transparent) !important;
   border: 1px solid var(--color-border-default) !important;
   border-radius: var(--border-radii-layout) !important;
 }
-
+ 
 /* Focus: strengthen the field so the active one is obvious. */
 .notion-form__input-field:focus,
 .notion-form__input-field:focus-visible {
@@ -617,29 +781,29 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   border-color: var(--color-text-default) !important;
   outline: none !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Callouts containing an image block — border handling
    A COLORED callout with an image inside it reads as a designed block
    in its own right, so the outline competes with it and comes off.
-
+ 
    An UNCOLORED callout is different: its background is transparent, so
    the border is the only thing defining the block. Stripping it there
    made the callout invisible, leaving a stray image on the page that
    looked like a publishing failure. Those keep their border.
-
+ 
    :has() asks "does this callout contain an image block?", letting the
    browser style the parent based on its contents. Listed last so it
    wins over the colored-callout strokes above, which set border colors.
    -------------------------------------------------------------------------- */
-
+ 
 /* Colored + image: border off. */
 .notion-callout[class*="bg-"]:not([class*="bg-default"]):has(.notion-image),
 .notion-callout[class*="bg-"]:not([class*="bg-default"]):has(figure img),
 .notion-callout[class*="bg-"]:not([class*="bg-default"]):has(.notion-callout__content img) {
   border: none !important;
 }
-
+ 
 /* Uncolored + image: border on, from Super › Colors › Main › Border Color. */
 .notion-callout:not([class*="bg-"]):has(.notion-image),
 .notion-callout[class*="bg-default"]:has(.notion-image),
@@ -649,7 +813,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
 .notion-callout[class*="bg-default"]:has(.notion-callout__content img) {
   border: 1px solid var(--color-border-default) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Mobile menu open — full-screen overlay
    Confirmed via Inspect: .super-navbar__menu-wrapper carries a
@@ -657,7 +821,7 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
    makes that element the anchor for position:fixed inside it — so the
    panel's "top: 0" meant the top of the wrapper, which sits below the
    92px navbar, not the top of the screen.
-
+ 
    Fixing the WRAPPER is what works. It gets pulled to the top of the
    viewport, and the navbar stays transparent and above it so the logo
    and close button remain visible and clickable.
@@ -669,60 +833,60 @@ html.theme-dark  { --nova-navbar-item-dim: var(--nova-navbar-item-dim-dark); }
   right: 0 !important;
   bottom: 0 !important;
 }
-
+ 
 .super-navbar__menu {
   top: 0 !important;
   margin-top: 0 !important;
 }
-
+ 
 html:has(.super-navbar__menu) .super-navbar {
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   z-index: 50 !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Content images — subtle border
    A white or light image loses its edge against a light background (and
    a dark one against dark), so images get the same hairline the gallery
    cards use. Corner radius follows Super › Layout › Rounded Edges.
-
+ 
    WHAT'S EXCLUDED: anything 06-lightbox.js has tagged with
    data-nova-noborder — set by a "-" or "-nb" caption flag, a "-ui" or
    "div-" filename, or simply being under 24px tall. CSS can't read
    caption text, so the script writes that attribute for it; the two
    systems share one flag syntax.
-
+ 
    Gallery card covers are untouched — their cards already carry a
    border of their own.
    -------------------------------------------------------------------------- */
 :root {
   --nova-image-border: 1px solid var(--color-border-default);
 }
-
+ 
 .notion-image:not([data-nova-noborder]) img {
   border: var(--nova-image-border) !important;
   border-radius: var(--border-radii-layout) !important;
 }
-
-
+ 
+ 
 /* --------------------------------------------------------------------------
    Graphic dividers — drawn in CSS, any color
    Confirmed via Inspect: these are 1600x4 PNGs, and Super's image
    pipeline resizes them until the height rounds to ZERO — so there's
    no image left to display, at any CSS height. That's why they
    vanished on mobile while still showing on desktop.
-
+ 
    So the image is hidden and its container is painted instead. The
    container keeps its place in the layout, and the color comes from
    the filename.
-
+ 
    Matching is generic: ANY image whose filename contains "div-"
    becomes a divider. If its name also contains a known color, it gets
    that color; anything else falls back to the neutral border color,
    so a new divider is never invisible.
-
+ 
    Colors come from Super › Colors › Forms (the same pickers that drive
    your buttons and section backgrounds), so dividers stay in step with
    the rest of the palette.
@@ -730,7 +894,7 @@ html:has(.super-navbar__menu) .super-navbar {
 :root {
   --nova-divider-height: 4px;
 }
-
+ 
 /* Base: every divider, whatever its color. */
 .notion-image:has(img[src*="div-"]) {
   height: var(--nova-divider-height) !important;
@@ -740,11 +904,11 @@ html:has(.super-navbar__menu) .super-navbar {
   overflow: hidden !important;
   background: var(--color-border-default) !important;
 }
-
+ 
 .notion-image:has(img[src*="div-"]) img {
   display: none !important;
 }
-
+ 
 /* Per-color. Add a line here for any new divider color. */
 .notion-image:has(img[src*="div-red"])    { background: var(--color-bg-form-btn-red) !important; }
 .notion-image:has(img[src*="div-green"])  { background: var(--color-bg-form-btn-green) !important; }
@@ -755,13 +919,13 @@ html:has(.super-navbar__menu) .super-navbar {
 .notion-image:has(img[src*="div-yellow"]) { background: var(--color-bg-form-btn-yellow) !important; }
 .notion-image:has(img[src*="div-brown"])  { background: var(--color-bg-form-btn-brown) !important; }
 .notion-image:has(img[src*="div-gray"])   { background: var(--color-bg-form-btn-gray) !important; }
-
+ 
 /* --------------------------------------------------------------------------
    Navbar CTA — swapped states
    Stock (00-base-theme.css, section 27) gives the CTA a transparent
    fill with a 1px border at rest, and fills it solid on hover.
    Swapped here: SOLID at rest, outlined on hover.
-
+ 
    Done as an override rather than by editing the stock rules, because
    the hover rule there is shared with the inline text pills — editing
    it would swap those too.
@@ -771,30 +935,30 @@ html:has(.super-navbar__menu) .super-navbar {
   color: var(--color-bg-default) !important;
   border: 1px solid var(--color-text-default) !important;
 }
-
+ 
 .super-navbar__cta:hover {
   background: transparent !important;
   color: var(--color-text-default) !important;
   border: 1px solid var(--color-text-default) !important;
   opacity: 1 !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Navbar items, theme toggle & CTA — translucent hover
    Stock uses Super's Main › Hover background, a solid gray in both
    modes. That reads muddy over full-bleed imagery, since it's an
    opaque swatch sitting on top of a photo.
-
+ 
    These three now use a wash of Super's TEXT color instead, which
    tints what's behind it rather than covering it — white in dark
    mode, near-black in light, automatically. A border at a higher
    strength gives the hover a defined edge.
-
+ 
    Deliberately separate from --nova-overlay-strength (5%), which stays
    where it is for toggles, list rows, code blocks and dropdowns.
    The lightbox close button also keeps its solid hover, since it only
    ever sits over a dark backdrop.
-
+ 
    MUST stay after the CTA block above: the CTA's :hover here only
    changes the fill, and relies on that block for its border.
    -------------------------------------------------------------------------- */
@@ -803,15 +967,15 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-nav-hover-border: 25%;  /* navbar items + theme toggle, edge */
   --nova-cta-hover-bg: 25%;      /* CTA fill on hover */
 }
-
+ 
 /* The edge is an INSET BOX-SHADOW, not a border, and the border
    property is NOT TOUCHED here — both details matter.
-
+ 
    Super already gives every navbar item a 1px transparent border. The
    original rule painted that border on hover, which kept the box the
    same size. Replacing it with `border: none` REMOVED those 2px, so
    items shrank on hover and the row jumped sideways under the cursor.
-
+ 
    Leaving border alone keeps Super's transparent 1px in place in every
    state, and the inset shadow paints the visible edge inside the
    existing box. Nothing changes size, so nothing moves. Do not add a
@@ -821,29 +985,29 @@ html:has(.super-navbar__menu) .super-navbar {
   background: color-mix(in srgb, var(--color-text-default) var(--nova-nav-hover-bg), transparent) !important;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--nova-nav-hover-border), transparent) !important;
 }
-
+ 
 /* CTA keeps its solid border (set above); only the fill changes. */
 .super-navbar__cta:hover {
   background: color-mix(in srgb, var(--color-text-default) var(--nova-cta-hover-bg), transparent) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Current page — holds the hover treatment permanently
    The only thing marking the current page used to be a text-opacity
    difference, too subtle to read at a glance and invisible over busy
    imagery. The current page now keeps the pill — wash, edge and
    full-strength text — so the navbar itself says where you are.
-
+ 
    SAME INSET-SHADOW APPROACH as the hover rule above, and the border
    property is left alone here for the same reason — see the note
    there. Two earlier versions of this rule got that wrong in opposite
    directions: one added a border (selected item 2px too big), the next
    set border: none (hovered item 2px too small).
-
+ 
    DELIBERATELY INERT ON HOVER: this sits after the :hover rule and
    matches at the same specificity, so hovering the current page
    changes nothing. You're already there.
-
+ 
    Its dials are separate from the hover dials and set slightly
    stronger, because a persistent state competes with background
    imagery in a way a transient hover doesn't. Set them equal to the
@@ -853,25 +1017,25 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-nav-active-bg: 18%;      /* current-page pill fill */
   --nova-nav-active-border: 35%;  /* current-page pill edge */
 }
-
+ 
 .super-navbar__item-list .super-navbar__item.active,
 .super-navbar__item-list .super-navbar__item.active:hover {
   color: var(--navbar-text-color) !important;
   background: color-mix(in srgb, var(--color-text-default) var(--nova-nav-active-bg), transparent) !important;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-default) var(--nova-nav-active-border), transparent) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Lightbox image — border
    The gallery builds its own <img> inside a dialog, so the page's
    image border (which keys off data-nova-noborder) never reaches it.
    Dark images then blend into the dark backdrop with nothing defining
    their edge.
-
+ 
    This border is a fixed white wash rather than Super's border color,
    because the lightbox backdrop is dark in BOTH themes — a light-mode
    border color would be too dark to see against it.
-
+ 
    NOTE: this applies to every image in the lightbox. The dialog image
    is built from just the source URL, so the -nb flag doesn't carry
    over to it.
@@ -879,20 +1043,20 @@ html:has(.super-navbar__menu) .super-navbar {
 :root {
   --nova-lightbox-image-border: 20%;  /* white strength on the edge */
 }
-
+ 
 #super-gallery-lightbox .sg-image {
   border: 1px solid color-mix(in srgb, #FFFFFF var(--nova-lightbox-image-border), transparent) !important;
   border-radius: var(--border-radii-layout) !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    Lightbox — layout & caption
    06-lightbox.js carries each image's Notion caption into the overlay
    as .sg-caption. This lays the overlay out and styles it.
-
+ 
    THE LAYOUT: image and caption behave as ONE centered group, with the
    counter anchored to the bottom of the screen in both layouts.
-
+ 
      +--------------------------------------------+
      |                                            |
      |  [<]          IMAGE           [>]          |  desktop: nav at
@@ -900,7 +1064,7 @@ html:has(.super-navbar__menu) .super-navbar {
      |                                            |
      |                 4 / 45                     |  counter: bottom
      +--------------------------------------------+
-
+ 
      +------------------------+
      |                        |
      |         IMAGE          |  mobile: image fills
@@ -908,7 +1072,7 @@ html:has(.super-navbar__menu) .super-navbar {
      |        caption         |  caption full width
      |  [<]    4 / 45    [>]  |  counter between the
      +------------------------+  bottom-corner nav
-
+ 
    The image+caption group is a flex COLUMN where the image is the
    flexible row (min-height: 0 lets it shrink below its natural size)
    and the caption is not. So the browser gives the caption whatever
@@ -916,7 +1080,7 @@ html:has(.super-navbar__menu) .super-navbar {
    wraps to three lines pushes the image up on its own, with no line
    counting and nothing to tune. object-fit: contain keeps the image
    undistorted as it shrinks.
-
+ 
    Padding on the overlay reserves the space the absolutely-positioned
    buttons and counter occupy, so the group never runs under them:
    left/right for the nav buttons on desktop, bottom for the counter
@@ -932,7 +1096,7 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-lightbox-nav-clear: 5.5rem;    /* side space reserved for prev/next */
   --nova-lightbox-bottom-clear: 3.5rem; /* bottom space reserved for the counter */
 }
-
+ 
 #super-gallery-lightbox[open] {
   display: flex !important;
   flex-direction: column !important;
@@ -945,7 +1109,7 @@ html:has(.super-navbar__menu) .super-navbar {
            calc(var(--nova-lightbox-bottom-clear) + env(safe-area-inset-bottom))
            var(--nova-lightbox-nav-clear) !important;
 }
-
+ 
 /* The flexible row: shrinks to whatever space the caption leaves. */
 #super-gallery-lightbox .sg-image {
   order: 1 !important;
@@ -955,7 +1119,7 @@ html:has(.super-navbar__menu) .super-navbar {
   max-height: 100% !important;
   object-fit: contain !important;
 }
-
+ 
 /* Caption: in the column, directly under the image. */
 #super-gallery-lightbox .sg-caption {
   order: 2 !important;
@@ -973,11 +1137,11 @@ html:has(.super-navbar__menu) .super-navbar {
   color: var(--nova-lightbox-caption-color) !important;
   text-wrap: pretty;
 }
-
+ 
 #super-gallery-lightbox .sg-caption[hidden] {
   display: none !important;
 }
-
+ 
 /* Counter: out of the column entirely, pinned to the bottom of the
    screen in both layouts. */
 #super-gallery-lightbox .sg-counter {
@@ -990,7 +1154,7 @@ html:has(.super-navbar__menu) .super-navbar {
   text-align: center !important;
   color: var(--nova-lightbox-counter-color) !important;
 }
-
+ 
 /* Mobile: stock moves prev/next to the bottom corners, onto the same
    band as the counter. The image can use the full width (nothing is
    beside it any more) but needs more clearance below. */
@@ -1000,53 +1164,53 @@ html:has(.super-navbar__menu) .super-navbar {
              calc(4.75rem + env(safe-area-inset-bottom))
              var(--nova-lightbox-pad) !important;
   }
-
+ 
   #super-gallery-lightbox .sg-caption {
     max-width: 100% !important;
   }
 }
-
-
+ 
+ 
 /* --------------------------------------------------------------------------
    TEXT BUTTONS — three weights of emphasis
    Gives three distinct button strengths that can sit side by side on
    one line, which a Notion button block can't do (it's its own block,
    so it always takes a line of its own).
-
+ 
      NOTION BUTTON BLOCK   heaviest. Filled, and 20% larger than
                            everything else — see --nova-button-scale
                            in 01-layout.css.
      **BOLD** LINK         filled, at normal text size.
      ***BOLD + ITALIC***   outlined.
      plain link            underlined text, untouched.
-
+ 
    CONFIRMED via Inspect on /staging/blocks, which has all three in
    all ten Notion colors. The markup nests like this, em OUTSIDE
    strong:
-
+ 
      bold           <strong><a class="notion-link link">
      bold + italic  <em><strong><a class="notion-link link">
-
+ 
    HOW THE SPLIT WORKS: 00-base-theme.css already styles every bold
    link as an outlined pill that fills on hover — which is exactly
    what bold+italic should do. So nothing here touches bold+italic at
    all; it simply keeps the existing treatment. These rules only
    capture the bold-WITHOUT-italic case and swap it to filled-at-rest,
    mirroring the navbar CTA.
-
+ 
    :not(em strong) is what excludes the italic case. Doing it this
    way means there are no competing rules to out-specify — without it,
    each of the ten colored fills below would need a matching
    bold+italic override to beat it, and the specificity race between
    them is exactly the kind of thing that breaks silently later.
-
+ 
    COLOR: the fill is currentColor — whatever color the link's text
    would have been. A pink link fills with the SAME pink as the
    heading beside it, which is the point: these buttons sit inline
    with copy and have to belong to it. An uncolored one resolves to
    the theme's text color, so it's solid white in dark mode and
    near-black in light, like the navbar CTA.
-
+ 
    This deliberately does NOT use the Forms › Button pickers. Those
    are a separate palette from Notion's text colors — Forms pink is
    rgb(227,0,170) while text pink is rgb(255,0,102) — so a filled
@@ -1054,7 +1218,7 @@ html:has(.super-navbar__menu) .super-navbar {
    it. Notion button BLOCKS still use Forms, as they always have;
    they're their own element, not part of a sentence.
    -------------------------------------------------------------------------- */
-
+ 
 /* Uncolored: fill with the inherited text color. color: inherit
    cancels the 70% dimming applied to rest-state pills earlier in this
    file — without it currentColor would pick up that dimmed value. */
@@ -1065,16 +1229,16 @@ html:has(.super-navbar__menu) .super-navbar {
   border-color: transparent !important;
   opacity: 1 !important;
 }
-
+ 
 /* HOVER, UNCOLORED: the navbar CTA's treatment — outlined, with a
    semi-transparent wash of the text color behind it. Reuses
    --nova-cta-hover-bg so the two stay matched if that dial moves.
-
+ 
    Why this case is different: an uncolored button is ALREADY white in
    dark mode, so inverting it to white would leave it looking
    identical and give no hover feedback at all. A colored one has
    somewhere to invert to, and keeps the solid treatment below.
-
+ 
    color: inherit cancels the 70% rest-state dimming applied earlier
    in this file, so currentColor resolves to the full-strength text
    color for both the border and the wash. */
@@ -1084,11 +1248,11 @@ html:has(.super-navbar__menu) .super-navbar {
   -webkit-text-fill-color: currentColor !important;
   border: 1px solid currentColor !important;
 }
-
+ 
 /* HOVER, COLORED: solid white in dark mode, solid black in light —
    the SAME hover a Notion button block uses, through the same two
    variables, so both button weights behave identically.
-
+ 
    One extra class each, so these beat the uncolored rule above
    without relying on source order. */
 .notion-root .notion-text[class*="color-gray"] strong:not(em strong) > .notion-link:hover,
@@ -1097,69 +1261,69 @@ html:has(.super-navbar__menu) .super-navbar {
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-brown"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-brown"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-orange"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-orange"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-yellow"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-yellow"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-green"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-green"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-blue"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-blue"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-purple"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-purple"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-pink"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-pink"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 .notion-root .notion-text[class*="color-red"] strong:not(em strong) > .notion-link:hover,
 .notion-root .notion-text [class*="color-red"] strong:not(em strong) > .notion-link:hover {
   background: var(--cta-bg-hover-color) !important;
   -webkit-text-fill-color: var(--cta-text-hover-color) !important;
   border-color: transparent !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    BOLD + ITALIC — upright text
    The italic is a SWITCH, not a style: it selects the outlined
    treatment, and the label itself should read as normal upright text
    like every other button on the page.
-
+ 
    font-style is inherited from the <em> that wraps the link, so it's
    reset on the anchor itself. Everything else about this tier —
    outlined at rest, colored fill on hover — already comes from
@@ -1169,25 +1333,25 @@ html:has(.super-navbar__menu) .super-navbar {
 .notion-root .notion-text em strong > .notion-link:hover {
   font-style: normal !important;
 }
-
+ 
 /* --------------------------------------------------------------------------
    BOLD + ITALIC — translucent fill at rest
    00-base-theme.css gives this tier a solid --color-bg-default fill,
    which over a photo or a colored section reads as a hard black or
    white slab — heavier than an outlined button should be.
-
+ 
    The fill is knocked back so the button sits INTO its surroundings
    while the border stays at full strength and carries the shape. The
    border is untouched here; only the fill changes.
-
+ 
    Transparency, not a lighter color: a fixed lighter value would
    cover whatever is behind it just as flatly. This lets the page,
    the cover image or a colored section show through.
-
+ 
    Hover is deliberately NOT touched — it keeps the solid colored fill
    from 00-base-theme.css. That rule carries a :hover and so outranks
    this one; no override needed.
-
+ 
    THE DIAL: 100% is the old solid fill, 0% is fully see-through.
    -------------------------------------------------------------------------- */
 :root {
@@ -1196,7 +1360,7 @@ html:has(.super-navbar__menu) .super-navbar {
      the label sat at 3.64:1 against its own surface at 25% — below
      the 4.5:1 AA threshold. 55% brings it to 5.80:1 while the button
      still reads as translucent.
-
+ 
      Costs nothing on an ordinary page: the wash is the PAGE
      background, so over the page itself it is invisible at any value.
      It only does work over imagery and colored sections, which is
@@ -1204,17 +1368,17 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-outline-button-bg: 55%;
   --nova-outline-button-text: 70%; /* label strength; border is always 100% */
 }
-
+ 
 /* ICON BUTTONS COME FREE FROM A MINIMUM WIDTH.
    An outlined button with one character was 43px wide and 48px tall —
    an oval. Giving it a minimum width equal to its own height makes a
    single character square, and the pill radius then renders it as a
    circle.
-
+ 
    Nothing else changes: a button whose text is already wider than its
    height never reaches the minimum, so every existing text button is
    untouched. No marker, no flag, no list of IDs.
-
+ 
    1lh is the element's own line-height, so the minimum tracks the
    font size automatically — the circle stays round if this button
    ever sits in larger or smaller type. The added 16px is the 8px top
@@ -1235,3 +1399,39 @@ html:has(.super-navbar__menu) .super-navbar {
      want the text at 100% as well. */
   -webkit-text-fill-color: color-mix(in srgb, currentColor var(--nova-outline-button-text), transparent) !important;
 }
+ 
+ 
+/* ---------------------------------------------------------------------------
+   NOTION ICON RECOLOUR
+ 
+   Notion's built-in icons arrive as <img src="app.notion.com/icons/NAME_gray.svg">
+   — flat single-colour SVGs, so a CSS filter repaints them.
+ 
+   Filter, not mask: mask-image is CORS-blocked cross-origin, and a data-URI
+   mask renders nothing on a replaced <img>. Chains were solved numerically
+   against the live icons; all land within 1.4/255 except gray (9.4).
+ 
+   To colour a page, add one line to the page-scope list below.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-icon-recolor: none;
+  --nova-icon-green: brightness(0) saturate(100%) invert(50.0%) sepia(60.0%) saturate(672%) hue-rotate(100deg) brightness(104.1%) contrast(104.4%);
+  --nova-icon-blue: brightness(0) saturate(100%) invert(44.3%) sepia(40.9%) saturate(964%) hue-rotate(167deg) brightness(91.8%) contrast(147.1%);
+  --nova-icon-orange: brightness(0) saturate(100%) invert(31.7%) sepia(60.0%) saturate(3104%) hue-rotate(5deg) brightness(98.6%) contrast(120.4%);
+  --nova-icon-pink: brightness(0) saturate(100%) invert(25.7%) sepia(42.6%) saturate(2000%) hue-rotate(296deg) brightness(107.9%) contrast(203.8%);
+  --nova-icon-purple: brightness(0) saturate(100%) invert(34.3%) sepia(53.4%) saturate(758%) hue-rotate(226deg) brightness(101.7%) contrast(280.2%);
+  --nova-icon-red: brightness(0) saturate(100%) invert(32.3%) sepia(60.0%) saturate(1893%) hue-rotate(319deg) brightness(65.4%) contrast(190.0%);
+  --nova-icon-yellow: brightness(0) saturate(100%) invert(39.6%) sepia(44.2%) saturate(1976%) hue-rotate(35deg) brightness(149.3%) contrast(101.1%);
+  --nova-icon-brown: brightness(0) saturate(100%) invert(23.9%) sepia(43.0%) saturate(1918%) hue-rotate(358deg) brightness(100.0%) contrast(84.8%);
+  --nova-icon-gray: brightness(0) saturate(100%) invert(75.2%) sepia(68.4%) saturate(2000%) hue-rotate(198deg) brightness(163.7%) contrast(26.5%);
+}
+ 
+.page__about { --nova-icon-recolor: var(--nova-icon-green); }
+ 
+img.notion-icon,
+.notion-callout__icon img,
+.notion-property__title__icon-wrapper img {
+  filter: var(--nova-icon-recolor) !important;
+}
+ 
+Claude finished the response
