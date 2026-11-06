@@ -342,3 +342,37 @@ html .notion-header__title {
 h1.notion-heading {
   margin-bottom: var(--nova-h1-space-after) !important;
 }
+
+
+/* ---------------------------------------------------------------------------
+   H2 BOLD  —  a size between plain H1 and bold H1
+
+   Measured ladder (00-base-theme sets H1 bold to clamp(2.6rem, 6vw, 5rem)):
+       viewport   H1 bold   H2 bold   H1 plain   H2 plain
+       1440         80px     54.4px     30px       24px
+       1024       61.4px     41.0px     30px       24px
+        390       41.6px       36px     30px       24px
+
+   The clamp floor/ceiling are the midpoints of H1 plain and H1 bold at each
+   end, so H2 bold always lands between them.
+
+   NOTE: this restyles EVERY bold H2. Un-bold any H2 meant to stay at 24px.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-h2-bold-size: clamp(2.25rem, 4vw, 3.4rem);
+  --nova-h2-bold-line-height: 1.05;
+  --nova-h2-bold-tracking: -0.03em;
+  --nova-h2-bold-space-after: 12px;
+}
+
+h2.notion-heading strong,
+strong h2.notion-heading {
+  font-size: var(--nova-h2-bold-size) !important;
+  line-height: var(--nova-h2-bold-line-height) !important;
+  letter-spacing: var(--nova-h2-bold-tracking) !important;
+}
+
+h2.notion-heading:has(strong) {
+  line-height: var(--nova-h2-bold-line-height) !important;
+  margin-bottom: var(--nova-h2-bold-space-after) !important;
+}
