@@ -1130,3 +1130,44 @@ main.super-content {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
+
+
+/* ---------------------------------------------------------------------------
+   CALLOUT ICON — vertically centre on the heading, any level H1-H4
+
+   Super renders the icon wrapper as a full-height block with the image pinned
+   to its top, so the icon floats to the top of a multi-line callout. Measured
+   on /about: icon centre sat 6px above the H3 centre on all nine WHAT items.
+
+   Fix: make the wrapper a centring flex box whose height is the heading's
+   first line box (line-height + 2px), pinned to the top of the callout.
+
+   The margin reset is required: Super gives H4 a 21px top margin even as the
+   first child, which pushes the heading down and breaks the centring.
+
+   Verified 0px offset on all 9 live callouts and on all four heading levels.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-callout-icon-h1: 41px;   /* heading line-height + 2 */
+  --nova-callout-icon-h2: 36px;
+  --nova-callout-icon-h3: 32px;
+  --nova-callout-icon-h4: 29px;
+}
+
+.notion-callout h1.notion-heading,
+.notion-callout h2.notion-heading,
+.notion-callout h3.notion-heading,
+.notion-callout h4.notion-heading {
+  margin-top: 0 !important;
+}
+
+.notion-callout > .notion-callout__icon {
+  display: flex !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+}
+
+.notion-callout:has(> .notion-callout__content h1) > .notion-callout__icon { height: var(--nova-callout-icon-h1) !important; }
+.notion-callout:has(> .notion-callout__content h2) > .notion-callout__icon { height: var(--nova-callout-icon-h2) !important; }
+.notion-callout:has(> .notion-callout__content h3) > .notion-callout__icon { height: var(--nova-callout-icon-h3) !important; }
+.notion-callout:has(> .notion-callout__content h4) > .notion-callout__icon { height: var(--nova-callout-icon-h4) !important; }
