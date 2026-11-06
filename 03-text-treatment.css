@@ -362,17 +362,22 @@ h1.notion-heading {
   --nova-h2-bold-size: clamp(2.25rem, 4vw, 3.4rem);
   --nova-h2-bold-line-height: 1.05;
   --nova-h2-bold-tracking: -0.03em;
-  --nova-h2-bold-space-after: 12px;
+  /* margin-bottom deliberately NOT set: Super already gives H2 12px. */
 }
 
-h2.notion-heading strong,
-strong h2.notion-heading {
+/* Size the H2 ITSELF and let <strong> inherit. Setting font-size only on the
+   strong left the h2's line-height resolving against its own 24px (25.2px)
+   while the text rendered at 54.4px — the glyphs overflowed the line box and
+   the spacing below looked far bigger than the margin actually was. */
+h2.notion-heading:has(strong) {
   font-size: var(--nova-h2-bold-size) !important;
   line-height: var(--nova-h2-bold-line-height) !important;
   letter-spacing: var(--nova-h2-bold-tracking) !important;
 }
 
-h2.notion-heading:has(strong) {
-  line-height: var(--nova-h2-bold-line-height) !important;
-  margin-bottom: var(--nova-h2-bold-space-after) !important;
+h2.notion-heading:has(strong) strong,
+h2.notion-heading:has(strong) * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
 }
