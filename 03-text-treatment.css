@@ -319,3 +319,26 @@ h4.notion-heading * {
 html .notion-header__title {
   letter-spacing: var(--nova-header-title-tracking) !important;
 }
+
+
+/* ---------------------------------------------------------------------------
+   H1 SPACE BELOW
+
+   Super gives every heading margin-bottom: 0, so a heading sits flush against
+   the text under it (measured gap: 0px on H1-H4). All vertical rhythm on the
+   page comes from the paragraph's own 12.8px bottom margin, which does nothing
+   for the FIRST paragraph after a heading.
+
+   This adds 12px below H1 only. For reference, a Notion carriage return (an
+   empty paragraph) is 32px, so this sits between flush and a full return.
+   Fixed px, not em, so the big clamp() H1 on case studies gets the same 12px
+   rather than scaling to ~32px. Switch to 0.4em if you want it to scale.
+   Top margins stay Super's. H2-H4 are left alone.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-h1-space-after: 12px;
+}
+
+h1.notion-heading {
+  margin-bottom: var(--nova-h1-space-after) !important;
+}
