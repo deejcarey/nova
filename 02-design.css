@@ -1355,7 +1355,7 @@ img.notion-icon,
    everything including flat areas; that is not the effect wanted here.)
 --------------------------------------------------------------------------- */
 :root {
-  --nova-callout-scrim: 50%;        /* plain callouts: 0% clear ... 100% solid page bg */
+  --nova-callout-scrim: 25%;        /* plain callouts: 0% clear ... 100% solid page bg */
   --nova-section-opacity: 50%;      /* full-width gray sections: lets the backdrop through */
 
   /* Fill strengths are COMPENSATED for the alpha above: at 50% the fill must be
