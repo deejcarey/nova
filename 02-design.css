@@ -296,12 +296,14 @@ html.theme-dark {
    same treatment from Super's own gray. */
 .theme-dark .notion-callout[class*="bg-gray"] {
   background-color: color-mix(in srgb,
-    color-mix(in srgb, var(--color-text-default) 4%, var(--color-bg-default))
+    color-mix(in srgb, var(--color-text-default) var(--nova-section-gray-dark), var(--color-bg-default))
     var(--nova-section-opacity), transparent) !important;
 }
 
 .theme-light .notion-callout[class*="bg-gray"] {
-  background-color: color-mix(in srgb, var(--color-bg-gray-light) var(--nova-section-opacity), transparent) !important;
+  background-color: color-mix(in srgb,
+    color-mix(in srgb, var(--color-text-default) var(--nova-section-gray-light), var(--color-bg-default))
+    var(--nova-section-opacity), transparent) !important;
 }
 
 .notion-callout[class*="bg-gray"] {
@@ -1354,7 +1356,16 @@ img.notion-icon,
 --------------------------------------------------------------------------- */
 :root {
   --nova-callout-scrim: 50%;        /* plain callouts: 0% clear ... 100% solid page bg */
-  --nova-section-opacity: 75%;      /* full-width gray sections: lets the backdrop through */
+  --nova-section-opacity: 50%;      /* full-width gray sections: lets the backdrop through */
+
+  /* Fill strengths are COMPENSATED for the alpha above: at 50% the fill must be
+     2C - B to composite back to the tone the sections had when opaque.
+         dark   target #0B0B0B over #010101  -> fill #151515  ->  8.4% of text
+         light  target #E6E6E6 over #FFFFFF  -> fill #CDCDCD  -> 19.6% of text
+     Change --nova-section-opacity and these need re-solving, or the two modes
+     drift apart in tone. */
+  --nova-section-gray-dark: 8.4%;
+  --nova-section-gray-light: 19.6%;
 }
 
 .notion-callout:not([class*="bg-"]) {
