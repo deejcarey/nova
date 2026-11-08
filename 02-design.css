@@ -1312,10 +1312,40 @@ html:has(.super-navbar__menu) .super-navbar {
   --nova-icon-gray: brightness(0) saturate(100%) invert(75.2%) sepia(68.4%) saturate(2000%) hue-rotate(198deg) brightness(163.7%) contrast(26.5%);
 }
 
+/* Light and dark use DIFFERENT greens in Super's palette:
+     dark  #00cc66   (9.77:1 on black)
+     light #00a251   (3.34:1 on white; #00cc66 would be 2.14:1 and fail)
+   So each theme gets its own chain and the icon tracks the heading. */
+:root { --nova-icon-green-light: brightness(0) saturate(100%) invert(49.2%) sepia(53.4%) saturate(783%) hue-rotate(100deg) brightness(84.8%) contrast(100%); }
+
 .page__about { --nova-icon-recolor: var(--nova-icon-green); }
+html.theme-light .page__about { --nova-icon-recolor: var(--nova-icon-green-light); }
 
 img.notion-icon,
 .notion-callout__icon img,
 .notion-property__title__icon-wrapper img {
   filter: var(--nova-icon-recolor) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   UNCOLOURED CALLOUT SCRIM
+
+   An uncoloured callout is `.notion-callout.color-default.border` — transparent
+   background, 1px border, 6px radius. A coloured one carries a `bg-*` class
+   (e.g. bg-gray-light), so :not([class*="bg-"]) hits only the plain ones and
+   leaves Super's colour choices alone.
+
+   The tint is mixed FROM --color-bg-default, not from white. That is what makes
+   it invisible over a flat page in either theme — the colour is identical to
+   what is already behind it — while still building a readable scrim over a
+   background graphic. (The expanded toggle uses white at 5%, which lightens
+   everything including flat areas; that is not the effect wanted here.)
+--------------------------------------------------------------------------- */
+:root {
+  --nova-callout-scrim: 65%;   /* 0% = fully transparent, 100% = solid page bg */
+}
+
+.notion-callout:not([class*="bg-"]) {
+  background: color-mix(in srgb, var(--color-bg-default) var(--nova-callout-scrim), transparent) !important;
 }
