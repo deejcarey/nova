@@ -339,7 +339,7 @@ html .notion-header__title {
   --nova-h1-space-after: 12px;
 }
 
-h1.notion-heading {
+h1.notion-heading:not(.toggle) {
   margin-bottom: var(--nova-h1-space-after) !important;
 }
 
@@ -429,12 +429,14 @@ h2.notion-heading:has(strong) * {
   --nova-h3-display-tracking: -0.02em;
 }
 
+h3.notion-heading.notion-semantic-string:has(strong),
 h3.notion-heading:has(strong) {
   font-size: var(--nova-h3-display-size) !important;
   line-height: var(--nova-h3-display-line-height) !important;
   letter-spacing: var(--nova-h3-display-tracking) !important;
 }
 
+h3.notion-heading.notion-semantic-string:has(strong) *,
 h3.notion-heading:has(strong) * {
   font-size: inherit !important;
   line-height: inherit !important;
