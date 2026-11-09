@@ -406,3 +406,37 @@ h2.notion-heading:has(strong) * {
 .notion-root :is(h1, h2).notion-heading + :is(h1, h2, h3, h4, .notion-text) {
   margin-top: 0 !important;
 }
+
+
+/* ---------------------------------------------------------------------------
+   H3 BOLD  —  a size between plain H1 and bold H2
+
+   Completes the pattern: bold is the display size at H1, H2 and H3.
+
+   NOTE: this restyles EVERY bold H3. Un-bold any H3 meant to stay at 20px.
+
+   Ladder (measured):
+       viewport   H1 bold   H2 bold   H3 b+i   H1 plain   H3 plain
+       1440         80px     54.4px   42.2px     30px       20px
+       1024       61.4px     41.0px   32.8px     30px       20px
+        390       41.6px       36px   32.8px     30px       20px
+
+   Floor and ceiling are the midpoints of H1 plain and H2 bold at each end.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-h3-display-size: clamp(2.05rem, 3vw, 2.64rem);
+  --nova-h3-display-line-height: 1.1;
+  --nova-h3-display-tracking: -0.02em;
+}
+
+h3.notion-heading:has(strong) {
+  font-size: var(--nova-h3-display-size) !important;
+  line-height: var(--nova-h3-display-line-height) !important;
+  letter-spacing: var(--nova-h3-display-tracking) !important;
+}
+
+h3.notion-heading:has(strong) * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+}
