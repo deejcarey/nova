@@ -547,6 +547,33 @@ h3.notion-heading:has(strong) * {
   margin-top: var(--nova-flow-to-box) !important;
 }
 
+/* 4b — anything directly under an image sits a fixed distance from it,
+        whatever its heading level. Measured on the homepage testimonials:
+        an H3 quote landed 5px below its avatar while an H1 quote landed 37px,
+        because the H1 collected the display-heading section margin.
+        16px of box gap puts both at ~21px of INK gap, since a 20px/30px H3
+        carries 5px of half-leading and a 30px/39px H1 carries 4.5px.
+        Tripled class to out-rank the display-heading rule above. */
+:root {
+  --nova-after-image: 16px;
+}
+
+.notion-image.notion-image.notion-image {
+  margin-bottom: 0 !important;   /* the gap belongs to the block below, not here */
+}
+
+
+.notion-image.notion-image.notion-image + *:not(.notion-heading__anchor),
+.notion-image.notion-image.notion-image + .notion-heading__anchor + * {
+  margin-top: var(--nova-after-image) !important;
+}
+
+/* Super emits a zero-height .notion-heading__anchor before every heading.
+   Without this it also collects the margin above, and the gap doubles. */
+.notion-image.notion-image.notion-image + .notion-heading__anchor {
+  margin-top: 0 !important;
+}
+
 /* 5 — nothing pushes away from the top edge of its container (last = wins) */
 .notion-root.notion-root > :first-child,
 .notion-column.notion-column > :first-child,
