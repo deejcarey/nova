@@ -1171,3 +1171,33 @@ main.super-content {
 .notion-callout:has(> .notion-callout__content h2) > .notion-callout__icon { height: var(--nova-callout-icon-h2) !important; }
 .notion-callout:has(> .notion-callout__content h3) > .notion-callout__icon { height: var(--nova-callout-icon-h3) !important; }
 .notion-callout:has(> .notion-callout__content h4) > .notion-callout__icon { height: var(--nova-callout-icon-h4) !important; }
+
+
+/* ---------------------------------------------------------------------------
+   GALLERY CARD ORDER  —  title last, every other property above it
+
+   Super stacks a gallery card's properties in a flex column, title first:
+       [cover image] -> title -> select (tags)
+   DJ wants the title — the punchy bit with the arrow rollover — at the bottom.
+
+   Pushing the title to the end rather than reversing the column, so a card
+   with three or more properties still behaves (reverse would flip them all).
+
+   Deliberately NOT scoped to a page: a single-property card has nothing to
+   reorder, so this is a no-op until a gallery gains a second property. Add
+   tags to Professional Work.db and the cards pick it up with no code change.
+
+   Gallery-only by construction — list views render .notion-collection-list__item,
+   which has no __content wrapper and never matches.
+
+   Super emits .notion-property__select for BOTH select and multi_select
+   (same branch, same class, one Pill per value), so multi-tag cards are
+   already covered.
+
+   Swept 2026-11-09: /work, /products, /stories, /staging/components carry a
+   title only (no-op). /staging/blocks has title+select, title+text, and
+   title+text+select cards — all three put the title last, which is the intent.
+--------------------------------------------------------------------------- */
+.notion-collection-card__content > .notion-property__title {
+  order: 99 !important;
+}
