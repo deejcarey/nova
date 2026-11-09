@@ -548,15 +548,13 @@ h3.notion-heading:has(strong) * {
 }
 
 /* 5 — nothing pushes away from the top edge of its container (last = wins) */
-.notion-root > :first-child,
-.notion-column > :first-child,
-.notion-callout__content > :first-child,
-.notion-toggle__content > :first-child {
-  margin-top: 0 !important;
-},
-.notion-root > .notion-heading__anchor:first-child + *,
-.notion-column > .notion-heading__anchor:first-child + *,
-.notion-callout__content > .notion-heading__anchor:first-child + *,
-.notion-toggle__content > .notion-heading__anchor:first-child + * {
+.notion-root.notion-root > :first-child,
+.notion-column.notion-column > :first-child,
+.notion-callout__content.notion-callout__content > :first-child,
+.notion-toggle__content.notion-toggle__content > :first-child,
+.notion-root.notion-root > .notion-heading__anchor:first-child + *,
+.notion-column.notion-column > .notion-heading__anchor:first-child + *,
+.notion-callout__content.notion-callout__content > .notion-heading__anchor:first-child + *,
+.notion-toggle__content.notion-toggle__content > .notion-heading__anchor:first-child + * {
   margin-top: 0 !important;
 }
