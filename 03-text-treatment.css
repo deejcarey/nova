@@ -416,87 +416,145 @@ h3.notion-heading:has(strong) * {
   letter-spacing: inherit !important;
 }
 
-
 /* ===========================================================================
    VERTICAL RHYTHM  —  ONE system for every block, in any container
 
-   WHY THIS EXISTS
-   Spacing used to come from three places at once: Super's per-level margins
-   (H2 16px, H3 2px, H4 21.28px), our own overrides, and a callout rule that
-   zeroed heading margins inside containers. The same heading therefore spaced
-   differently depending on what followed it and what it sat inside:
-
-       "Values—to the core."   H3 bold -> H4, on the page    = 33px
-       "MINI resuME."          H3 bold -> H4, in a callout   = 12px
-
    THE MODEL
-   All vertical margins are zeroed, then every gap is re-applied as a
-   margin-top on the SECOND block. One owner per gap, no collapsing, and
-   nothing keys off a container — so a block spaces identically on the page,
-   in a column, in a callout or inside a toggle.
+   Every gap is a margin-top on the LOWER block. One owner per gap, no
+   collapsing, nothing keyed to a container — a block spaces the same on the
+   page, in a column, in a callout or inside a toggle.
 
-       space between two blocks = the lower block's margin-top
+   SCOPED TO DIRECT CHILDREN of the four containers that hold a content flow.
+   This matters: an unscoped rule also hits the heading inside a toggle's
+   __summary row, which pushed the toggle title below its + button.
 
-   Four values cover the whole site. Change them here and everything moves
-   together.
+   DEFAULT-ON: any direct child gets the body gap unless something more
+   specific claims it, so block types we have not enumerated (forms, embeds,
+   videos) still space correctly instead of collapsing to zero.
+
+   SPECIFICITY NOTE: do not put an element+class compound (h1.notion-heading)
+   inside the reset's :is() — :is() takes the specificity of its most specific
+   argument, which silently out-ranks the per-type rules below and zeroes them.
 =========================================================================== */
 :root {
-  --nova-flow-body:   12.8px;  /* body block after body block              */
-  --nova-flow-box:    16px;    /* bordered block after anything            */
-  --nova-flow-before: 32px;    /* above a display heading (section break)  */
-  --nova-flow-after:  12px;    /* below a display heading                  */
+  --nova-flow-body:   12.8px;  /* any block after any block               */
+  --nova-flow-box:    16px;    /* bordered block (callout, image, collection) */
+  --nova-toggle-gap:  16px;    /* EVERY toggle, no exceptions                */
+  --nova-flow-before: 32px;    /* above a display heading                 */
+  --nova-flow-after:  12px;    /* below a display heading                 */
   --nova-flow-to-box: 22px;    /* display heading -> bordered block.
                                   Larger because a border paints at the box
-                                  edge while text starts ~9px lower.       */
+                                  edge while text starts ~9px lower.      */
 }
 
-/* 1 — reset every vertical margin */
-.notion-root :is(h1.notion-heading, h2.notion-heading, h3.notion-heading, h4.notion-heading, .notion-text, .notion-quote, .notion-toggle, .notion-callout, .notion-collection, .notion-image, .notion-list) {
-  margin-top: 0 !important;
+/* 1 — default gap for every block in a flow, and no bottom margins anywhere */
+.notion-root > *:not(.notion-heading__anchor),
+.notion-column > *:not(.notion-heading__anchor),
+.notion-callout__content > *:not(.notion-heading__anchor),
+.notion-toggle__content > *:not(.notion-heading__anchor) {
+  margin-top: var(--nova-flow-body) !important;
   margin-bottom: 0 !important;
 }
 
-/* 2 — space BEFORE, by block type.
-       Plain H3 and H4 are body copy on this site, so they flow as body. */
-.notion-root :is(.notion-text, .notion-quote, .notion-list, .notion-divider,
-                 h3.notion-heading:not(:has(strong)), h4.notion-heading) {
-  margin-top: var(--nova-flow-body) !important;
+/* 1b — Super sets margin-bottom on some headings at (0,2,1), which beats the
+        reset above. Doubling the container class clears it for good, so the
+        gap is always owned by the block below. */
+.notion-root.notion-root > :is(h1, h2, h3, h4).notion-heading,
+.notion-column.notion-column > :is(h1, h2, h3, h4).notion-heading,
+.notion-callout__content.notion-callout__content > :is(h1, h2, h3, h4).notion-heading,
+.notion-toggle__content.notion-toggle__content > :is(h1, h2, h3, h4).notion-heading {
+  margin-bottom: 0 !important;
 }
 
-.notion-root :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image) {
+/* 2 — bordered blocks sit a little further apart */
+.notion-root > :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > :is(.notion-callout, .notion-collection, .notion-image) {
   margin-top: var(--nova-flow-box) !important;
 }
 
-.notion-root :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)) {
+/* 2b — ONE standard for every toggle, whatever precedes it. Deliberately
+        excluded from the heading-adjacency rule below so a toggle after a
+        heading matches a toggle after a toggle. */
+.notion-root.notion-root > .notion-toggle,
+.notion-column.notion-column > .notion-toggle,
+.notion-callout__content.notion-callout__content > .notion-toggle,
+.notion-toggle__content.notion-toggle__content > .notion-toggle {
+  margin-top: var(--nova-toggle-gap) !important;
+}
+
+/* 3 — a display heading opens a section */
+.notion-root > :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)),
+.notion-column > :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)),
+.notion-callout__content > :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)),
+.notion-toggle__content > :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)) {
   margin-top: var(--nova-flow-before) !important;
 }
 
-/* 3 — a display heading owns the space beneath it */
-.notion-root h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
-.notion-root h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
-.notion-root h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
-.notion-root h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
-.notion-root h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
-.notion-root h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider) {
+/* 4 — a display heading owns the space beneath it */
+.notion-root > h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root > h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root > h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root > h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root > h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-column > h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-callout__content > h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-toggle__content > h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider) {
   margin-top: var(--nova-flow-after) !important;
 }
 
-.notion-root h1.notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
-.notion-root h1.notion-heading + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
-.notion-root h2.notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
-.notion-root h2.notion-heading + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
-.notion-root h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
-.notion-root h3.notion-heading:has(strong) + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image) {
+.notion-root > h1.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-root > h1.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-root > h2.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-root > h2.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-root > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-root > h3.notion-heading:has(strong) + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h1.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h1.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h2.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h2.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-column > h3.notion-heading:has(strong) + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h1.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h1.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h2.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h2.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-callout__content > h3.notion-heading:has(strong) + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h1.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h1.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h2.notion-heading + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h2.notion-heading + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-callout, .notion-collection, .notion-image),
+.notion-toggle__content > h3.notion-heading:has(strong) + :is(.notion-callout, .notion-collection, .notion-image) {
   margin-top: var(--nova-flow-to-box) !important;
 }
 
-/* 4 — nothing pushes away from the top edge of its container.
-       Super emits a zero-height .notion-heading__anchor, hence both forms. */
-.notion-root.notion-root > :first-child,
+/* 5 — nothing pushes away from the top edge of its container (last = wins) */
+.notion-root > :first-child,
 .notion-column > :first-child,
 .notion-callout__content > :first-child,
-.notion-toggle__content > :first-child,
-.notion-root.notion-root > .notion-heading__anchor:first-child + *,
+.notion-toggle__content > :first-child {
+  margin-top: 0 !important;
+},
+.notion-root > .notion-heading__anchor:first-child + *,
 .notion-column > .notion-heading__anchor:first-child + *,
 .notion-callout__content > .notion-heading__anchor:first-child + *,
 .notion-toggle__content > .notion-heading__anchor:first-child + * {
