@@ -574,6 +574,34 @@ h3.notion-heading:has(strong) * {
   margin-top: 0 !important;
 }
 
+/* 4c — EVEN RHYTHM in an icon card: icon, title, body.
+        The paragraph starts one body line below the title, so the pair reads
+        as one block of type instead of the title floating above it.
+
+        Measured on the Values and What-I-offer cards: the title baseline sat
+        40px above the body's first baseline while the body's own line-to-line
+        is 27px. At 0 extra margin the gap is 28px — within 1px of even.
+
+        SCOPED BY SHAPE, not by heading level. The card titles are H2 on
+        /about and plain H3 on the homepage, and plain H3/H4 are also DJ's
+        body copy — so keying off the level collapsed consecutive paragraphs
+        on the case studies. What makes a card title a title is that it
+        follows the icon image. */
+:root {
+  --nova-heading-to-text: 0px;
+}
+
+.notion-image + .notion-heading__anchor + h1.notion-heading + .notion-text,
+.notion-image + h1.notion-heading + .notion-text,
+.notion-image + .notion-heading__anchor + h2.notion-heading + .notion-text,
+.notion-image + h2.notion-heading + .notion-text,
+.notion-image + .notion-heading__anchor + h3.notion-heading + .notion-text,
+.notion-image + h3.notion-heading + .notion-text,
+.notion-image + .notion-heading__anchor + h4.notion-heading + .notion-text,
+.notion-image + h4.notion-heading + .notion-text {
+  margin-top: var(--nova-heading-to-text) !important;
+}
+
 /* 5 — nothing pushes away from the top edge of its container (last = wins) */
 .notion-root.notion-root > :first-child,
 .notion-column.notion-column > :first-child,
