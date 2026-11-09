@@ -58,28 +58,15 @@
                 the bar occupies, plus a little past it.
    -------------------------------------------------------------------------- */
 :root {
-  --nova-hero-scrim: 55%;
+  --nova-hero-scrim: 0%;
   --nova-hero-scrim-depth: calc(var(--nova-nav-height) * 1.6);
 }
 
-.notion-root > .notion-image.full-width:first-child {
-  position: relative !important;
-}
 
-.notion-root > .notion-image.full-width:first-child::after {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: var(--nova-hero-scrim-depth) !important;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-bg-default) var(--nova-hero-scrim), transparent) 0%,
-    transparent 100%
-  ) !important;
-  pointer-events: none !important;
-}
+
+/* Hero scrim REMOVED at DJ's request — he handles navbar legibility in the
+   artwork itself. The dials below are left in place, unused, in case it is
+   ever wanted back: set --nova-hero-scrim above 0 and restore a ::after. */
 
 /* --------------------------------------------------------------------------
    Navbar — background, blur & scroll behavior
