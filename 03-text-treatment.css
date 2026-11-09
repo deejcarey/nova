@@ -407,6 +407,24 @@ h2.notion-heading:has(strong) * {
   margin-top: 0 !important;
 }
 
+/* A BORDERED block after a heading needs more room than a text block.
+
+   Text and a toggle sitting the same 12px below a heading do not look the
+   same: text has 3px padding plus ~6px half-leading before any glyph appears
+   (first ink ~21px down), while a toggle paints its 1px border right at the
+   box edge (first ink 13px down). Measured on /about: "MINI resuME." -> text
+   vs "FAQ" -> toggle, identical margins, ~8px different optically.
+
+   This puts the painted edge where the text's first ink would be. */
+:root {
+  --nova-heading-to-box: 10px;
+}
+
+.notion-root :is(h1, h2, h3, h4).notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout),
+.notion-root :is(h1, h2, h3, h4).notion-heading + :is(.notion-toggle, .notion-callout) {
+  margin-top: var(--nova-heading-to-box) !important;
+}
+
 
 /* ---------------------------------------------------------------------------
    H3 BOLD  —  a size between plain H1 and bold H2
@@ -434,6 +452,9 @@ h3.notion-heading:has(strong) {
   font-size: var(--nova-h3-display-size) !important;
   line-height: var(--nova-h3-display-line-height) !important;
   letter-spacing: var(--nova-h3-display-tracking) !important;
+  /* H1 gets this from --nova-h1-space-after and H2 from Super's own
+     h2:not(.toggle) rule; plain H3 is body copy and keeps Super's 0. */
+  margin-bottom: var(--nova-h1-space-after) !important;
 }
 
 h3.notion-heading.notion-semantic-string:has(strong) *,
