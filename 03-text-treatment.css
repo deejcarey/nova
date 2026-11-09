@@ -84,10 +84,7 @@
   line-height: var(--nova-body-line-height) !important;
 }
 
-.notion-text {
-  margin-top: var(--nova-body-space-before) !important;
-  margin-bottom: var(--nova-body-space-after) !important;
-}
+
 
 /* Stock adds a second gap inside the block; zeroed so only the
    panel's value applies and spacing stays predictable. */
@@ -173,9 +170,7 @@ h4.notion-heading * {
   line-height: 1.2 !important;
 }
 
-.notion-text:has(+ .notion-divider) {
-  margin-bottom: .5rem !important;
-}
+
 
 /* --------------------------------------------------------------------------
    Gallery cards — title weight/size, no-cover text truncation
@@ -339,9 +334,7 @@ html .notion-header__title {
   --nova-h1-space-after: 12px;
 }
 
-h1.notion-heading:not(.toggle) {
-  margin-bottom: var(--nova-h1-space-after) !important;
-}
+
 
 
 /* ---------------------------------------------------------------------------
@@ -383,47 +376,7 @@ h2.notion-heading:has(strong) * {
 }
 
 
-/* ---------------------------------------------------------------------------
-   SPACE AFTER A HEADING  —  make it the heading's job, not the next block's
 
-   Super sets a different top margin per level (H2 16px, H3 2px, H4 21.28px),
-   so the gap under an identical heading changed depending on what followed:
-
-       "Hey, I'm DJ."                  H2 bold -> H3   = 14px
-       "Discovering the undiscovered." H2 bold -> H4   = 33px
-
-   Both headings are the same size with the same 12px below. Zeroing the top
-   margin of the block directly after a heading makes the heading's own
-   margin-bottom the single source of that gap, at every level.
-
-   ONLY H1 and H2 trigger this. DJ authors body copy as H3 and H4, so letting
-   those trigger it collapsed consecutive paragraphs from 21px to 0.
-   Scoped to headings and text only: dividers, images and callouts keep their
-   own top margin, so section rules and spacers are untouched. Super puts a
-   zero-height .notion-heading__anchor between blocks, hence the two forms.
---------------------------------------------------------------------------- */
-.notion-root :is(h1, h2).notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text),
-.notion-root :is(h1, h2).notion-heading + :is(h1, h2, h3, h4, .notion-text) {
-  margin-top: 0 !important;
-}
-
-/* A BORDERED block after a heading needs more room than a text block.
-
-   Text and a toggle sitting the same 12px below a heading do not look the
-   same: text has 3px padding plus ~6px half-leading before any glyph appears
-   (first ink ~21px down), while a toggle paints its 1px border right at the
-   box edge (first ink 13px down). Measured on /about: "MINI resuME." -> text
-   vs "FAQ" -> toggle, identical margins, ~8px different optically.
-
-   This puts the painted edge where the text's first ink would be. */
-:root {
-  --nova-heading-to-box: 10px;
-}
-
-.notion-root :is(h1, h2, h3, h4).notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout),
-.notion-root :is(h1, h2, h3, h4).notion-heading + :is(.notion-toggle, .notion-callout) {
-  margin-top: var(--nova-heading-to-box) !important;
-}
 
 
 /* ---------------------------------------------------------------------------
@@ -454,7 +407,6 @@ h3.notion-heading:has(strong) {
   letter-spacing: var(--nova-h3-display-tracking) !important;
   /* H1 gets this from --nova-h1-space-after and H2 from Super's own
      h2:not(.toggle) rule; plain H3 is body copy and keeps Super's 0. */
-  margin-bottom: var(--nova-h1-space-after) !important;
 }
 
 h3.notion-heading.notion-semantic-string:has(strong) *,
@@ -462,4 +414,91 @@ h3.notion-heading:has(strong) * {
   font-size: inherit !important;
   line-height: inherit !important;
   letter-spacing: inherit !important;
+}
+
+
+/* ===========================================================================
+   VERTICAL RHYTHM  —  ONE system for every block, in any container
+
+   WHY THIS EXISTS
+   Spacing used to come from three places at once: Super's per-level margins
+   (H2 16px, H3 2px, H4 21.28px), our own overrides, and a callout rule that
+   zeroed heading margins inside containers. The same heading therefore spaced
+   differently depending on what followed it and what it sat inside:
+
+       "Values—to the core."   H3 bold -> H4, on the page    = 33px
+       "MINI resuME."          H3 bold -> H4, in a callout   = 12px
+
+   THE MODEL
+   All vertical margins are zeroed, then every gap is re-applied as a
+   margin-top on the SECOND block. One owner per gap, no collapsing, and
+   nothing keys off a container — so a block spaces identically on the page,
+   in a column, in a callout or inside a toggle.
+
+       space between two blocks = the lower block's margin-top
+
+   Four values cover the whole site. Change them here and everything moves
+   together.
+=========================================================================== */
+:root {
+  --nova-flow-body:   12.8px;  /* body block after body block              */
+  --nova-flow-box:    16px;    /* bordered block after anything            */
+  --nova-flow-before: 32px;    /* above a display heading (section break)  */
+  --nova-flow-after:  12px;    /* below a display heading                  */
+  --nova-flow-to-box: 22px;    /* display heading -> bordered block.
+                                  Larger because a border paints at the box
+                                  edge while text starts ~9px lower.       */
+}
+
+/* 1 — reset every vertical margin */
+.notion-root :is(h1.notion-heading, h2.notion-heading, h3.notion-heading, h4.notion-heading, .notion-text, .notion-quote, .notion-toggle, .notion-callout, .notion-collection, .notion-image, .notion-list) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 2 — space BEFORE, by block type.
+       Plain H3 and H4 are body copy on this site, so they flow as body. */
+.notion-root :is(.notion-text, .notion-quote, .notion-list, .notion-divider,
+                 h3.notion-heading:not(:has(strong)), h4.notion-heading) {
+  margin-top: var(--nova-flow-body) !important;
+}
+
+.notion-root :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image) {
+  margin-top: var(--nova-flow-box) !important;
+}
+
+.notion-root :is(h1.notion-heading, h2.notion-heading, h3.notion-heading:has(strong)) {
+  margin-top: var(--nova-flow-before) !important;
+}
+
+/* 3 — a display heading owns the space beneath it */
+.notion-root h1.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root h1.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root h2.notion-heading + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root h2.notion-heading + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root h3.notion-heading:has(strong) + .notion-heading__anchor + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider),
+.notion-root h3.notion-heading:has(strong) + :is(h1, h2, h3, h4, .notion-text, .notion-quote, .notion-list, .notion-divider) {
+  margin-top: var(--nova-flow-after) !important;
+}
+
+.notion-root h1.notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
+.notion-root h1.notion-heading + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
+.notion-root h2.notion-heading + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
+.notion-root h2.notion-heading + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
+.notion-root h3.notion-heading:has(strong) + .notion-heading__anchor + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image),
+.notion-root h3.notion-heading:has(strong) + :is(.notion-toggle, .notion-callout, .notion-collection, .notion-image) {
+  margin-top: var(--nova-flow-to-box) !important;
+}
+
+/* 4 — nothing pushes away from the top edge of its container.
+       Super emits a zero-height .notion-heading__anchor, hence both forms. */
+.notion-root.notion-root > :first-child,
+.notion-column > :first-child,
+.notion-callout__content > :first-child,
+.notion-toggle__content > :first-child,
+.notion-root.notion-root > .notion-heading__anchor:first-child + *,
+.notion-column > .notion-heading__anchor:first-child + *,
+.notion-callout__content > .notion-heading__anchor:first-child + *,
+.notion-toggle__content > .notion-heading__anchor:first-child + * {
+  margin-top: 0 !important;
 }
