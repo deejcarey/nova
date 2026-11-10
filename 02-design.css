@@ -1361,7 +1361,8 @@ img.notion-icon,
 
 /* ---------------------------------------------------------------------------
    GALLERY CARD HOVER  —  one treatment for every gallery on the site
-   (added 2026-11-09; paste at the very END of 02-design.css)
+   (v1 2026-11-09; v2 2026-11-09: spotlight dim removed at DJ's request,
+   image brighten + border ring added)
 
    THE RULE: a card that opens a page gets the full hover. A card that
    doesn't is inert — no hover, no highlight, no arrow, no hand cursor.
@@ -1377,16 +1378,20 @@ img.notion-icon,
    /staging/blocks, /staging/components: 175 cards, every one either
    linked or .no-click, never both. No info-only card contains a link.
 
-   SUPER AUTO-LINKS: if Super creates a sub-page for a card (e.g. Pepsi on
-   /about, one card on /products), that card gains an anchor and picks up
-   the hover. Delete the sub-page and it goes inert again on refresh.
+   SUPER AUTO-LINKS: Super creates a sub-page for any database entry whose
+   page has content — even a single stray return. That card gains an anchor
+   and picks up the hover. Empty the page and it goes inert on refresh.
 --------------------------------------------------------------------------- */
 :root {
-  --nova-card-hover-scale: 1.02;   /* hovered card size; 1 = off. 1.02 grows a
-                                      267px card ~3px per side — clears the
-                                      16px card gap measured on /art */
-  --nova-card-hover-dim: 55%;      /* opacity of the OTHER cards in that
-                                      gallery; 100% = spotlight off */
+  --nova-card-hover-scale: 1.02;       /* hovered card size; 1 = off. 1.02 grows
+                                          a 267px card ~3px per side — clears
+                                          the 16px card gap measured on /art */
+  --nova-card-hover-brighten: 1.3;     /* cover image brightness; 1 = off */
+  --nova-card-hover-ring: 2px;         /* extra width drawn inside the card's
+                                          own 1px border -> 3px total */
+  --nova-card-hover-ring-color: var(--color-text-default); /* full-strength:
+                                          #f0f0f0 dark, near-black light.
+                                          Rest border is #333 (measured). */
   --nova-card-hover-speed: .25s;
   --nova-card-hover-ease: cubic-bezier(.2, .7, .2, 1);
 }
@@ -1411,7 +1416,7 @@ img.notion-icon,
 }
 
 /* 3 — HOVER: mouse and trackpad only. Touch screens have no hover; a tap
-       would leave a card stuck scaled and its neighbours stuck dimmed. */
+       would leave a card stuck in its hover state. */
 @media (hover: hover) and (pointer: fine) {
 
   /* background keeps Super's own .12s transition, which this would
@@ -1419,8 +1424,32 @@ img.notion-icon,
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]) {
     transition:
       transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
-      opacity var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      border-color var(--nova-card-hover-speed) var(--nova-card-hover-ease),
       background .12s ease-in !important;
+  }
+
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]) img.notion-collection-card__cover {
+    transition: filter var(--nova-card-hover-speed) var(--nova-card-hover-ease);
+  }
+
+  /* THE RING. The card's own border can't simply grow from 1px to 3px:
+     the card is border-box in a fixed grid cell, so a thicker border would
+     squeeze the image 2px on every side and make it jump. Instead the real
+     border turns full-strength, and a ::after layer inside it grows from
+     0 to 2px, adding up to 3px with no layout change.
+
+     z-index 11 sits above Super's click anchor (z-index 10, measured);
+     pointer-events: none keeps clicks going to that anchor. The card's
+     ::before and ::after were both unused (measured). */
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href])::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 11;
+    pointer-events: none;
+    border-radius: inherit;
+    border: 0 solid var(--nova-card-hover-ring-color);
+    transition: border-width var(--nova-card-hover-speed) var(--nova-card-hover-ease);
   }
 
   /* Scale. z-index lifts the card over its neighbours so the grown edge
@@ -1428,17 +1457,20 @@ img.notion-icon,
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover {
     transform: scale(var(--nova-card-hover-scale)) !important;
     z-index: 2 !important;
+    border-color: var(--nova-card-hover-ring-color) !important;
+  }
+
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover::after {
+    border-width: var(--nova-card-hover-ring);
+  }
+
+  /* Brighten the cover only — the title gradient and text sit above it
+     and stay as they are. */
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover img.notion-collection-card__cover {
+    filter: brightness(var(--nova-card-hover-brighten));
   }
 
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover .notion-property__title::after {
     opacity: 1 !important;
-  }
-
-  /* Spotlight: dims the other cards in the SAME gallery only.
-     No :has() nested inside :has() here — that is invalid and the whole
-     rule would be dropped. It isn't needed: info-only cards can't be
-     :hover (rule 1), so any hovered card is a linked one. */
-  .notion-collection-gallery:has(> .notion-collection-card:hover) > .notion-collection-card:not(:hover) {
-    opacity: var(--nova-card-hover-dim);
   }
 }
