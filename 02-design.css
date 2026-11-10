@@ -1,4 +1,4 @@
-/* 02-design.css — v3, 2026-11-09 — gallery hover: ring snaps off instantly on roll-off. Search this file for 'VERSION v3' to confirm. */
+/* 02-design.css — v4, 2026-11-09 — gallery hover: instant ring, 4% scale, 90%->115% brightness; image cursor fix. Search for 'VERSION v4' to confirm. */
 /* ==========================================================================
    02-design.css — color, transparency & visual surface treatment only
    No positioning or sizing here — that's 01-layout.css. Load this
@@ -1362,10 +1362,12 @@ img.notion-icon,
 
 /* ---------------------------------------------------------------------------
    GALLERY CARD HOVER  —  one treatment for every gallery on the site
-   VERSION v3 — 2026-11-09
+   VERSION v4 — 2026-11-09
    v1: scale + spotlight dim + arrow
    v2: spotlight dim removed at DJ's request; image brighten + border ring
    v3: ring and bright border snap off instantly on roll-off
+   v4: ring snaps ON instantly too; scale 2% -> 4%; covers rest at 90% and
+       rise to 115% on hover (was 100% -> 130%, which blew out bright art)
 
    THE RULE: a card that opens a page gets the full hover. A card that
    doesn't is inert — no hover, no highlight, no arrow, no hand cursor.
@@ -1382,20 +1384,28 @@ img.notion-icon,
    linked or .no-click, never both. No info-only card contains a link.
 
    SUPER AUTO-LINKS: Super creates a sub-page for any database entry whose
-   page has content — even a single stray return. That card gains an anchor
-   and picks up the hover. Empty the page and it goes inert on refresh.
+   page has content — even a single stray return (DJ's finding). That card
+   gains an anchor and picks up the hover. Empty the page and it goes inert
+   on refresh.
 --------------------------------------------------------------------------- */
 :root {
-  --nova-card-hover-scale: 1.02;       /* hovered card size; 1 = off. 1.02 grows
-                                          a 267px card ~3px per side — clears
-                                          the 16px card gap measured on /art */
-  --nova-card-hover-brighten: 1.3;     /* cover image brightness; 1 = off */
+  --nova-card-hover-scale: 1.04;       /* hovered card size; 1 = off.
+                                          1.04 grows a 267px card ~5px per
+                                          side and a 550px featured card
+                                          ~11px — both inside the 16px card
+                                          gap measured on /art. A featured
+                                          card past ~800px wide would reach
+                                          the gap; z-index keeps it on top */
+  --nova-card-rest-brightness: .9;     /* cover image at rest; 1 = untouched */
+  --nova-card-hover-brightness: 1.15;  /* cover image on hover */
   --nova-card-hover-ring: 2px;         /* extra width drawn inside the card's
                                           own 1px border -> 3px total */
   --nova-card-hover-ring-color: var(--color-text-default); /* full-strength:
                                           #f0f0f0 dark, near-black light.
                                           Rest border is #333 (measured). */
-  --nova-card-hover-speed: .25s;
+  --nova-card-hover-speed: .25s;       /* scale + brightness, both ways.
+                                          The ring has no transition: it is
+                                          instant on and instant off. */
   --nova-card-hover-ease: cubic-bezier(.2, .7, .2, 1);
 }
 
@@ -1419,36 +1429,33 @@ img.notion-icon,
 }
 
 /* 3 — HOVER: mouse and trackpad only. Touch screens have no hover; a tap
-       would leave a card stuck in its hover state. */
+       would leave a card stuck in its hover state.
+
+       The 90% REST DIM lives in here too, on purpose: it only exists to
+       give the hover somewhere to rise from. On a phone there is no hover,
+       so images there stay at full strength. Info-only galleries (logos)
+       are never dimmed. */
 @media (hover: hover) and (pointer: fine) {
 
-  /* TIMING IS SPLIT BY DIRECTION. A transition always plays with the
-     timing of the state being ENTERED. So:
-       this rule (rest)   = timing on roll-OFF
-       the :hover rule    = timing on roll-ON
-     The ring and bright border snap off instantly (0s) on roll-off, so
-     only the normal 1px border is visible while the card shrinks back.
-     Before v3 they eased out over .25s alongside the shrink, then
-     snapped to the rest border at the end — the "hiccup" DJ saw.
-
+  /* No border-color in this list: the ring is instant both ways.
      background keeps Super's own .12s transition, which this would
      otherwise replace. */
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]) {
     transition:
       transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
-      border-color 0s,
       background .12s ease-in !important;
   }
 
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]) img.notion-collection-card__cover {
+    filter: brightness(var(--nova-card-rest-brightness));
     transition: filter var(--nova-card-hover-speed) var(--nova-card-hover-ease);
   }
 
   /* THE RING. The card's own border can't simply grow from 1px to 3px:
      the card is border-box in a fixed grid cell, so a thicker border would
      squeeze the image 2px on every side and make it jump. Instead the real
-     border turns full-strength, and a ::after layer inside it grows from
-     0 to 2px, adding up to 3px with no layout change.
+     border turns full-strength, and a ::after layer inside it adds 2px,
+     making 3px with no layout change.
 
      z-index 11 sits above Super's click anchor (z-index 10, measured);
      pointer-events: none keeps clicks going to that anchor. The card's
@@ -1461,7 +1468,6 @@ img.notion-icon,
     pointer-events: none;
     border-radius: inherit;
     border: 0 solid var(--nova-card-hover-ring-color);
-    transition: border-width 0s;   /* roll-off: gone instantly */
   }
 
   /* Scale. z-index lifts the card over its neighbours so the grown edge
@@ -1470,25 +1476,42 @@ img.notion-icon,
     transform: scale(var(--nova-card-hover-scale)) !important;
     z-index: 2 !important;
     border-color: var(--nova-card-hover-ring-color) !important;
-    /* roll-on timing — see the TIMING note above */
-    transition:
-      transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
-      border-color var(--nova-card-hover-speed) var(--nova-card-hover-ease),
-      background .12s ease-in !important;
   }
 
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover::after {
     border-width: var(--nova-card-hover-ring);
-    transition: border-width var(--nova-card-hover-speed) var(--nova-card-hover-ease);
   }
 
   /* Brighten the cover only — the title gradient and text sit above it
      and stay as they are. */
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover img.notion-collection-card__cover {
-    filter: brightness(var(--nova-card-hover-brighten));
+    filter: brightness(var(--nova-card-hover-brightness));
   }
 
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover .notion-property__title::after {
     opacity: 1 !important;
   }
+}
+
+
+/* ---------------------------------------------------------------------------
+   IMAGE CURSOR — hand on images that open the lightbox, nothing on the rest
+   (added v4, 2026-11-09)
+
+   MEASURED on /work/firewood-brand: all 63 content images showed a
+   zoom-in (magnifier) cursor — including the 4 that 06-lightbox.js
+   excludes, which do nothing when clicked. The magnifier comes from
+   Super's own lightbox-with-navigation.css, still loaded in Super's Head.
+   None of the Nova files set a cursor on images.
+
+   06-lightbox.js already marks excluded images with data-nova-nolightbox
+   (a "-" or "-nl" caption, a "-ui" or "div-" filename, or under 24px tall).
+   Same flag here, so the cursor always matches what a click actually does.
+--------------------------------------------------------------------------- */
+.notion-root .notion-image:not([data-nova-nolightbox]) img {
+  cursor: pointer !important;
+}
+
+.notion-root .notion-image[data-nova-nolightbox] img {
+  cursor: default !important;
 }
