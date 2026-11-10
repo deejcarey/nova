@@ -1358,3 +1358,87 @@ img.notion-icon,
 .notion-callout:not([class*="bg-"]) {
   background: color-mix(in srgb, var(--color-bg-default) var(--nova-callout-scrim), transparent) !important;
 }
+
+/* ---------------------------------------------------------------------------
+   GALLERY CARD HOVER  —  one treatment for every gallery on the site
+   (added 2026-11-09; paste at the very END of 02-design.css)
+
+   THE RULE: a card that opens a page gets the full hover. A card that
+   doesn't is inert — no hover, no highlight, no arrow, no hand cursor.
+
+   HOW A CARD IS SORTED: Super renders a linked card with an anchor as its
+   direct child — a.notion-collection-card__anchor[href]. An info-only card
+   has no anchor and carries .no-click. We key off the ANCHOR, not the
+   class: it is the thing that makes a card clickable, so the two can never
+   disagree. Not keyed to images, gallery size, page or block ID — a new
+   gallery anywhere just works.
+
+   Measured 2026-11-09 across /about, /art, /work, /products, /stories,
+   /staging/blocks, /staging/components: 175 cards, every one either
+   linked or .no-click, never both. No info-only card contains a link.
+
+   SUPER AUTO-LINKS: if Super creates a sub-page for a card (e.g. Pepsi on
+   /about, one card on /products), that card gains an anchor and picks up
+   the hover. Delete the sub-page and it goes inert again on refresh.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-card-hover-scale: 1.02;   /* hovered card size; 1 = off. 1.02 grows a
+                                      267px card ~3px per side — clears the
+                                      16px card gap measured on /art */
+  --nova-card-hover-dim: 55%;      /* opacity of the OTHER cards in that
+                                      gallery; 100% = spotlight off */
+  --nova-card-hover-speed: .25s;
+  --nova-card-hover-ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+/* 1 — INFO-ONLY CARDS: dead to the cursor, on every device.
+       pointer-events: none hands the pointer to the gallery behind the
+       card, so Super's hover highlight (#1a1a1a -> #212121 in dark mode),
+       the hand cursor and the arrow can't fire. Page scrolling is
+       unaffected. */
+.notion-collection-card:not(:has(> a.notion-collection-card__anchor[href])) {
+  pointer-events: none !important;
+}
+
+/* 2 — THE ARROW. Hidden at rest on linked cards only. Replaces Horizon's
+       unscoped version, which sat hidden after every title in every table
+       and list on the site. */
+.notion-collection-card:has(> a.notion-collection-card__anchor[href]) .notion-property__title::after {
+  content: '→';
+  margin-left: 6px;
+  opacity: 0;
+  transition: opacity var(--nova-card-hover-speed) var(--nova-card-hover-ease);
+}
+
+/* 3 — HOVER: mouse and trackpad only. Touch screens have no hover; a tap
+       would leave a card stuck scaled and its neighbours stuck dimmed. */
+@media (hover: hover) and (pointer: fine) {
+
+  /* background keeps Super's own .12s transition, which this would
+     otherwise replace. */
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]) {
+    transition:
+      transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      opacity var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      background .12s ease-in !important;
+  }
+
+  /* Scale. z-index lifts the card over its neighbours so the grown edge
+     isn't painted under them (the card is already position: relative). */
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover {
+    transform: scale(var(--nova-card-hover-scale)) !important;
+    z-index: 2 !important;
+  }
+
+  .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover .notion-property__title::after {
+    opacity: 1 !important;
+  }
+
+  /* Spotlight: dims the other cards in the SAME gallery only.
+     No :has() nested inside :has() here — that is invalid and the whole
+     rule would be dropped. It isn't needed: info-only cards can't be
+     :hover (rule 1), so any hovered card is a linked one. */
+  .notion-collection-gallery:has(> .notion-collection-card:hover) > .notion-collection-card:not(:hover) {
+    opacity: var(--nova-card-hover-dim);
+  }
+}
