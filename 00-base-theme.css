@@ -1,10 +1,14 @@
 /* ==========================================================================
    00-base-theme.css — Horizon theme (stock), base layer for Nova
    This is the official Horizon theme, formatted for readability, with
-   ONE deliberate change from stock: in section 6, ".notion-header" is
-   no longer hidden on the homepage (#page-index) — stock Horizon hid
-   it there, which also hid the hero cover image added in a separate
-   file, since the cover lives inside .notion-header.
+   these deliberate changes from stock:
+
+   - Section 6: ".notion-header" is no longer hidden on the homepage
+     (#page-index) — stock Horizon hid it there, which also hid the hero
+     cover image, since the cover lives inside .notion-header.
+   - Sections 20 and 33 (2026-11-09): dead and broken gallery-card rules
+     removed. Card hover now lives in 02-design.css, "GALLERY CARD HOVER".
+     See the notes in those sections.
 
    Rule ORDER within this file is preserved exactly as the original
    theme wrote it (not just grouped), because several sections rely on
@@ -389,19 +393,24 @@ strong h1.notion-heading {
 }
 
 /* --------------------------------------------------------------------------
-   20. Collection cards — layout, cover image, hover effects
+   20. Collection cards — layout & cover image
+   CLEANED 2026-11-09. Removed from stock Horizon:
+     .notion-collection-card__cover img { ... }          (padding/height/transition)
+     .notion-collection-card picture,
+     .notion-collection-card__cover div { height }
+     .notion-collection-card:hover .notion-collection-card__cover img { scale 1.05 }
+     .notion-property__title::after + its :hover rule      (the "→" arrow)
+
+   The first three targeted elements Super doesn't render. On Super the
+   cover class sits ON the <img> itself, so "__cover img", "__cover div"
+   and "picture" all matched 0 elements on every page (measured on /art,
+   /work, /about, /products, /staging/blocks). That's why the hover zoom
+   never showed.
+
+   The arrow was unscoped — it put a hidden "→" after every title in
+   every table and list on the site. It now lives in 02-design.css,
+   scoped to cards that link to a page, with the rest of card hover.
    -------------------------------------------------------------------------- */
-.notion-collection-card__cover img {
-  padding: 0 !important;
-  height: 100% !important;
-  transition: transform .2s ease-in-out !important;
-}
-
-.notion-collection-card picture,
-.notion-collection-card__cover div {
-  height: 100% !important;
-}
-
 .notion-collection-card {
   flex-direction: column !important;
   box-shadow: none !important;
@@ -418,28 +427,11 @@ strong h1.notion-heading {
   position: relative !important;
 }
 
-.notion-collection-card:hover .notion-collection-card__cover img {
-  transform: scale(1.05) !important;
-  -webkit-transform: scale(1.05) !important;
-  -ms-transform: scale(1.05) !important;
-}
-
 .notion-collection-card__content {
   position: absolute !important;
   bottom: 0 !important;
   background: linear-gradient(to top, #000 0, rgba(0, 0, 0, 0) 100%);
   width: 100% !important;
-}
-
-.notion-collection-card:hover .notion-property__title::after {
-  opacity: 1 !important;
-}
-
-.notion-property__title::after {
-  transition: opacity .2s ease-in-out !important;
-  content: '→';
-  opacity: 0 !important;
-  margin-left: 6px !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1015,11 +1007,15 @@ strong h1.notion-heading {
 
 /* --------------------------------------------------------------------------
    33. Misc polish
-   -------------------------------------------------------------------------- */
-.notion-collection-card.no-click {
-  cursor: pointer !important;
-}
+   CLEANED 2026-11-09. Removed from stock Horizon:
+     .notion-collection-card.no-click { cursor: pointer !important; }
 
+   Super marks info-only cards (no page to open) .no-click and gives
+   them cursor: default. Horizon forced the pointing hand back on, so
+   cards that do nothing looked clickable (measured on /staging/blocks).
+   Info-only cards are now fully inert — see 02-design.css,
+   "GALLERY CARD HOVER".
+   -------------------------------------------------------------------------- */
 .notion-quote {
   line-height: 1.4 !important;
   margin-bottom: 24px !important;
