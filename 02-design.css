@@ -1,3 +1,4 @@
+/* 02-design.css — v3, 2026-11-09 — gallery hover: ring snaps off instantly on roll-off. Search this file for 'VERSION v3' to confirm. */
 /* ==========================================================================
    02-design.css — color, transparency & visual surface treatment only
    No positioning or sizing here — that's 01-layout.css. Load this
@@ -1361,8 +1362,10 @@ img.notion-icon,
 
 /* ---------------------------------------------------------------------------
    GALLERY CARD HOVER  —  one treatment for every gallery on the site
-   (v1 2026-11-09; v2 2026-11-09: spotlight dim removed at DJ's request,
-   image brighten + border ring added)
+   VERSION v3 — 2026-11-09
+   v1: scale + spotlight dim + arrow
+   v2: spotlight dim removed at DJ's request; image brighten + border ring
+   v3: ring and bright border snap off instantly on roll-off
 
    THE RULE: a card that opens a page gets the full hover. A card that
    doesn't is inert — no hover, no highlight, no arrow, no hand cursor.
@@ -1419,12 +1422,21 @@ img.notion-icon,
        would leave a card stuck in its hover state. */
 @media (hover: hover) and (pointer: fine) {
 
-  /* background keeps Super's own .12s transition, which this would
+  /* TIMING IS SPLIT BY DIRECTION. A transition always plays with the
+     timing of the state being ENTERED. So:
+       this rule (rest)   = timing on roll-OFF
+       the :hover rule    = timing on roll-ON
+     The ring and bright border snap off instantly (0s) on roll-off, so
+     only the normal 1px border is visible while the card shrinks back.
+     Before v3 they eased out over .25s alongside the shrink, then
+     snapped to the rest border at the end — the "hiccup" DJ saw.
+
+     background keeps Super's own .12s transition, which this would
      otherwise replace. */
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]) {
     transition:
       transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
-      border-color var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      border-color 0s,
       background .12s ease-in !important;
   }
 
@@ -1449,7 +1461,7 @@ img.notion-icon,
     pointer-events: none;
     border-radius: inherit;
     border: 0 solid var(--nova-card-hover-ring-color);
-    transition: border-width var(--nova-card-hover-speed) var(--nova-card-hover-ease);
+    transition: border-width 0s;   /* roll-off: gone instantly */
   }
 
   /* Scale. z-index lifts the card over its neighbours so the grown edge
@@ -1458,10 +1470,16 @@ img.notion-icon,
     transform: scale(var(--nova-card-hover-scale)) !important;
     z-index: 2 !important;
     border-color: var(--nova-card-hover-ring-color) !important;
+    /* roll-on timing — see the TIMING note above */
+    transition:
+      transform var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      border-color var(--nova-card-hover-speed) var(--nova-card-hover-ease),
+      background .12s ease-in !important;
   }
 
   .notion-collection-card:has(> a.notion-collection-card__anchor[href]):hover::after {
     border-width: var(--nova-card-hover-ring);
+    transition: border-width var(--nova-card-hover-speed) var(--nova-card-hover-ease);
   }
 
   /* Brighten the cover only — the title gradient and text sit above it
