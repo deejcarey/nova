@@ -1,4 +1,4 @@
-/* 02-design.css — v4, 2026-11-09 — gallery hover: instant ring, 4% scale, 90%->115% brightness; image cursor fix. Search for 'VERSION v4' to confirm. */
+/* 02-design.css — v4, 2026-11-09 — gallery hover: instant 2px ring a step brighter than rest, 4% scale, 90%->115% brightness; image cursor fix. Search for 'VERSION v4' to confirm. */
 /* ==========================================================================
    02-design.css — color, transparency & visual surface treatment only
    No positioning or sizing here — that's 01-layout.css. Load this
@@ -1367,7 +1367,9 @@ img.notion-icon,
    v2: spotlight dim removed at DJ's request; image brighten + border ring
    v3: ring and bright border snap off instantly on roll-off
    v4: ring snaps ON instantly too; scale 2% -> 4%; covers rest at 90% and
-       rise to 115% on hover (was 100% -> 130%, which blew out bright art)
+       rise to 115% on hover (was 100% -> 130%, which blew out bright art);
+       ring toned down: 3px -> 2px total, and a step brighter than the rest
+       border instead of the full text color
 
    THE RULE: a card that opens a page gets the full hover. A card that
    doesn't is inert — no hover, no highlight, no arrow, no hand cursor.
@@ -1398,11 +1400,18 @@ img.notion-icon,
                                           the gap; z-index keeps it on top */
   --nova-card-rest-brightness: .9;     /* cover image at rest; 1 = untouched */
   --nova-card-hover-brightness: 1.15;  /* cover image on hover */
-  --nova-card-hover-ring: 2px;         /* extra width drawn inside the card's
-                                          own 1px border -> 3px total */
-  --nova-card-hover-ring-color: var(--color-text-default); /* full-strength:
-                                          #f0f0f0 dark, near-black light.
-                                          Rest border is #333 (measured). */
+  --nova-card-hover-ring: 1px;         /* extra width drawn inside the card's
+                                          own 1px border -> 2px total */
+
+  /* HOVER BORDER: one step brighter (dark) / darker (light) than the rest
+     border, built from Super's own pickers so both themes follow from one
+     rule — mix 14% of the text color into the border color.
+     MEASURED rest values: dark #333333 on #010101, light #BFBFBF on #FFFFFF.
+       dark   #333333 -> #4E4E4E   (target was #4D4D4D)
+       light  #BFBFBF -> #A4A4A4   (target was #A6A6A6)
+     Raise the % for a stronger edge; 100% = full text color (the v2 look). */
+  --nova-card-hover-ring-strength: 14%;
+  --nova-card-hover-ring-color: color-mix(in srgb, var(--color-text-default) var(--nova-card-hover-ring-strength), var(--color-border-default));
   --nova-card-hover-speed: .25s;       /* scale + brightness, both ways.
                                           The ring has no transition: it is
                                           instant on and instant off. */
@@ -1453,9 +1462,9 @@ img.notion-icon,
 
   /* THE RING. The card's own border can't simply grow from 1px to 3px:
      the card is border-box in a fixed grid cell, so a thicker border would
-     squeeze the image 2px on every side and make it jump. Instead the real
-     border turns full-strength, and a ::after layer inside it adds 2px,
-     making 3px with no layout change.
+     squeeze the image on every side and make it jump. Instead the real
+     border changes color, and a ::after layer inside it adds the extra
+     width (--nova-card-hover-ring), with no layout change.
 
      z-index 11 sits above Super's click anchor (z-index 10, measured);
      pointer-events: none keeps clicks going to that anchor. The card's
