@@ -1,4 +1,4 @@
-/* 01-layout.css — v6, 2026-11-13 — breadcrumb with no hero image: same space above the arrow as below it. Search for 'VERSION v6' to confirm. */
+/* 01-layout.css — v7, 2026-11-13 — mobile: 48px between stacked icon cards (What I offer, Values). Search for 'VERSION v7' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1405,4 +1405,49 @@ main.super-content {
 --------------------------------------------------------------------------- */
 .notion-root.notion-root > .notion-text:first-child:has(> em:first-child strong > .notion-link):has(> span) {
   margin-top: calc(var(--nova-flow-body, 12.8px) - var(--nova-hero-pull)) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   STACKED CARDS — breathing room between icon cards on phones
+   VERSION v7 — 2026-11-13
+
+   A "card" is a column that opens with an image and has a title or text
+   directly under it: the homepage "What I offer" entries, the About page
+   "Values" entries. Side by side on desktop they need no help. Stacked on a
+   phone they ran together, because the space BETWEEN two cards (16px) was
+   the same as the space INSIDE a card between its icon and its title (16px)
+   — nothing told the eye where one entry ended and the next began.
+
+   MEASURED at 375px, end of one card to the icon of the next:
+                                        before    after
+     /       What I offer (12 cards)     16px      48px
+     /about  Values (9 cards)            16px      48px
+   Inside a card nothing changes: icon -> title 16px, title -> text 0px.
+
+   48px = the 16px there already + 32px, the height of one empty Notion line.
+   So it reads like the extra return DJ wanted, without the return — which
+   on desktop added space under every row.
+
+   SCOPED BY SHAPE, no flag: a column row counts as cards when one of its
+   columns starts with an image that is followed by a heading or by text
+   that isn't an empty line. Rows of pure images (case-study galleries) have
+   no title under the image, don't match, and stay 16px apart.
+
+   HOW: this does not add a rule of its own. It raises
+   --nova-mobile-box-column-gap for card rows only. The v2 rule (gap between
+   stacked columns inside a row) and the v4 rule (gap from one row to the
+   next) both read that variable, so both follow, and the cards are evenly
+   spaced whether Notion has them in one row or several.
+
+   Hero rows (:has(h1)) are unaffected — v2 already excludes them.
+--------------------------------------------------------------------------- */
+@media all and (max-width: 900px) {
+  :root {
+    --nova-mobile-card-gap: 48px;
+  }
+
+  .notion-column-list:has(> .notion-column > .notion-image:first-child + :is(.notion-heading__anchor, .notion-heading, .notion-text:not(:empty))) {
+    --nova-mobile-box-column-gap: var(--nova-mobile-card-gap);
+  }
 }
