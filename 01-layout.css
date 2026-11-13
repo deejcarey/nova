@@ -1,3 +1,4 @@
+/* 01-layout.css — v2, 2026-11-12 — mobile: 16px gap between stacked columns that hold images/callouts/galleries. Search for 'VERSION v2' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1200,4 +1201,58 @@ main.super-content {
 --------------------------------------------------------------------------- */
 .notion-collection-card__content > .notion-property__title {
   order: 99 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   STACKED COLUMNS — gap around bordered blocks (images, callouts, galleries)
+   VERSION v2 — 2026-11-12   (v1 = the file as deployed 2026-11-09)
+
+   THE BUG: on phones, images in a column row sat flush against each other —
+   a row of two or three images became one touching strip, then a normal gap
+   before the next row. DJ saw it as "every other image slams into the one
+   above".
+
+   THE CAUSE WAS OURS: --nova-mobile-column-gap (0px, above) removes the
+   padding between stacked columns. That is right for text — a heading
+   column over its body column should sit tight, and type carries its own
+   breathing room in its line-height. A box has none, so two boxes touch.
+
+   MEASURED at 375px, gap between stacked columns before this rule:
+     /work/firewood-brand          image -> image 0px (28)   text -> image 0px (3)
+     /art/artdb/celestial-empire   image -> image 0px (4)
+     /  (What I offer cards)       text -> image 0px (9)
+     /about                        text -> image 0px (7)    image -> h3 0px (1)
+     /manifesto                    callout -> callout 0px (1)
+   After: every one of those is 16px. Text-to-text pairs are unchanged.
+
+   SCOPED BY SHAPE: a column row is matched when a boundary between two of
+   its columns touches a bordered block — the lower column STARTS with one,
+   or the upper column ENDS with one. Rows of pure text never match.
+
+   WHY row-gap AND NOT PADDING: Super's column row is display:flex with
+   flex-wrap:wrap (measured). row-gap only exists BETWEEN wrapped rows, so it
+   does nothing while columns sit side by side and switches on by itself the
+   moment they stack — no breakpoint to keep in sync with Super's. Padding
+   on the columns would also push side-by-side columns out of line with each
+   other between ~640px and 900px.
+
+   The hero row (:has(h1)) is excluded: it has its own row-gap dial,
+   --nova-mobile-hero-space-below, earlier in this file.
+   The homepage logo strip is untouched: its ID-scoped gap in
+   04-special-features.css out-ranks this.
+
+   THE DIAL matches --nova-flow-box in 03-text-treatment.css (16px), the gap
+   the rhythm system already puts between bordered blocks inside ONE column —
+   so images now sit the same distance apart whether Notion has them in one
+   column or spread across several. Keep the two equal.
+--------------------------------------------------------------------------- */
+@media all and (max-width: 900px) {
+  :root {
+    --nova-mobile-box-column-gap: 16px;
+  }
+
+  .notion-column-list:not(:has(h1.notion-heading)):has(> .notion-column + .notion-column > :is(.notion-image, .notion-callout, .notion-collection):first-child),
+  .notion-column-list:not(:has(h1.notion-heading)):has(> .notion-column:not(:last-child) > :is(.notion-image, .notion-callout, .notion-collection):last-child) {
+    row-gap: var(--nova-mobile-box-column-gap) !important;
+  }
 }
