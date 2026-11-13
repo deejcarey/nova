@@ -1,4 +1,4 @@
-/* 01-layout.css — v3, 2026-11-12 — mobile: 16px between stacked image rows as well as inside them. Search for 'VERSION v3' to confirm. */
+/* 01-layout.css — v4, 2026-11-12 — mobile: 16px between column rows, including rows separated by one empty line. Search for 'VERSION v4' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1257,53 +1257,79 @@ main.super-content {
   }
 }
 
-
 /* ---------------------------------------------------------------------------
-   STACKED COLUMNS — even gap from one ROW of images to the next
-   VERSION v3 — 2026-11-12   (v2 = gap between stacked columns INSIDE a row)
+   STACKED COLUMNS — one even gap from one ROW to the next
+   VERSION v4 — 2026-11-12   (replaces the v3 block; v2 above is unchanged)
 
-   THE BUG: on a phone, a page built from rows of images (Celestial Empire:
-   four rows of two) stacked with an uneven beat — 16px, 37px, 16px, 37px.
-   16px inside a row (v2, above), 37px from one row to the next.
+   THE RULE, phones only: when two column rows follow each other, the gap
+   between them is the same 16px used between stacked columns INSIDE a row
+   (v2). It applies whether the rows are directly adjacent or have ONE empty
+   line between them.
 
-   WHERE THE 37px CAME FROM (measured at 375px):
-     12px    padding-bottom on the upper row's last column   (Super)
-     12.8px  margin-top on the lower row                     (--nova-flow-body)
-     12px    padding-top on the lower row's first column     (Super)
+   WHY THE EMPTY LINE: DJ puts a single empty line between rows of cards so
+   Notion keeps them as separate rows (homepage "What I offer": four rows of
+   three). On desktop that line is the space between rows. On a phone the
+   rows stack, and that line became 58px between every third card while the
+   cards inside a row sat 16px apart.
 
-   THE FIX: where two column rows sit directly one after the other, drop
-   those two paddings and set the margin to the same 16px used inside a row.
-   Result on Celestial Empire: every image-to-image gap is 16px.
+   MEASURED at 375px, seam between two rows:
+                                              before    after
+     /  What I offer, row -> empty -> row      58px      16px   (x3)
+     /art/artdb/celestial-empire  row -> row   16px      16px   (v3, kept)
+     /work/firewood-brand         row -> row   16px      16px   (v3, kept)
 
-   DELIBERATELY NARROW. Only the seam BETWEEN TWO ADJACENT ROWS changes, and
-   only on the side that touches a bordered block (image, callout, gallery).
-   The gap between a row and anything else — text, a heading, a divider, an
-   empty line — is exactly as it was. Empty-line spacing on phones is a
-   separate decision DJ has parked.
+   WHAT MAKES UP A SEAM (all three are handled, or the gap is uneven):
+     padding-bottom on the upper row's last column    12px  (Super)
+     the empty line, if any                            45px  (32 tall + 13 gap)
+     margin-top on the lower row                       12.8px
+     padding-top on the lower row's first column       12px  (Super)
 
-   680px IS SUPER'S OWN STACKING POINT (its notion.css: max-width 680px sets
-   .notion-column to width 100%). Above it columns sit side by side and need
-   their padding, so nothing here applies. If Super moves that number, move
-   this one.
+   SAFE BY CONSTRUCTION — nothing can end up touching:
+     - Only an empty line with a column row directly ABOVE and directly
+       BELOW it is hidden. Every other empty line on the site is untouched.
+       Two empty lines in a row are left alone: that reads as a deliberate
+       break, not a row separator.
+     - Paddings are only dropped where a bordered block (image, callout,
+       gallery) touches the seam, and the 16px margin replaces them. Two
+       rows of pure text keep their padding.
 
-   NO NESTED :has(). Each :has() below sits on its own element in the
-   selector; none is inside another's brackets, which would void the rule.
+   680px IS SUPER'S OWN STACKING POINT (notion.css: max-width 680px sets
+   .notion-column to width 100%). Above it nothing here applies, so the empty
+   line still does its job on desktop and tablet.
 
-   THE DIAL is shared with v2 (--nova-mobile-box-column-gap, 16px), so the
-   gap inside a row and between rows can never drift apart.
+   NO NESTED :has(). Some selectors below carry two, but each sits on a
+   different element; none is inside another's brackets, which would void
+   the rule.
+
+   THE DIAL is v2's --nova-mobile-box-column-gap (16px).
 --------------------------------------------------------------------------- */
 @media all and (max-width: 680px) {
-  /* Upper row: its last column ends with a bordered block. */
-  .notion-column-list:has(+ .notion-column-list) > .notion-column:last-child:has(> :is(.notion-image, .notion-callout, .notion-collection):last-child) {
+  /* 1 — an empty line sitting directly between two column rows adds nothing. */
+  .notion-column-list + .notion-text:empty:has(+ .notion-column-list) {
+    display: none !important;
+  }
+
+  /* 2 — upper row gives up its bottom padding when the seam touches a
+         bordered block: it ENDS with one, or the row below STARTS with one. */
+  .notion-column-list:has(+ .notion-column-list) > .notion-column:last-child:has(> :is(.notion-image, .notion-callout, .notion-collection):last-child),
+  .notion-column-list:has(+ .notion-text:empty + .notion-column-list) > .notion-column:last-child:has(> :is(.notion-image, .notion-callout, .notion-collection):last-child),
+  .notion-column-list:has(+ .notion-column-list > .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child) > .notion-column:last-child,
+  .notion-column-list:has(+ .notion-text:empty + .notion-column-list > .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child) > .notion-column:last-child {
     padding-bottom: 0 !important;
   }
 
-  /* Lower row: its first column starts with a bordered block. */
-  .notion-column-list + .notion-column-list:has(> .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child) {
+  /* 3 — lower row sits one in-row gap below, under the same condition. */
+  .notion-column-list + .notion-column-list:has(> .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child),
+  .notion-column-list + .notion-text:empty + .notion-column-list:has(> .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child),
+  .notion-column-list:has(> .notion-column:last-child > :is(.notion-image, .notion-callout, .notion-collection):last-child) + .notion-column-list,
+  .notion-column-list:has(> .notion-column:last-child > :is(.notion-image, .notion-callout, .notion-collection):last-child) + .notion-text:empty + .notion-column-list {
     margin-top: var(--nova-mobile-box-column-gap) !important;
   }
 
-  .notion-column-list + .notion-column-list > .notion-column:first-child:has(> :is(.notion-image, .notion-callout, .notion-collection):first-child) {
+  .notion-column-list + .notion-column-list > .notion-column:first-child:has(> :is(.notion-image, .notion-callout, .notion-collection):first-child),
+  .notion-column-list + .notion-text:empty + .notion-column-list > .notion-column:first-child:has(> :is(.notion-image, .notion-callout, .notion-collection):first-child),
+  .notion-column-list:has(> .notion-column:last-child > :is(.notion-image, .notion-callout, .notion-collection):last-child) + .notion-column-list > .notion-column:first-child,
+  .notion-column-list:has(> .notion-column:last-child > :is(.notion-image, .notion-callout, .notion-collection):last-child) + .notion-text:empty + .notion-column-list > .notion-column:first-child {
     padding-top: 0 !important;
   }
 }
