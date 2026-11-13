@@ -1,4 +1,4 @@
-/* 01-layout.css — v7, 2026-11-13 — mobile: 48px between stacked icon cards (What I offer, Values). Search for 'VERSION v7' to confirm. */
+/* 01-layout.css — v8, 2026-11-13 — toggles: title no longer runs under the + button. Search for 'VERSION v8' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1450,4 +1450,38 @@ main.super-content {
   .notion-column-list:has(> .notion-column > .notion-image:first-child + :is(.notion-heading__anchor, .notion-heading, .notion-text:not(:empty))) {
     --nova-mobile-box-column-gap: var(--nova-mobile-card-gap);
   }
+}
+
+
+/* ---------------------------------------------------------------------------
+   TOGGLES — keep the title clear of the + / - button
+   VERSION v8 — 2026-11-13
+
+   THE BUG: a toggle's title could run underneath its + button. Horizon
+   reserves 30px on the right of the title, but the button needs 34px: it
+   sits 18px in from the edge and the "+" glyph is 16px wide (measured).
+   So any title long enough to wrap ran 3px INTO the button. On a phone
+   nearly every title wraps: 13 of the 17 toggles on /about overlapped.
+   On desktop the same thing happens as soon as a title is long enough to
+   reach the right edge.
+
+   THE FIX: reserve the button's real footprint plus a visible gap.
+       18px (button inset) + 16px (glyph) + 16px (gap) = 50px
+   Measured after, at 375px and 1280px: the title's limit is 16px short of
+   the button on every toggle; no title overlaps.
+
+   Applies to every toggle — plain and heading toggles, any page, any width.
+   Only the title row changes. The opened content below it is untouched:
+   it starts under the button, not beside it.
+
+   The 18px and 16px are properties of the button as Horizon draws it
+   (00-base-theme.css, section 28: right: 18px, 24px glyph). If the button
+   is ever moved or resized there, update them here.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-toggle-plus-gap: 16px;   /* clear space between title and button */
+}
+
+.notion-toggle > .notion-toggle__summary {
+  padding-right: calc(18px + 16px + var(--nova-toggle-plus-gap)) !important;
 }
