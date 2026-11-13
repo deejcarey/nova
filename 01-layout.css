@@ -1,4 +1,4 @@
-/* 01-layout.css — v2, 2026-11-12 — mobile: 16px gap between stacked columns that hold images/callouts/galleries. Search for 'VERSION v2' to confirm. */
+/* 01-layout.css — v3, 2026-11-12 — mobile: 16px between stacked image rows as well as inside them. Search for 'VERSION v3' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1254,5 +1254,56 @@ main.super-content {
   .notion-column-list:not(:has(h1.notion-heading)):has(> .notion-column + .notion-column > :is(.notion-image, .notion-callout, .notion-collection):first-child),
   .notion-column-list:not(:has(h1.notion-heading)):has(> .notion-column:not(:last-child) > :is(.notion-image, .notion-callout, .notion-collection):last-child) {
     row-gap: var(--nova-mobile-box-column-gap) !important;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   STACKED COLUMNS — even gap from one ROW of images to the next
+   VERSION v3 — 2026-11-12   (v2 = gap between stacked columns INSIDE a row)
+
+   THE BUG: on a phone, a page built from rows of images (Celestial Empire:
+   four rows of two) stacked with an uneven beat — 16px, 37px, 16px, 37px.
+   16px inside a row (v2, above), 37px from one row to the next.
+
+   WHERE THE 37px CAME FROM (measured at 375px):
+     12px    padding-bottom on the upper row's last column   (Super)
+     12.8px  margin-top on the lower row                     (--nova-flow-body)
+     12px    padding-top on the lower row's first column     (Super)
+
+   THE FIX: where two column rows sit directly one after the other, drop
+   those two paddings and set the margin to the same 16px used inside a row.
+   Result on Celestial Empire: every image-to-image gap is 16px.
+
+   DELIBERATELY NARROW. Only the seam BETWEEN TWO ADJACENT ROWS changes, and
+   only on the side that touches a bordered block (image, callout, gallery).
+   The gap between a row and anything else — text, a heading, a divider, an
+   empty line — is exactly as it was. Empty-line spacing on phones is a
+   separate decision DJ has parked.
+
+   680px IS SUPER'S OWN STACKING POINT (its notion.css: max-width 680px sets
+   .notion-column to width 100%). Above it columns sit side by side and need
+   their padding, so nothing here applies. If Super moves that number, move
+   this one.
+
+   NO NESTED :has(). Each :has() below sits on its own element in the
+   selector; none is inside another's brackets, which would void the rule.
+
+   THE DIAL is shared with v2 (--nova-mobile-box-column-gap, 16px), so the
+   gap inside a row and between rows can never drift apart.
+--------------------------------------------------------------------------- */
+@media all and (max-width: 680px) {
+  /* Upper row: its last column ends with a bordered block. */
+  .notion-column-list:has(+ .notion-column-list) > .notion-column:last-child:has(> :is(.notion-image, .notion-callout, .notion-collection):last-child) {
+    padding-bottom: 0 !important;
+  }
+
+  /* Lower row: its first column starts with a bordered block. */
+  .notion-column-list + .notion-column-list:has(> .notion-column:first-child > :is(.notion-image, .notion-callout, .notion-collection):first-child) {
+    margin-top: var(--nova-mobile-box-column-gap) !important;
+  }
+
+  .notion-column-list + .notion-column-list > .notion-column:first-child:has(> :is(.notion-image, .notion-callout, .notion-collection):first-child) {
+    padding-top: 0 !important;
   }
 }
