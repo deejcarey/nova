@@ -1,4 +1,4 @@
-/* 01-layout.css — v4, 2026-11-12 — mobile: 16px between column rows, including rows separated by one empty line. Search for 'VERSION v4' to confirm. */
+/* 01-layout.css — v5, 2026-11-13 — breadcrumb: 8px of extra space above and below. Search for 'VERSION v5' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1332,4 +1332,41 @@ main.super-content {
   .notion-column-list:has(> .notion-column:last-child > :is(.notion-image, .notion-callout, .notion-collection):last-child) + .notion-text:empty + .notion-column-list > .notion-column:first-child {
     padding-top: 0 !important;
   }
+}
+
+
+/* ---------------------------------------------------------------------------
+   BREADCRUMB — breathing room above and below
+   VERSION v5 — 2026-11-13
+
+   Any paragraph that starts with the round back-arrow button (the breadcrumb
+   shape defined earlier in this file) gets extra space above and below, so
+   DJ no longer adds an empty line before it in Notion. Applies to every
+   page type and to both the one-line and two-line variants — no flag.
+
+   PADDING, NOT MARGIN, on purpose: the rhythm system in 03-text-treatment.css
+   owns every margin, and zeroes the top margin of a page's first block. The
+   breadcrumb is the first block on most pages, so a margin would be thrown
+   away exactly where it is needed. Padding sits inside the block and simply
+   adds to whatever gap the rhythm system already gives.
+
+   3px IS SUPER'S OWN paragraph padding (measured: block 50px tall = 44px of
+   rows + 3px top + 3px bottom). The buffer is added on top of it, so the dial
+   is the real amount of extra space.
+
+   MEASURED, edge of the 48px circle to its neighbour:
+                                              before    after
+     hero image -> circle   (Firewood)         17px      25px
+     circle -> divider      (all pages)        14px      22px
+     navbar -> circle, desktop (Art, Work)     31px      39px
+     navbar -> circle, phone                    1px       9px
+   The circle stays centred on the label text (0px offset before and after).
+--------------------------------------------------------------------------- */
+:root {
+  --nova-crumb-buffer: 8px;   /* extra space above AND below the breadcrumb */
+}
+
+.notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span) {
+  padding-top: calc(3px + var(--nova-crumb-buffer)) !important;
+  padding-bottom: calc(3px + var(--nova-crumb-buffer)) !important;
 }
