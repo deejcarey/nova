@@ -1,4 +1,4 @@
-/* 01-layout.css — v5, 2026-11-13 — breadcrumb: 8px of extra space above and below. Search for 'VERSION v5' to confirm. */
+/* 01-layout.css — v6, 2026-11-13 — breadcrumb with no hero image: same space above the arrow as below it. Search for 'VERSION v6' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1369,4 +1369,40 @@ main.super-content {
 .notion-root .notion-text:has(> em:first-child strong > .notion-link):has(> span) {
   padding-top: calc(3px + var(--nova-crumb-buffer)) !important;
   padding-bottom: calc(3px + var(--nova-crumb-buffer)) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   BREADCRUMB — pages with NO hero image: equal space above and below
+   VERSION v6 — 2026-11-13
+
+   When the breadcrumb is the first thing on the page, the gap from the
+   navbar down to the arrow circle now equals the gap from the circle down
+   to the divider (22px), on desktop and phone alike.
+
+   MEASURED before this rule, navbar -> circle:
+     desktop  39px   (30px header space + 11px padding - 2px circle overhang)
+     phone     9px   ( 0px header space + 11px padding - 2px circle overhang)
+   The header reserves different space per breakpoint, which is why the two
+   never matched each other or the 22px below. After: 22px at every width.
+
+   HOW: the gap below the circle is the breadcrumb's bottom padding plus the
+   divider's own margin (--nova-flow-body, 12.8px, set in
+   03-text-treatment.css). So the top needs that same 12.8px, minus whatever
+   the header has already reserved. --nova-hero-pull is exactly that
+   reserved amount and is already wired per breakpoint earlier in this file
+   (30px desktop, 0px phone), so one line covers both:
+       12.8 - 30 = -17.2px on desktop  (pulls the breadcrumb up)
+       12.8 -  0 = +12.8px on phones   (pushes it down)
+   Change --nova-crumb-buffer and top and bottom still move together.
+
+   ONLY WHEN THE BREADCRUMB IS THE PAGE'S FIRST BLOCK. With a hero image
+   above it, this does not apply and the v5 spacing stands (25px / 22px).
+
+   The rhythm system zeroes the top margin of a page's first block
+   (03-text-treatment.css, rule 5). This selector out-ranks that rule on
+   specificity, so it wins even though 03 loads later.
+--------------------------------------------------------------------------- */
+.notion-root.notion-root > .notion-text:first-child:has(> em:first-child strong > .notion-link):has(> span) {
+  margin-top: calc(var(--nova-flow-body, 12.8px) - var(--nova-hero-pull)) !important;
 }
