@@ -1,4 +1,4 @@
-/* 01-layout.css — v8, 2026-11-13 — toggles: title no longer runs under the + button. Search for 'VERSION v8' to confirm. */
+/* 01-layout.css — v9, 2026-11-13 — view tabs: rounder corners (8px -> 14px). Search for 'VERSION v9' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1484,4 +1484,35 @@ main.super-content {
 
 .notion-toggle > .notion-toggle__summary {
   padding-right: calc(18px + 16px + var(--nova-toggle-plus-gap)) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   VIEW TABS — corner radius
+   VERSION v9 — 2026-11-13
+
+   The row of view buttons above a database (Work > Project Work: All Work,
+   Projects, Pitches, Demo Reels).
+
+   WHERE THE LOOK COMES FROM: not Horizon. Super's own snippet,
+   sites.super.so/snippets/v2/view-picker.css, is loaded in the Head and
+   out-ranks Horizon's dropdown rules. It draws each tab 42px tall with
+   12px 14px padding, and takes its corners from --picker-border-radius,
+   which it sets on :root with !important. MEASURED: that resolves to 8px.
+
+   So the radius is changed by re-pointing THAT variable rather than by
+   fighting the snippet's rule. html:root out-ranks the snippet's :root, so
+   this wins whichever file loads first.
+
+   8px -> 14px: visibly rounder, still a rounded rectangle. 21px (half the
+   42px height) would make it a full pill like the site's other buttons.
+
+   Type size and weight for these tabs live in 03-text-treatment.css.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-view-tab-radius: 14px;
+}
+
+html:root {
+  --picker-border-radius: var(--nova-view-tab-radius) !important;
 }
