@@ -1,3 +1,4 @@
+/* 03-text-treatment.css — v2, 2026-11-13 — view tabs: 25% larger and bold. Search for 'VERSION v2' to confirm. */
 /* ==========================================================================
    03-text-treatment.css — typography
    ========================================================================== */
@@ -612,4 +613,39 @@ h3.notion-heading:has(strong) * {
 .notion-callout__content.notion-callout__content > .notion-heading__anchor:first-child + *,
 .notion-toggle__content.notion-toggle__content > .notion-heading__anchor:first-child + * {
   margin-top: 0 !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   VIEW TABS — type size and weight
+   VERSION v2 — 2026-11-13   (v1 = this file as deployed before today)
+
+   The row of view buttons above a database (Work > Project Work: All Work,
+   Projects, Pitches, Demo Reels).
+
+   MEASURED before: 10px, weight 300, uppercase, 0.8px tracking — set by
+   Horizon in 00-base-theme.css, section 30, inside its min-width: 624px
+   block. After: 12.5px (10px x 1.25), weight 700. Uppercase and tracking
+   are unchanged.
+
+   SAME 624px BREAKPOINT AS HORIZON, on purpose: below it Horizon stops
+   styling these as small uppercase tabs, and under 576px Super turns the
+   row into a dropdown menu with 16px options. Those states are left alone.
+
+   The tab's box doesn't grow: Super's view-picker snippet fixes it at 42px
+   tall, and 12.5px type sits inside that with room to spare. Tabs get
+   wider with their labels; the four on /work still fit on one row.
+
+   Corner radius for these tabs lives in 01-layout.css.
+--------------------------------------------------------------------------- */
+:root {
+  --nova-view-tab-scale: 1.25;   /* 1 = Horizon's 10px */
+  --nova-view-tab-weight: 700;
+}
+
+@media all and (min-width: 624px) {
+  .notion-collection__header-wrapper .notion-dropdown__option p {
+    font-size: calc(10px * var(--nova-view-tab-scale)) !important;
+    font-weight: var(--nova-view-tab-weight) !important;
+  }
 }
