@@ -9,6 +9,8 @@
    - Sections 20 and 33 (2026-11-09): dead and broken gallery-card rules
      removed. Card hover now lives in 02-design.css, "GALLERY CARD HOVER".
      See the notes in those sections.
+   - Section 32 (2026-11-15): Horizon's own lightbox removed, with its two
+     variables in section 3. See the note in section 32.
 
    Rule ORDER within this file is preserved exactly as the original
    theme wrote it (not just grouped), because several sections rely on
@@ -82,7 +84,6 @@ h2.notion-heading * {
 
   /* Strength settings — the ONLY place transparency amounts live. */
   --nova-overlay-strength: 5%;   /* toggles, code blocks, dropdown active */
-  --nova-lightbox-strength: 80%; /* lightbox backdrop */
   --nova-card-strength: 60%;     /* gallery card content backing */
 
   /* Low-opacity wash of the text color: white-ish in dark mode,
@@ -92,7 +93,6 @@ h2.notion-heading * {
   --nova-translucent-overlay: color-mix(in srgb, var(--color-text-default) var(--nova-overlay-strength), transparent) !important;
   --nova-toggle-hover-bg: var(--nova-translucent-overlay) !important;
   --color-code-bg: var(--nova-translucent-overlay) !important;
-  --nova-lightbox-bg: color-mix(in srgb, var(--color-bg-default) var(--nova-lightbox-strength), transparent) !important;
   --card-content-bg-color: color-mix(in srgb, var(--color-bg-default) var(--nova-card-strength), transparent) !important;
 
   /* Text sitting on a colored fill (pill hover, colored buttons):
@@ -956,54 +956,16 @@ strong h1.notion-heading {
 
 /* --------------------------------------------------------------------------
    32. Lightbox
+   CLEANED 2026-11-15. Removed from stock Horizon:
+     .lightbox-wrapper, .close-lightbox, .close-lightbox:hover,
+     .lightbox-image — and, in section 3, --nova-lightbox-strength and
+     --nova-lightbox-bg, which only .close-lightbox used.
+
+   Dead code: the site's lightbox is 06-lightbox.js, which builds
+   #super-gallery-lightbox with .sg-* classes. Measured: no element with any
+   of the removed classes exists on any page. Lightbox styling lives in
+   02-design.css.
    -------------------------------------------------------------------------- */
-.lightbox-wrapper {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  background: rgba(0, 0, 0, .5);
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 99;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(5px);
-}
-
-.close-lightbox {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 67px;
-  padding: 8px 8px 13px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-  font-size: 2rem;
-  background: var(--nova-lightbox-bg);
-  border: 1px solid var(--color-border-default);
-  color: var(--color-text-default);
-  border-radius: 500px;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
-
-.close-lightbox:hover {
-  background: var(--color-ui-hover-bg);
-}
-
-.lightbox-image {
-  width: auto;
-  max-height: 90%;
-  max-width: 80%;
-  height: auto;
-  z-index: 100;
-  border-radius: 12px;
-}
 
 /* --------------------------------------------------------------------------
    33. Misc polish
