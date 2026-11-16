@@ -1,3 +1,4 @@
+/* 06-lightbox.js — v2, 2026-11-15 — caption width matches the image, so its left-aligned text starts at the image's edge. Search for 'VERSION v2' to confirm. */
 /* ==========================================================================
    06-lightbox.js — Super's "lightbox with navigation" snippet, forked
    Based on https://sites.super.so/snippets/lightbox-with-navigation.js
@@ -31,6 +32,8 @@
 
    CAPTIONS IN THE OVERLAY: an image's Notion caption is carried into
    the lightbox and shown under the image (styled in 02-design.css).
+   VERSION v2: the caption is sized to the image's on-screen width, so
+   its left-aligned text starts exactly at the image's left edge.
    A caption that is only flags shows nothing, since it carries no
    meaning for a reader. Images without a caption show nothing and
    reserve no space.
@@ -145,6 +148,16 @@
   const nextButton = dialog.querySelector('.sg-next');
   const counter = dialog.querySelector('.sg-counter');
   const caption = dialog.querySelector('.sg-caption');
+
+  // v2: caption box = image's on-screen width, so left-aligned text lines
+  // up with the image's left edge. Re-measured on every new image and
+  // whenever the image resizes (window resize, or a wrapping caption
+  // pushing the image smaller). Converges in a frame or two.
+  function fitCaption() {
+    caption.style.width = image.clientWidth ? image.clientWidth + 'px' : '';
+  }
+  image.addEventListener('load', fitCaption);
+  if ('ResizeObserver' in window) new ResizeObserver(fitCaption).observe(image);
   let gallery = [];
   let index = 0;
   let pageURL = '';
