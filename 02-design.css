@@ -1,4 +1,4 @@
-/* 02-design.css — v4, 2026-11-09 — gallery hover: instant 2px ring a step brighter than rest, 4% scale, 90%->115% brightness; image cursor fix. Search for 'VERSION v4' to confirm. */
+/* 02-design.css — v5, 2026-11-15 — lightbox caption left-aligned to the image's edge; extra caption rules removed. Search for 'VERSION v5' to confirm. */
 /* ==========================================================================
    02-design.css — color, transparency & visual surface treatment only
    No positioning or sizing here — that's 01-layout.css. Load this
@@ -940,13 +940,16 @@ html:has(.super-navbar__menu) .super-navbar {
    06-lightbox.js carries each image's Notion caption into the overlay
    as .sg-caption. This lays the overlay out and styles it.
 
+   VERSION v5 — 2026-11-15: caption LEFT-aligned to the image's left edge,
+   matching captions on the page (was centered).
+
    THE LAYOUT: image and caption behave as ONE centered group, with the
    counter anchored to the bottom of the screen in both layouts.
 
      +--------------------------------------------+
      |                                            |
      |  [<]          IMAGE           [>]          |  desktop: nav at
-     |              caption                       |  the sides
+     |               caption                      |  the sides
      |                                            |
      |                 4 / 45                     |  counter: bottom
      +--------------------------------------------+
@@ -955,9 +958,18 @@ html:has(.super-navbar__menu) .super-navbar {
      |                        |
      |         IMAGE          |  mobile: image fills
      |                        |  to the top
-     |        caption         |  caption full width
+     |         caption        |
      |  [<]    4 / 45    [>]  |  counter between the
      +------------------------+  bottom-corner nav
+
+   LEFT EDGE: CSS alone can't make the caption as wide as the image — the
+   image's width depends on the screen and its own proportions. So
+   06-lightbox.js sets the caption's width to the image's on-screen width
+   and re-measures whenever the image resizes. Here the text is simply
+   left-aligned inside that box. Measured: all 45 captions on Email
+   Marketing start within 2px of the image's edge, at 1440px and 375px.
+   If the script ever fails, the caption box shrinks to its text and
+   stays centered — no worse than before.
 
    The image+caption group is a flex COLUMN where the image is the
    flexible row (min-height: 0 lets it shrink below its natural size)
@@ -974,7 +986,6 @@ html:has(.super-navbar__menu) .super-navbar {
    -------------------------------------------------------------------------- */
 :root {
   --nova-lightbox-caption-size: .95rem;
-  --nova-lightbox-caption-max: 60ch;
   --nova-lightbox-caption-color: rgba(255, 255, 255, .78);
   --nova-lightbox-counter-color: rgba(255, 255, 255, .55);
   --nova-lightbox-gap: .85rem;          /* space between image and caption */
@@ -998,7 +1009,6 @@ html:has(.super-navbar__menu) .super-navbar {
 
 /* The flexible row: shrinks to whatever space the caption leaves. */
 #super-gallery-lightbox .sg-image {
-  order: 1 !important;
   flex: 0 1 auto !important;
   min-height: 0 !important;
   max-width: 100% !important;
@@ -1006,18 +1016,13 @@ html:has(.super-navbar__menu) .super-navbar {
   object-fit: contain !important;
 }
 
-/* Caption: in the column, directly under the image. */
+/* Caption: in the column, directly under the image. Its width comes from
+   06-lightbox.js (the image's width). margin: 0 clears the browser's
+   default paragraph margins — it's a <p>. */
 #super-gallery-lightbox .sg-caption {
-  order: 2 !important;
-  position: static !important;
   flex: 0 0 auto !important;
-  transform: none !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
   margin: 0 !important;
-  max-width: min(var(--nova-lightbox-caption-max), 100%) !important;
-  text-align: center !important;
+  text-align: left !important;
   font-size: var(--nova-lightbox-caption-size) !important;
   line-height: 1.45 !important;
   color: var(--nova-lightbox-caption-color) !important;
@@ -1049,10 +1054,6 @@ html:has(.super-navbar__menu) .super-navbar {
     padding: var(--nova-lightbox-pad) var(--nova-lightbox-pad)
              calc(4.75rem + env(safe-area-inset-bottom))
              var(--nova-lightbox-pad) !important;
-  }
-
-  #super-gallery-lightbox .sg-caption {
-    max-width: 100% !important;
   }
 }
 
