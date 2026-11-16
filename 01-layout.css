@@ -1,4 +1,4 @@
-/* 01-layout.css — v9, 2026-11-13 — view tabs: rounder corners (8px -> 14px). Search for 'VERSION v9' to confirm. */
+/* 01-layout.css — v10, 2026-11-15 — images outside columns: caption left-aligned like everywhere else. Search for 'VERSION v10' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1515,4 +1515,31 @@ main.super-content {
 
 html:root {
   --picker-border-radius: var(--nova-view-tab-radius) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   IMAGES OUTSIDE COLUMNS — left-aligned, like every other image
+   VERSION v10 — 2026-11-15
+
+   THE BUG: an image placed straight on the page (not in a column) had its
+   caption centered under it, while every image in a column had its caption
+   at the left edge — e.g. the three "2. Design" images on
+   /work/organizational-modeling.
+
+   THE CAUSE IS SUPER: Notion's alignment arrives on the page as a class —
+   align-start for Left. Super only emits it for images INSIDE columns.
+   Measured: all 154 images in columns carry align-start; the 6 images
+   outside columns (3 on Org Design, 3 on Email Marketing) carry no
+   alignment class at all. With none, Super's own default applies:
+   .notion-image { align-items: center } — so the caption box is centered.
+   Format doesn't matter: a PNG behaved exactly like the SVGs.
+
+   THE FIX: an image with NO alignment class gets left alignment. An image
+   with one (left, center or right, set in Notion) is untouched.
+
+   Measured on Org Design, caption left edge: 298 / 301 / 306px -> 0px.
+--------------------------------------------------------------------------- */
+.notion-root .notion-image:not([class*="align-"]) {
+  align-items: start !important;
 }
