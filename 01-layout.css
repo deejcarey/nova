@@ -1,4 +1,4 @@
-/* 01-layout.css — v10, 2026-11-15 — images outside columns: caption left-aligned like everywhere else. Search for 'VERSION v10' to confirm. */
+/* 01-layout.css — v11, 2026-11-17 — galleries: Super's 16px/4px padding removed. Search for 'VERSION v11' to confirm. */
 /* ==========================================================================
    01-layout.css — spacing, sizing & positioning only
    No color, no transparency, no blur — those live in 02-design.css.
@@ -1542,4 +1542,26 @@ html:root {
 --------------------------------------------------------------------------- */
 .notion-root .notion-image:not([class*="align-"]) {
   align-items: start !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   GALLERIES — no built-in padding
+   VERSION v11 — 2026-11-17
+
+   Super's notion.css gives every gallery 16px of padding above its first
+   card and 4px below its last. Our rhythm system (03-text-treatment.css)
+   already sets the gap above a gallery (16px, --nova-flow-box), so the two
+   stacked: 32px under a divider where the heading above it got 12px.
+
+   One owner per gap: the padding goes, the rhythm system decides.
+   MEASURED on Customer Journeys, divider -> first logo: 32px -> 16px.
+
+   Super's view-picker snippet already zeroed the top padding on pages that
+   load it (Work), so Work and its view tabs don't move. Everywhere else
+   galleries sit 16px higher and end 4px sooner.
+--------------------------------------------------------------------------- */
+.notion-collection-gallery {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
