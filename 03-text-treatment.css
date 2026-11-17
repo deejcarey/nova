@@ -1,4 +1,4 @@
-/* 03-text-treatment.css — v2, 2026-11-13 — view tabs: 25% larger and bold. Search for 'VERSION v2' to confirm. */
+/* 03-text-treatment.css — v3, 2026-11-17 — callouts: content starts at the top padding, like every other container. Search for 'VERSION v3' to confirm. */
 /* ==========================================================================
    03-text-treatment.css — typography
    ========================================================================== */
@@ -612,6 +612,20 @@ h3.notion-heading:has(strong) * {
 .notion-column.notion-column > .notion-heading__anchor:first-child + *,
 .notion-callout__content.notion-callout__content > .notion-heading__anchor:first-child + *,
 .notion-toggle__content.notion-toggle__content > .notion-heading__anchor:first-child + * {
+  margin-top: 0 !important;
+}
+
+/* 5b — VERSION v3, 2026-11-17. Callouts: rule 5 never fired.
+        Super puts the callout's own (usually empty) title text in front of
+        its content as <span class="notion-semantic-string"></span>. So the
+        first real block is the SECOND child and kept its rhythm margin:
+        16px above a gallery or image, 32px above a display heading.
+        MEASURED on Customer Journeys, callout top -> first logo: 49px top
+        vs 21px bottom. After: 17px / 17px.
+        Skips that empty span (and a heading anchor after it). A callout
+        whose title text is NOT empty is untouched. */
+.notion-callout__content.notion-callout__content > :empty:first-child + *:not(.notion-heading__anchor),
+.notion-callout__content.notion-callout__content > :empty:first-child + .notion-heading__anchor + * {
   margin-top: 0 !important;
 }
 
